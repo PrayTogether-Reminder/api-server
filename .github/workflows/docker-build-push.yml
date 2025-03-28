@@ -1,0 +1,73 @@
+name: Docker Build and Push to GHCR
+
+on:
+  repository_dispatch:
+    types: [trigger-docker-workflow]
+
+jobs:
+  docker-build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.client_payload.sha }}
+
+      - name: Download JAR Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-jar-${{ github.event.client_payload.sha }}
+          path: app
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        id: docker_build # 빌드 단계 ID (선택사항)
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Get short commit SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Send Discord Docker Job Status
+        if: always()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          status: ${{ job.status }} # (success, failure, cancelled, skipped)
+          color: ${{ job.status == 'success' && '0x00ff00' || '0xff0000' }}
+          title: "[${{ github.repository }}] ${{ job.status == 'success' && '✅ Docker Image Pushed' || '❌ Docker Build/Push Failed' }}"
+          description: |
+            Docker build & push job status for **${{ github.repository }}**.
+
+            **Image:** `ghcr.io/${{ github.repository }}`
+            **Commit:** [`${{ steps.vars.outputs.sha_short }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.event.client_payload.sha }})
+
+            ${{ job.status == 'success' && format('**Tags Applied:**\n```{0}```', steps.meta.outputs.tags) || '**Failure detected!** Please check the workflow logs.' }}
+          url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          username: "기도함께 도우미"
+          # avatar_url: "봇_이미지_URL"
