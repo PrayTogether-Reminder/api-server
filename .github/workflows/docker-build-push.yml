@@ -21,7 +21,7 @@ jobs:
         with:
           name: app-jar-${{ github.event.client_payload.sha }}
           path: app
-          un-id: ${{ github.event.client_payload.run_id }}
+          run-id: ${{ github.event.client_payload.run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
