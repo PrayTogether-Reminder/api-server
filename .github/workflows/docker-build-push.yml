@@ -49,6 +49,10 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Get short commit SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: Send Discord Docker Job Status
         if: always()
         uses: sarisia/actions-status-discord@v1
@@ -61,7 +65,7 @@ jobs:
             Docker build & push job status for **${{ github.repository }}**.
 
             **Image:** `ghcr.io/${{ github.repository }}`
-            **Commit:** [`${{ format('{0}...', substring(github.event.client_payload.sha, 0, 7)) }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.event.client_payload.sha }})
+            **Commit:** [`${{ steps.vars.outputs.sha_short }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.event.client_payload.sha }})
 
             ${{ job.status == 'success' && format('**Tags Applied:**\n```{0}```', steps.meta.outputs.tags) || '**Failure detected!** Please check the workflow logs.' }}
           url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
