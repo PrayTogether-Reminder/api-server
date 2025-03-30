@@ -7,20 +7,22 @@ import site.praytogether.pray_together.common.exception.spec.ExceptionSpec;
 
 @Getter
 public abstract class BaseException extends RuntimeException{
-    private final ExceptionSpec spec;
+    private final ExceptionSpec exceptionSpec;
     @Getter(AccessLevel.NONE)
-    private final ExceptionField fields;
+    private final ExceptionField exceptionField;
 
     protected BaseException(ExceptionSpec spec, ExceptionField fields){
-        this.spec = spec;
-        this.fields = fields;
+        this.exceptionSpec = spec;
+        this.exceptionField = fields;
     }
 
     public String getLogMessage(){
         StringJoiner joiner = new StringJoiner(", ", "[ ", " ]");
-        fields.get().forEach((key, value) -> joiner.add(key + "=" + value));
+        exceptionField.get().forEach((key, value) -> joiner.add(key + "=" + value));
         return String.format(
                 "[ERROR] %s : %s = %s %s",
-                spec.getCode(), spec.name(), spec.getMessage(), joiner);
+                exceptionSpec.getCode(), exceptionSpec.name(), exceptionSpec.getMessage(), joiner);
     }
+
+   abstract public String getClientMessage();
 }
