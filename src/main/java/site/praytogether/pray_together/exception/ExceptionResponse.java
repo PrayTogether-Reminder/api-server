@@ -1,9 +1,8 @@
-package site.praytogether.pray_together.common.exception;
+package site.praytogether.pray_together.exception;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

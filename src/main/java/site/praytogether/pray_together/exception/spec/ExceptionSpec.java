@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.common.exception.spec;
+package site.praytogether.pray_together.exception.spec;
 
 import org.springframework.http.HttpStatus;
 

@@ -1,9 +1,9 @@
-package site.praytogether.pray_together.common.exception;
+package site.praytogether.pray_together.exception;
 
 import java.util.StringJoiner;
 import lombok.AccessLevel;
 import lombok.Getter;
-import site.praytogether.pray_together.common.exception.spec.ExceptionSpec;
+import site.praytogether.pray_together.exception.spec.ExceptionSpec;
 
 @Getter
 public abstract class BaseException extends RuntimeException{

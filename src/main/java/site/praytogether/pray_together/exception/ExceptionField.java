@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.common.exception;
+package site.praytogether.pray_together.exception;
 
 import java.util.HashMap;
 import java.util.Map;
