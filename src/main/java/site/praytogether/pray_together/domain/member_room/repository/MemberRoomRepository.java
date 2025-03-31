@@ -14,9 +14,18 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
   boolean deleteByMember_IdAndRoom_Id(Long memberId, Long roomId);
 
-  List<MemberIdName> findByRoom_Id(Long roomId);
-
   boolean existsByMember_IdAndRoom_Id(Long memberId, Long roomId);
+
+  @Query(
+      """
+      SELECT new site.praytogether.pray_together.domain.member.model.MemberIdName(
+        m.id, m.name
+      )
+      FROM MemberRoom mr
+      JOIN Member m ON m.id = mr.member.id
+      WHERE mr.room.id = :roomId
+""")
+  List<MemberIdName> findMember_IdAndNameByRoom_Id(Long roomId);
 
   @Query(
       """

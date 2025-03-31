@@ -81,7 +81,7 @@ public class MemberRoomService {
   }
 
   public List<MemberIdName> fetchMembersInRoom(Long roomId) {
-    return memberRoomRepository.findByRoom_Id(roomId);
+    return memberRoomRepository.findMember_IdAndNameByRoom_Id(roomId);
   }
 
   public void validateMemberExistInRoom(Long memberId, Long roomId) {
