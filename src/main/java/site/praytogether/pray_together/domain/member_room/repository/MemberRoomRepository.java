@@ -5,13 +5,18 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import site.praytogether.pray_together.domain.member.model.MemberIdName;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
-import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCnt;
+import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCount;
 import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 
 public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
   boolean deleteByMember_IdAndRoom_Id(Long memberId, Long roomId);
+
+  List<MemberIdName> findByRoom_Id(Long roomId);
+
+  boolean existsByMember_IdAndRoom_Id(Long memberId, Long roomId);
 
   @Query(
       """
@@ -40,7 +45,7 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
   @Query(
       """
-        SELECT new site.praytogether.pray_together.domain.member_room.model.RoomIdMember(
+        SELECT new site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCount(
         mr.room.id, COUNT(*)
         )
         FROM MemberRoom mr
@@ -48,5 +53,5 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
         GROUP BY mr.room.id
 
 """)
-  List<RoomIdMemberCnt> findMemberCntByIds(List<Long> roomIds);
+  List<RoomIdMemberCount> findMemberCountByIds(List<Long> roomIds);
 }

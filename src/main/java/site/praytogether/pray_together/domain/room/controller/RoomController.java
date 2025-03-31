@@ -19,6 +19,7 @@ import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.room.applicatoin.RoomApplicationService;
 import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
+import site.praytogether.pray_together.domain.room.dto.RoomMemberResponse;
 import site.praytogether.pray_together.domain.room.dto.RoomScrollRequest;
 import site.praytogether.pray_together.domain.room.dto.RoomScrollResponse;
 
@@ -53,5 +54,12 @@ public class RoomController {
   public ResponseEntity<MessageResponse> deleteRoom(
       @PrincipalId Long memberId, @PathVariable Long roomId) {
     return ResponseEntity.status(HttpStatus.OK).body(roomApplication.deleteRoom(memberId, roomId));
+  }
+
+  @GetMapping("/:roomId/members")
+  public ResponseEntity<RoomMemberResponse> getRoomParticipants(
+      @PrincipalId Long memberId, @PathVariable Long roomId) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(roomApplication.listRoomParticipants(memberId, roomId));
   }
 }

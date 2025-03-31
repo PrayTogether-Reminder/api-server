@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
+import site.praytogether.pray_together.domain.member.model.MemberIdName;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.domain.member_room.exception.MemberRoomNotFoundException;
-import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCnt;
+import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCount;
 import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 import site.praytogether.pray_together.domain.member_room.service.MemberRoomService;
 import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
+import site.praytogether.pray_together.domain.room.dto.RoomMemberResponse;
 import site.praytogether.pray_together.domain.room.dto.RoomScrollRequest;
 import site.praytogether.pray_together.domain.room.dto.RoomScrollResponse;
 import site.praytogether.pray_together.domain.room.model.Room;
@@ -45,7 +47,7 @@ public class RoomApplicationService {
         memberRoomService.fetchRoomsByMember(memberId, scrollRequest);
 
     List<Long> roomIds = roomInfoMap.keySet().stream().toList();
-    List<RoomIdMemberCnt> roomMemberCounts = memberRoomService.fetchRoomMemberCounts(roomIds);
+    List<RoomIdMemberCount> roomMemberCounts = memberRoomService.fetchRoomMemberCounts(roomIds);
 
     roomMemberCounts.forEach(
         roomMemberCount ->
@@ -64,5 +66,11 @@ public class RoomApplicationService {
       throw new MemberRoomNotFoundException(memberId, roomId);
     }
     return MessageResponse.of("방을 나갔습니다.");
+  }
+
+  public RoomMemberResponse listRoomParticipants(Long memberId, Long roomId) {
+    memberRoomService.validateMemberExistInRoom(memberId, roomId);
+    List<MemberIdName> memberIdNames = memberRoomService.fetchMembersInRoom(roomId);
+    return RoomMemberResponse.of(memberIdNames);
   }
 }

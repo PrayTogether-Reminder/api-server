@@ -12,8 +12,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.member.model.Member;
+import site.praytogether.pray_together.domain.member.model.MemberIdName;
+import site.praytogether.pray_together.domain.member_room.exception.MemberRoomNotFoundException;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
-import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCnt;
+import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCount;
 import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 import site.praytogether.pray_together.domain.member_room.repository.MemberRoomRepository;
 import site.praytogether.pray_together.domain.room.dto.RoomScrollRequest;
@@ -47,8 +49,8 @@ public class MemberRoomService {
     return convertToOrderedMap(roomInfos);
   }
 
-  public List<RoomIdMemberCnt> fetchRoomMemberCounts(List<Long> roomIds) {
-    return memberRoomRepository.findMemberCntByIds(roomIds);
+  public List<RoomIdMemberCount> fetchRoomMemberCounts(List<Long> roomIds) {
+    return memberRoomRepository.findMemberCountByIds(roomIds);
   }
 
   private List<RoomInfo> fetchRoomsByAfter(Long memberId, RoomScrollRequest scrollRequest) {
@@ -73,7 +75,18 @@ public class MemberRoomService {
                 LinkedHashMap::new));
   }
 
+  @Transactional
   public boolean deleteMemberRoomById(Long memberId, Long roomId) {
     return memberRoomRepository.deleteByMember_IdAndRoom_Id(memberId, roomId);
+  }
+
+  public List<MemberIdName> fetchMembersInRoom(Long roomId) {
+    return memberRoomRepository.findByRoom_Id(roomId);
+  }
+
+  public void validateMemberExistInRoom(Long memberId, Long roomId) {
+    if (memberRoomRepository.existsByMember_IdAndRoom_Id(memberId, roomId) == false) {
+      throw new MemberRoomNotFoundException(memberId, roomId);
+    }
   }
 }
