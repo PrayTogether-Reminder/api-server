@@ -8,7 +8,7 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import site.praytogether.pray_together.domain.memberroom.model.RoomInfo;
+import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

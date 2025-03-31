@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.memberroom.service;
+package site.praytogether.pray_together.domain.member_room.service;
 
 import static site.praytogether.pray_together.constant.CoreConstant.MemberRoomConstant.DEFAULT_INFINITE_SCROLL_AFTER;
 import static site.praytogether.pray_together.constant.CoreConstant.MemberRoomConstant.ROOMS_INFINITE_SCROLL_SIZE;
@@ -12,10 +12,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.member.model.Member;
-import site.praytogether.pray_together.domain.memberroom.model.MemberRoom;
-import site.praytogether.pray_together.domain.memberroom.model.RoomIdMemberCnt;
-import site.praytogether.pray_together.domain.memberroom.model.RoomInfo;
-import site.praytogether.pray_together.domain.memberroom.repository.MemberRoomRepository;
+import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
+import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCnt;
+import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
+import site.praytogether.pray_together.domain.member_room.repository.MemberRoomRepository;
 import site.praytogether.pray_together.domain.room.dto.RoomScrollRequest;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.domain.room.model.RoomRole;
@@ -71,5 +71,9 @@ public class MemberRoomService {
                 roomInfo -> roomInfo,
                 (existing, replacement) -> existing,
                 LinkedHashMap::new));
+  }
+
+  public boolean deleteMemberRoomById(Long memberId, Long roomId) {
+    return memberRoomRepository.deleteByMember_IdAndRoom_Id(memberId, roomId);
   }
 }

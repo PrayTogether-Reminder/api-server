@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.memberroom.model;
+package site.praytogether.pray_together.domain.member_room.model;
 
 import lombok.AccessLevel;
 import lombok.Getter;

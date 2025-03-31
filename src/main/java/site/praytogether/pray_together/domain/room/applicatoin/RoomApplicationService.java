@@ -7,12 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
-import site.praytogether.pray_together.domain.member.expcetion.MemberNotFoundException;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
-import site.praytogether.pray_together.domain.memberroom.model.RoomIdMemberCnt;
-import site.praytogether.pray_together.domain.memberroom.model.RoomInfo;
-import site.praytogether.pray_together.domain.memberroom.service.MemberRoomService;
+import site.praytogether.pray_together.domain.member_room.exception.MemberRoomNotFoundException;
+import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCnt;
+import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
+import site.praytogether.pray_together.domain.member_room.service.MemberRoomService;
 import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
 import site.praytogether.pray_together.domain.room.dto.RoomScrollRequest;
 import site.praytogether.pray_together.domain.room.dto.RoomScrollResponse;
@@ -34,7 +34,7 @@ public class RoomApplicationService {
   public MessageResponse createRoom(Long memberId, RoomCreateRequest createRequest) {
     Room createdRoom =
         roomService.createRoom(createRequest.getName(), createRequest.getDescription());
-    Member memberRef = findMemberRefOrThrow(memberId);
+    Member memberRef = memberService.getRefOrThrow(memberId);
     memberRoomService.addMemberToRoom(memberRef, createdRoom, RoomRole.OWNER);
     return MessageResponse.of("방 생성을 완료했습니다.");
   }
@@ -56,9 +56,13 @@ public class RoomApplicationService {
     return RoomScrollResponse.of(roomInfoMap);
   }
 
-  private Member findMemberRefOrThrow(Long memberId) {
-    return memberService
-        .getRefIfExist(memberId)
-        .orElseThrow(() -> new MemberNotFoundException(memberId));
+  @Transactional
+  public MessageResponse deleteRoom(Long memberId, Long roomId) {
+    memberService.validateMemberExists(memberId);
+    boolean deleteResult = memberRoomService.deleteMemberRoomById(memberId, roomId);
+    if (deleteResult == false) {
+      throw new MemberRoomNotFoundException(memberId, roomId);
+    }
+    return MessageResponse.of("방을 나갔습니다.");
   }
 }

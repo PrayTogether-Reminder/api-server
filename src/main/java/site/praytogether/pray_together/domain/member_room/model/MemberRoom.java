@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.memberroom.model;
+package site.praytogether.pray_together.domain.member_room.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

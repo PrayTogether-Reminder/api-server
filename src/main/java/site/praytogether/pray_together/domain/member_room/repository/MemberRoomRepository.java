@@ -1,19 +1,21 @@
-package site.praytogether.pray_together.domain.memberroom.repository;
+package site.praytogether.pray_together.domain.member_room.repository;
 
 import java.time.Instant;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import site.praytogether.pray_together.domain.memberroom.model.MemberRoom;
-import site.praytogether.pray_together.domain.memberroom.model.RoomIdMemberCnt;
-import site.praytogether.pray_together.domain.memberroom.model.RoomInfo;
+import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
+import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCnt;
+import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 
 public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
+  boolean deleteByMember_IdAndRoom_Id(Long memberId, Long roomId);
+
   @Query(
       """
-      SELECT new site.praytogether.pray_together.domain.memberroom.model.RoomInfo(
+      SELECT new site.praytogether.pray_together.domain.member_room.model.RoomInfo(
         r.id ,r.name, r.description,mr.createdTime ,mr.isNotification
       )
       FROM MemberRoom  mr
@@ -25,7 +27,7 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
   @Query(
       """
-          SELECT new site.praytogether.pray_together.domain.memberroom.model.RoomInfo(
+          SELECT new site.praytogether.pray_together.domain.member_room.model.RoomInfo(
             r.id ,r.name, r.description,mr.createdTime ,mr.isNotification
           )
           FROM MemberRoom  mr
@@ -38,7 +40,7 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
   @Query(
       """
-        SELECT new site.praytogether.pray_together.domain.memberroom.model.RoomIdMember(
+        SELECT new site.praytogether.pray_together.domain.member_room.model.RoomIdMember(
         mr.room.id, COUNT(*)
         )
         FROM MemberRoom mr
