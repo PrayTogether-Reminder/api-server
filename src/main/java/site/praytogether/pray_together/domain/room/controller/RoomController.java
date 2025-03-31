@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import site.praytogether.pray_together.domain.auth.annotation.PrayTogetherMemberId;
+import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.room.applicatoin.RoomApplicationService;
 import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
@@ -32,7 +32,7 @@ public class RoomController {
 
   @GetMapping
   public ResponseEntity<RoomScrollResponse> getRoomsByScroll(
-      @PrayTogetherMemberId Long memberId,
+      @PrincipalId Long memberId,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_ORDER_BY) String orderBy,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_AFTER) String after,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_DIR) String dir) {
@@ -44,14 +44,14 @@ public class RoomController {
 
   @PostMapping
   public ResponseEntity<MessageResponse> createRoom(
-      @PrayTogetherMemberId Long memberId, RoomCreateRequest request) {
+      @PrincipalId Long memberId, RoomCreateRequest request) {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(roomApplication.createRoom(memberId, request));
   }
 
   @DeleteMapping("/:roomId")
   public ResponseEntity<MessageResponse> deleteRoom(
-      @PrayTogetherMemberId Long memberId, @PathVariable Long roomId) {
+      @PrincipalId Long memberId, @PathVariable Long roomId) {
     return ResponseEntity.status(HttpStatus.OK).body(roomApplication.deleteRoom(memberId, roomId));
   }
 }

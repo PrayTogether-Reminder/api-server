@@ -11,4 +11,4 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @AuthenticationPrincipal(
     expression = "#this == 'anonymousUser' ? null : id",
     errorOnInvalidType = true)
-public @interface PrayTogetherMemberId {}
+public @interface PrincipalId {}
