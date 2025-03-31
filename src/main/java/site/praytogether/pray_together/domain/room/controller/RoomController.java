@@ -9,13 +9,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import site.praytogether.pray_together.domain.auth.annotation.PrayTogetherMemberId;
+import site.praytogether.pray_together.domain.base.MessageResponse;
+import site.praytogether.pray_together.domain.room.applicatoin.RoomApplicationService;
+import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
 import site.praytogether.pray_together.domain.room.dto.RoomScrollRequest;
 import site.praytogether.pray_together.domain.room.dto.RoomScrollResponse;
-import site.praytogether.pray_together.domain.room.service.RoomService;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +26,7 @@ import site.praytogether.pray_together.domain.room.service.RoomService;
 @RequestMapping("/api/v1/rooms")
 public class RoomController {
 
-  private final RoomService roomService;
+  private final RoomApplicationService roomApplication;
 
   @GetMapping
   public ResponseEntity<RoomScrollResponse> getRoomsByScroll(
@@ -32,7 +35,15 @@ public class RoomController {
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_AFTER) String after,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_DIR) String dir) {
     RoomScrollRequest request = RoomScrollRequest.of(orderBy, after, dir);
-    RoomScrollResponse roomScrollResponse = roomService.fetchRoomsInfiniteScroll(memberId, request);
+    RoomScrollResponse roomScrollResponse =
+        roomApplication.fetchRoomsInfiniteScroll(memberId, request);
     return ResponseEntity.status(HttpStatus.OK).body(roomScrollResponse);
+  }
+
+  @PostMapping
+  public ResponseEntity<MessageResponse> createRoom(
+      @PrayTogetherMemberId Long memberId, RoomCreateRequest request) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(roomApplication.createRoom(memberId, request));
   }
 }

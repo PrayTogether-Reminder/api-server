@@ -36,4 +36,8 @@ public class Room extends BaseEntity {
 
   @Column(nullable = false, length = RoomConstant.DESCRIPTION_MAX_LEN)
   private String description;
+
+  public static Room create(String name, String description) {
+    return Room.builder().name(name).description(description).build();
+  }
 }
