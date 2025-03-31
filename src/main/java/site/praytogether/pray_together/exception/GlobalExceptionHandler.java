@@ -11,12 +11,14 @@ import site.praytogether.pray_together.exception.spec.ExceptionSpec;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    // API BaseException
-    @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ExceptionResponse> handleBaseException(BaseException e) {
-        log.error(e.getLogMessage());
-        ExceptionSpec exceptionSpec = e.getExceptionSpec();
-        return ResponseEntity.status(exceptionSpec.getStatue())
-                .body(ExceptionResponse.of(exceptionSpec.getStatue().value(),exceptionSpec.getCode(),e.getClientMessage()));
-    }
+  // API BaseException
+  @ExceptionHandler(BaseException.class)
+  public ResponseEntity<ExceptionResponse> handleBaseException(BaseException e) {
+    log.error(e.getLogMessage());
+    ExceptionSpec exceptionSpec = e.getExceptionSpec();
+    return ResponseEntity.status(exceptionSpec.getStatus())
+        .body(
+            ExceptionResponse.of(
+                exceptionSpec.getStatus().value(), exceptionSpec.getCode(), e.getClientMessage()));
+  }
 }
