@@ -12,10 +12,12 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import site.praytogether.pray_together.domain.auth.cache.RefreshTokenCache;
 import site.praytogether.pray_together.security.filter.JwtAuthFilter;
+import site.praytogether.pray_together.security.filter.JwtValidationFilter;
 import site.praytogether.pray_together.security.service.JwtService;
 
 @EnableWebSecurity
@@ -26,6 +28,7 @@ public class SecurityConfig {
   private final ObjectMapper objectMapper;
   private final RefreshTokenCache refreshTokenCache;
   private final JwtService jwtService;
+  private final AuthenticationEntryPoint authenticationEntryPoint;
 
   @Bean
   public SecurityFilterChain securityFilterChain(
@@ -42,6 +45,8 @@ public class SecurityConfig {
         .addFilterBefore(
             new JwtAuthFilter(authenticationManager, objectMapper, refreshTokenCache, jwtService),
             LogoutFilter.class)
+        .addFilterBefore(
+            new JwtValidationFilter(jwtService, authenticationEntryPoint), JwtAuthFilter.class)
         .csrf(AbstractHttpConfigurer::disable)
         .anonymous(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)

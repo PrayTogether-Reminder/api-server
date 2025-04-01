@@ -25,5 +25,7 @@ public class CoreConstant {
   public static class JwtConstant {
     public static final String ACCESS_TYPE = "access";
     public static final String REFRESH_TYPE = "refresh";
+    public static final String HTTP_HEADER_AUTHORIZATION = "Authorization";
+    public static final String HTTP_HEADER_AUTH_BEARER = "Bearer ";
   }
 }

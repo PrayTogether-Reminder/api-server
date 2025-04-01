@@ -12,6 +12,9 @@ public enum AuthExceptionSpec implements ExceptionSpec {
   OTP_TEMPLATE_LOAD_FAIL(
       HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-002", "회원가입 OTP 템플릿을 불러오는데 실패했습니다."),
   INCORRECT_EMAIL_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH-003", "이메일 또는 비밀번호가 올바르지 않습니다."),
+  UNKNOWN_AUTHENTICATION_FAILURE(
+      HttpStatus.BAD_REQUEST, "AUTH-004", "Auth Entry Point 에서 알 수 없는 이유로 인증에 실패했습니다."),
+  JWT_EXCEPTION(HttpStatus.BAD_REQUEST, "AUTH-005", "JWT 인증에 실패했습니다."),
   ;
 
   private final HttpStatus status;

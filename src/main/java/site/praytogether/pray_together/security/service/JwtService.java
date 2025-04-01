@@ -67,4 +67,12 @@ public class JwtService {
   private Claims extractAllClaims(String token) {
     return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
   }
+
+  public PrayTogetherPrincipal extractPrincipal(String token) {
+    Claims claims = extractAllClaims(token);
+    return PrayTogetherPrincipal.builder()
+        .email((String) claims.get(EMAIL))
+        .id(Long.valueOf(claims.getSubject()))
+        .build();
+  }
 }
