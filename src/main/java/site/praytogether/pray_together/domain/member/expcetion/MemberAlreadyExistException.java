@@ -3,18 +3,18 @@ package site.praytogether.pray_together.domain.member.expcetion;
 import site.praytogether.pray_together.exception.ExceptionField;
 import site.praytogether.pray_together.exception.spec.MemberExceptionSpec;
 
-public class MemberNotFoundException extends MemberException {
+public class MemberAlreadyExistException extends MemberException {
 
-  public MemberNotFoundException(Long memberId) {
-    this(ExceptionField.builder().add("memberId", memberId).build());
+  public MemberAlreadyExistException(String email) {
+    this(ExceptionField.builder().add("email", email).build());
   }
 
-  protected MemberNotFoundException(ExceptionField field) {
+  protected MemberAlreadyExistException(ExceptionField field) {
     super(MemberExceptionSpec.MEMBER_NOT_FOUND, field);
   }
 
   @Override
   public String getClientMessage() {
-    return "회원 정보를 찾을 수 없습니다.";
+    return "이미 등록된 회원 정보가 있습니다.";
   }
 }

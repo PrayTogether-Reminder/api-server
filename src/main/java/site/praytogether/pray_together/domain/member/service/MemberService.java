@@ -2,6 +2,7 @@ package site.praytogether.pray_together.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import site.praytogether.pray_together.domain.member.expcetion.MemberAlreadyExistException;
 import site.praytogether.pray_together.domain.member.expcetion.MemberNotFoundException;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.repository.MemberRepository;
@@ -22,5 +23,13 @@ public class MemberService {
 
   public boolean isExistMember(Long memberId) {
     return memberRepository.existsById(memberId);
+  }
+
+  public void validateMemberNotExists(String email) {
+    if (isExistMember(email) == true) throw new MemberAlreadyExistException(email);
+  }
+
+  public boolean isExistMember(String email) {
+    return memberRepository.existsByEmail(email);
   }
 }
