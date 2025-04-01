@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import site.praytogether.pray_together.domain.auth.application.AuthApplicationService;
 import site.praytogether.pray_together.domain.auth.dto.EmailOtpRequest;
 import site.praytogether.pray_together.domain.auth.dto.OtpVerifyRequest;
+import site.praytogether.pray_together.domain.auth.dto.SignupRequest;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 
 @RestController
@@ -21,8 +22,11 @@ import site.praytogether.pray_together.domain.base.MessageResponse;
 public class AuthController {
   private final AuthApplicationService authApplication;
 
-  //  @PostMapping("/signup")
-  //    public ResponseEntity<MessageResponse> signup()
+  @PostMapping("/signup")
+  public ResponseEntity<MessageResponse> signup(@Valid @RequestBody SignupRequest request) {
+    authApplication.signup(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(MessageResponse.of("회원 가입을 완료했습니다."));
+  }
 
   @PostMapping("/otp/email")
   public ResponseEntity<MessageResponse> getEmailOtp(@Valid @RequestBody EmailOtpRequest request) {

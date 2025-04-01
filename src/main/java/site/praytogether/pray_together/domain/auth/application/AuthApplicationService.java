@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.praytogether.pray_together.domain.auth.dto.OtpVerifyRequest;
+import site.praytogether.pray_together.domain.auth.dto.SignupRequest;
 import site.praytogether.pray_together.domain.auth.service.AuthService;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 
@@ -13,6 +14,11 @@ import site.praytogether.pray_together.domain.member.service.MemberService;
 public class AuthApplicationService {
   private final MemberService memberService;
   private final AuthService authService;
+
+  public void signup(SignupRequest request) {
+    memberService.validateMemberNotExists(request.getEmail());
+    memberService.createMember(request.getName(), request.getEmail(), request.getPassword());
+  }
 
   public void sendOtp(String email) {
     memberService.validateMemberNotExists(email);

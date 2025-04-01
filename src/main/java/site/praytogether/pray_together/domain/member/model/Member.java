@@ -39,4 +39,8 @@ public class Member extends BaseEntity {
 
   @Column(nullable = false, length = MemberConstant.PASSWORD_MAX_LEN)
   private String password;
+
+  public static Member create(String name, String email, String password) {
+    return Member.builder().name(name).email(email).password(password).build();
+  }
 }

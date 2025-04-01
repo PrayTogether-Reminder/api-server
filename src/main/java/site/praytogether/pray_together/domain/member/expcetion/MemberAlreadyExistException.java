@@ -10,7 +10,7 @@ public class MemberAlreadyExistException extends MemberException {
   }
 
   protected MemberAlreadyExistException(ExceptionField field) {
-    super(MemberExceptionSpec.MEMBER_NOT_FOUND, field);
+    super(MemberExceptionSpec.MEMBER_ALREADY_EXIST, field);
   }
 
   @Override
