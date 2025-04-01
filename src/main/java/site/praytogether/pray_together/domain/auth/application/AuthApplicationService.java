@@ -29,6 +29,10 @@ public class AuthApplicationService {
     memberService.createMember(request.getName(), request.getEmail(), request.getPassword());
   }
 
+  public void withdraw(Long memberId) {
+    memberService.deleteMember(memberId);
+  }
+
   public void sendOtp(String email) {
     memberService.validateMemberNotExists(email);
     otpService.sendOtp(email);

@@ -22,6 +22,11 @@ public class MemberService {
     memberRepository.save(createdMember);
   }
 
+  @Transactional
+  public void deleteMember(Long memberId) {
+    memberRepository.deleteById(memberId);
+  }
+
   public Member getRefOrThrow(Long memberId) {
     validateMemberExists(memberId);
     return memberRepository.getReferenceById(memberId);
