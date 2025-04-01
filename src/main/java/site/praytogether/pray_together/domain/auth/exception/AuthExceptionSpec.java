@@ -16,6 +16,8 @@ public enum AuthExceptionSpec implements ExceptionSpec {
       HttpStatus.BAD_REQUEST, "AUTH-004", "Auth Entry Point 에서 알 수 없는 이유로 인증에 실패했습니다."),
   JWT_EXCEPTION(HttpStatus.BAD_REQUEST, "AUTH-005", "JWT 인증에 실패했습니다."),
   JWT_EXPIRED(HttpStatus.BAD_REQUEST, "AUTH-006", "JWT가 만료되었습니다."),
+  REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH-007", "RefreshToken을 cache에서 찾을 수 없습니다."),
+  REFRESH_TOKEN_NOT_VALID(HttpStatus.BAD_REQUEST, "AUTH-008", "RefreshToken이 유효하지 않습니다."),
   ;
 
   private final HttpStatus status;

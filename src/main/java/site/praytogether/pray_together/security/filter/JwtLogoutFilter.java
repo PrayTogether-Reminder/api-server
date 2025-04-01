@@ -11,14 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import site.praytogether.pray_together.domain.auth.cache.RefreshTokenCache;
-import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.service.RefreshTokenService;
 
 @RequiredArgsConstructor
 public class JwtLogoutFilter extends OncePerRequestFilter {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final String LOGOUT_URL = "/api/v1/auth/logout";
-  private final RefreshTokenCache refreshTokenCache;
+  private final RefreshTokenService refreshTokenService;
 
   @Override
   protected void doFilterInternal(
@@ -35,7 +35,7 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
     logger.info("로그아웃 인증 정보 = {}", authentication);
     if (authentication == null) return;
     PrayTogetherPrincipal principal = (PrayTogetherPrincipal) authentication.getPrincipal();
-    refreshTokenCache.delete(String.valueOf(principal.getId()));
+    refreshTokenService.delete(String.valueOf(principal.getId()));
 
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
   }

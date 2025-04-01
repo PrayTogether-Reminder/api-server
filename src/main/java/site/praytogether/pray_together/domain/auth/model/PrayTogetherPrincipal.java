@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.auth.domain;
+package site.praytogether.pray_together.domain.auth.model;
 
 import io.jsonwebtoken.lang.Collections;
 import java.util.Collection;

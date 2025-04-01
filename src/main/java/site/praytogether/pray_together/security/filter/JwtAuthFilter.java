@@ -19,11 +19,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import site.praytogether.pray_together.constant.CoreConstant.JwtConstant;
-import site.praytogether.pray_together.domain.auth.cache.RefreshTokenCache;
-import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
 import site.praytogether.pray_together.domain.auth.dto.LoginRequest;
 import site.praytogether.pray_together.domain.auth.dto.LoginResponse;
+import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.service.RefreshTokenService;
 import site.praytogether.pray_together.exception.ExceptionResponse;
 import site.praytogether.pray_together.security.service.JwtService;
 
@@ -31,18 +30,18 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final AuthenticationManager authenticationManager;
   private final ObjectMapper objectMapper;
-  private final RefreshTokenCache refreshCache;
+  private final RefreshTokenService refreshTokenService;
   private final String LOGIN_URL = "/api/v1/auth/login";
   private final JwtService jwtService;
 
   public JwtAuthFilter(
       AuthenticationManager authenticationManager,
       ObjectMapper objectMapper,
-      RefreshTokenCache refreshCache,
+      RefreshTokenService refreshTokenService,
       JwtService jwtService) {
     this.authenticationManager = authenticationManager;
     this.objectMapper = objectMapper;
-    this.refreshCache = refreshCache;
+    this.refreshTokenService = refreshTokenService;
     this.jwtService = jwtService;
     setFilterProcessesUrl(LOGIN_URL);
   }
@@ -86,9 +85,9 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
       Authentication authentication)
       throws IOException {
     PrayTogetherPrincipal principal = (PrayTogetherPrincipal) authentication.getPrincipal();
-    String accessToken = jwtService.issueBy(principal, JwtConstant.ACCESS_TYPE);
-    String refreshToken = jwtService.issueBy(principal, JwtConstant.REFRESH_TYPE);
-    refreshCache.save(String.valueOf(principal.getId()), refreshToken);
+    String accessToken = jwtService.issueAccessToken(principal);
+    String refreshToken = jwtService.issueRefreshToken(principal);
+    refreshTokenService.save(String.valueOf(principal.getId()), refreshToken);
 
     LoginResponse loginResponse =
         LoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();

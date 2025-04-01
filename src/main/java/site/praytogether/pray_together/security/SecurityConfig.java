@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import site.praytogether.pray_together.domain.auth.cache.RefreshTokenCache;
+import site.praytogether.pray_together.domain.auth.service.RefreshTokenService;
 import site.praytogether.pray_together.security.filter.JwtAuthFilter;
 import site.praytogether.pray_together.security.filter.JwtLogoutFilter;
 import site.praytogether.pray_together.security.filter.JwtValidationFilter;
@@ -27,7 +27,7 @@ import site.praytogether.pray_together.security.service.JwtService;
 public class SecurityConfig {
 
   private final ObjectMapper objectMapper;
-  private final RefreshTokenCache refreshTokenCache;
+  private final RefreshTokenService refreshTokenService;
   private final JwtService jwtService;
   private final AuthenticationEntryPoint authenticationEntryPoint;
 
@@ -43,9 +43,9 @@ public class SecurityConfig {
                     .authenticated())
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .addFilterBefore(new JwtLogoutFilter(refreshTokenCache), LogoutFilter.class)
+        .addFilterBefore(new JwtLogoutFilter(refreshTokenService), LogoutFilter.class)
         .addFilterBefore(
-            new JwtAuthFilter(authenticationManager, objectMapper, refreshTokenCache, jwtService),
+            new JwtAuthFilter(authenticationManager, objectMapper, refreshTokenService, jwtService),
             JwtLogoutFilter.class)
         .addFilterBefore(
             new JwtValidationFilter(jwtService, authenticationEntryPoint), JwtAuthFilter.class)

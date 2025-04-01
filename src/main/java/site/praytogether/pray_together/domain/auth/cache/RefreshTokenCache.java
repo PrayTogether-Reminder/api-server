@@ -6,4 +6,6 @@ public interface RefreshTokenCache {
   String delete(String key);
 
   String get(String key);
+
+  boolean isExist(String key);
 }

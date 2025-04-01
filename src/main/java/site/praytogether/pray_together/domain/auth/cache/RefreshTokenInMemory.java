@@ -26,4 +26,9 @@ public class RefreshTokenInMemory implements RefreshTokenCache {
   public String get(String key) {
     return cache.get(key);
   }
+
+  @Override
+  public boolean isExist(String key) {
+    return cache.containsKey(key);
+  }
 }

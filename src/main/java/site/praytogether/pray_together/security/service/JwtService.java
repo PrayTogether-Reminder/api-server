@@ -11,7 +11,7 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import site.praytogether.pray_together.constant.CoreConstant.JwtConstant;
-import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
 
 @Service
 public class JwtService {
@@ -33,17 +33,28 @@ public class JwtService {
     this.refreshTokenExpireTime = refreshTokenExpireTime;
   }
 
-  public String issueBy(PrayTogetherPrincipal principal, String type) {
+  public String issueAccessToken(PrayTogetherPrincipal principal) {
     long now = System.currentTimeMillis();
-    long expireTime =
-        type.equals(JwtConstant.ACCESS_TYPE) ? accessTokenExpireTime : refreshTokenExpireTime;
     return Jwts.builder()
         .subject(String.valueOf(principal.getId()))
         .claim(EMAIL, principal.getEmail())
-        .claim(TYPE, type)
+        .claim(TYPE, JwtConstant.ACCESS_TYPE)
         .claim(UID, UUID.randomUUID().toString().substring(0, 6))
         .issuedAt(new Date(now))
-        .expiration(new Date(now + expireTime))
+        .expiration(new Date(now + accessTokenExpireTime))
+        .signWith(secretKey)
+        .compact();
+  }
+
+  public String issueRefreshToken(PrayTogetherPrincipal principal) {
+    long now = System.currentTimeMillis();
+    return Jwts.builder()
+        .subject(String.valueOf(principal.getId()))
+        .claim(EMAIL, principal.getEmail())
+        .claim(TYPE, JwtConstant.REFRESH_TYPE)
+        .claim(UID, UUID.randomUUID().toString().substring(0, 6))
+        .issuedAt(new Date(now))
+        .expiration(new Date(now + refreshTokenExpireTime))
         .signWith(secretKey)
         .compact();
   }

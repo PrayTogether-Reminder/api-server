@@ -19,7 +19,7 @@ import site.praytogether.pray_together.domain.auth.exception.OtpTemplateLoadFail
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class OtpService {
   private final JavaMailSender mailSender;
   private final SecureRandom secureRandom;
   private final OtpCache otpCache;
@@ -38,7 +38,7 @@ public class AuthService {
     } catch (MessagingException e) {
       throw new OtpSendFailException(email);
     }
-    otpCache.save(email, otp);
+    otpCache.save(email, otp); // Todo: set OTP TTL 3 minute
   }
 
   public boolean verifyOtp(String email, String otp) {
