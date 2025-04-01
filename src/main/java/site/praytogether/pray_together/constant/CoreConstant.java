@@ -21,4 +21,9 @@ public class CoreConstant {
     public static final String DEFAULT_INFINITE_SCROLL_DIR = "desc";
     public static final int ROOMS_INFINITE_SCROLL_SIZE = 10;
   }
+
+  public static class JwtConstant {
+    public static final String ACCESS_TYPE = "access";
+    public static final String REFRESH_TYPE = "refresh";
+  }
 }

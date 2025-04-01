@@ -11,5 +11,5 @@ public enum MethodArgumentExceptionSpec implements ExceptionSpec {
   ;
   private final HttpStatus status;
   private final String code;
-  private final String message;
+  private final String debugMessage;
 }
