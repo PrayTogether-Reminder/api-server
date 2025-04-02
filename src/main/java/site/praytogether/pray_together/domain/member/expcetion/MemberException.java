@@ -6,7 +6,7 @@ import site.praytogether.pray_together.exception.spec.ExceptionSpec;
 
 public abstract class MemberException extends BaseException {
 
-  protected MemberException(ExceptionSpec spec, Long memberId) {
-    super(spec, ExceptionField.builder().add("memberId", memberId).build());
+  protected MemberException(ExceptionSpec spec, ExceptionField field) {
+    super(spec, field);
   }
 }

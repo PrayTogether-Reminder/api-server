@@ -17,7 +17,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class BaseEntity {
 
   @CreatedDate
-  @Column(name = "created_time", updatable = false, columnDefinition = "TIMESTAMP(3)")
+  @Column(
+      name = "created_time",
+      updatable = false,
+      columnDefinition = "TIMESTAMP(3) WITH TIME ZONE")
   private Instant createdTime;
 
   @CreatedBy
@@ -25,7 +28,7 @@ public class BaseEntity {
   private Long createdBy;
 
   @LastModifiedDate
-  @Column(name = "updated_time", columnDefinition = "TIMESTAMP(3)")
+  @Column(name = "updated_time", columnDefinition = "TIMESTAMP(3) WITH TIME ZONE")
   private Instant updatedTime;
 
   @LastModifiedBy

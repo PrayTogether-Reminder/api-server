@@ -1,11 +1,16 @@
 package site.praytogether.pray_together.domain.member.expcetion;
 
+import site.praytogether.pray_together.exception.ExceptionField;
 import site.praytogether.pray_together.exception.spec.MemberExceptionSpec;
 
 public class MemberNotFoundException extends MemberException {
 
   public MemberNotFoundException(Long memberId) {
-    super(MemberExceptionSpec.MEMBER_NOT_FOUND, memberId);
+    this(ExceptionField.builder().add("memberId", memberId).build());
+  }
+
+  protected MemberNotFoundException(ExceptionField field) {
+    super(MemberExceptionSpec.MEMBER_NOT_FOUND, field);
   }
 
   @Override

@@ -6,23 +6,24 @@ import lombok.Getter;
 import site.praytogether.pray_together.exception.spec.ExceptionSpec;
 
 @Getter
-public abstract class BaseException extends RuntimeException{
-    private final ExceptionSpec exceptionSpec;
-    @Getter(AccessLevel.NONE)
-    private final ExceptionField exceptionField;
+public abstract class BaseException extends RuntimeException {
+  private final ExceptionSpec exceptionSpec;
 
-    protected BaseException(ExceptionSpec spec, ExceptionField fields){
-        this.exceptionSpec = spec;
-        this.exceptionField = fields;
-    }
+  @Getter(AccessLevel.NONE)
+  private final ExceptionField exceptionField;
 
-    public String getLogMessage(){
-        StringJoiner joiner = new StringJoiner(", ", "[ ", " ]");
-        exceptionField.get().forEach((key, value) -> joiner.add(key + "=" + value));
-        return String.format(
-                "[ERROR] %s : %s = %s %s",
-                exceptionSpec.getCode(), exceptionSpec.name(), exceptionSpec.getMessage(), joiner);
-    }
+  protected BaseException(ExceptionSpec spec, ExceptionField fields) {
+    this.exceptionSpec = spec;
+    this.exceptionField = fields;
+  }
 
-   abstract public String getClientMessage();
+  public String getLogMessage() {
+    StringJoiner joiner = new StringJoiner(", ", "[ ", " ]");
+    exceptionField.get().forEach((key, value) -> joiner.add(key + "=" + value));
+    return String.format(
+        "[ERROR] %s : %s = %s %s",
+        exceptionSpec.getCode(), exceptionSpec.name(), exceptionSpec.getDebugMessage(), joiner);
+  }
+
+  public abstract String getClientMessage();
 }

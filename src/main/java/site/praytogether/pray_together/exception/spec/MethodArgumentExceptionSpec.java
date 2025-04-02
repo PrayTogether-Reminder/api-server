@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum MemberRoomExceptionSpec implements ExceptionSpec {
-  MEMBER_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_ROOM-001", "회원이 속한 방을 찾을 수 없습니다.");
-
+public enum MethodArgumentExceptionSpec implements ExceptionSpec {
+  METHOD_ARGUMENT_NOT_VALIDATION(HttpStatus.BAD_REQUEST, "METHOD-001", "올바른 값이 아닙니다."),
+  ;
   private final HttpStatus status;
   private final String code;
   private final String debugMessage;
