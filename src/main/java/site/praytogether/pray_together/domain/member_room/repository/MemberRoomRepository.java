@@ -58,7 +58,7 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
         mr.room.id, COUNT(*)
         )
         FROM MemberRoom mr
-        WHERE mr.id IN :roomIds
+        WHERE mr.room.id IN :roomIds
         GROUP BY mr.room.id
 
 """)
