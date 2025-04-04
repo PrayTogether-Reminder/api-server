@@ -17,4 +17,10 @@ public class IntegrateTest {
   @Autowired protected MemberRoomRepository memberRoomRepository;
   @Autowired protected TestUtils testUtils;
   protected final String ROOMS_API_URL = "/api/v1/rooms";
+
+  protected void cleanRepository() {
+    memberRoomRepository.deleteAll();
+    roomRepository.deleteAll();
+    memberRepository.deleteAll();
+  }
 }

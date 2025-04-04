@@ -41,9 +41,7 @@ public class RoomDeleteIntegrateTest extends IntegrateTest {
 
   @AfterEach
   void cleanup() {
-    memberRepository.deleteAll();
-    memberRoomRepository.deleteAll();
-    roomRepository.deleteAll();
+    cleanRepository();
   }
 
   @Test
