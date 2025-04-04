@@ -12,7 +12,7 @@ import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 
 public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
-  boolean deleteByMember_IdAndRoom_Id(Long memberId, Long roomId);
+  int deleteByMember_IdAndRoom_Id(Long memberId, Long roomId);
 
   boolean existsByMember_IdAndRoom_Id(Long memberId, Long roomId);
 
