@@ -6,6 +6,7 @@ import static site.praytogether.pray_together.constant.CoreConstant.MemberRoomCo
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -58,7 +59,7 @@ public class RoomController {
   @DeleteMapping("/{roomId}")
   public ResponseEntity<MessageResponse> deleteRoom(
       @PrincipalId Long memberId,
-      @Min(value = 1, message = "잘 못된 방을 선택하셨습니다.") @PathVariable Long roomId) {
+      @Positive(message = "잘 못된 방을 선택하셨습니다.") @PathVariable Long roomId) {
     return ResponseEntity.status(HttpStatus.OK).body(roomApplication.deleteRoom(memberId, roomId));
   }
 
