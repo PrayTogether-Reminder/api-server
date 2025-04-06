@@ -28,4 +28,8 @@ public class CoreConstant {
     public static final String HTTP_HEADER_AUTHORIZATION = "Authorization";
     public static final String HTTP_HEADER_AUTH_BEARER = "Bearer ";
   }
+
+  public static class PrayerTitleConstant {
+    public static final int TITLE_MAX_LEN = 50 * RDBMS_CHAR_LEN_BYTE;
+  }
 }
