@@ -55,7 +55,7 @@ public class RoomApplicationService {
                 .get(roomMemberCount.getRoomId())
                 .setMemberCnt(roomMemberCount.getMemberCnt()));
 
-    return RoomScrollResponse.of(roomInfoMap);
+    return RoomScrollResponse.from(roomInfoMap);
   }
 
   @Transactional
@@ -71,6 +71,6 @@ public class RoomApplicationService {
   public RoomMemberResponse listRoomParticipants(Long memberId, Long roomId) {
     memberRoomService.validateMemberExistInRoom(memberId, roomId);
     List<MemberIdName> memberIdNames = memberRoomService.fetchMembersInRoom(roomId);
-    return RoomMemberResponse.of(memberIdNames);
+    return RoomMemberResponse.from(memberIdNames);
   }
 }

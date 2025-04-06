@@ -10,7 +10,7 @@ import site.praytogether.pray_together.domain.member.model.MemberIdName;
 public class RoomMemberResponse {
   private final List<MemberIdName> members;
 
-  public static RoomMemberResponse of(List<MemberIdName> memberIdNames) {
+  public static RoomMemberResponse from(List<MemberIdName> memberIdNames) {
     return new RoomMemberResponse(memberIdNames);
   }
 }
