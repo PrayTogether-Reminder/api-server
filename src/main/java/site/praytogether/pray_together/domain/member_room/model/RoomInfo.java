@@ -1,18 +1,21 @@
 package site.praytogether.pray_together.domain.member_room.model;
 
 import java.time.Instant;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor()
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RoomInfo {
-  private final Long roomId;
-  private final String name;
+  private Long roomId;
+  private String name;
   private Long memberCnt;
-  private final String description;
-  private final Instant joinedTime;
-  private final boolean isNotification;
+  private String description;
+  private Instant joinedTime;
+  private boolean isNotification;
 
   public RoomInfo(
       Long id, String name, String description, Instant createdTime, boolean isNotification) {

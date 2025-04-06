@@ -77,7 +77,7 @@ public class MemberRoomService {
 
   @Transactional
   public boolean deleteMemberRoomById(Long memberId, Long roomId) {
-    return memberRoomRepository.deleteByMember_IdAndRoom_Id(memberId, roomId);
+    return 1 == memberRoomRepository.deleteByMember_IdAndRoom_Id(memberId, roomId);
   }
 
   public List<MemberIdName> fetchMembersInRoom(Long roomId) {

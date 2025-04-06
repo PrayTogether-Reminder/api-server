@@ -17,6 +17,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import site.praytogether.pray_together.constant.CoreConstant.MemberRoomConstant;
 import site.praytogether.pray_together.domain.base.BaseEntity;
 import site.praytogether.pray_together.domain.member.model.Member;
@@ -41,6 +43,7 @@ public class MemberRoom extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id", nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Member member;
 
   @ManyToOne(fetch = FetchType.LAZY)

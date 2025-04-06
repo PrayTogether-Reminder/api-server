@@ -34,7 +34,7 @@ public class Member extends BaseEntity {
   @Column(nullable = false, length = MemberConstant.EMAIL_MAX_LEN, unique = true)
   private String email;
 
-  @Column(nullable = false, length = MemberConstant.NAME_MAX_LEN, unique = true)
+  @Column(nullable = false, length = MemberConstant.NAME_MAX_LEN)
   private String name;
 
   @Column(nullable = false, length = MemberConstant.PASSWORD_MAX_LEN)
