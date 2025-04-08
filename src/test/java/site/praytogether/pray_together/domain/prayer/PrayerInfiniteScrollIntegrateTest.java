@@ -21,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerScrollResponse;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollResponse;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitleInfo;
 import site.praytogether.pray_together.domain.room.model.Room;
@@ -80,14 +80,14 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
     HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
     // when
-    ResponseEntity<PrayerScrollResponse> responseEntity =
-        restTemplate.exchange(uri, HttpMethod.GET, requestEntity, PrayerScrollResponse.class);
+    ResponseEntity<PrayerTitleScrollResponse> responseEntity =
+        restTemplate.exchange(uri, HttpMethod.GET, requestEntity, PrayerTitleScrollResponse.class);
 
     // then
     assertThat(responseEntity.getStatusCode())
         .as(test + ": 기도 내용 목록 무한 스크롤 API 응답 상태 코드가 200 OK가 아닙니다.")
         .isEqualTo(HttpStatus.OK);
-    PrayerScrollResponse response = responseEntity.getBody();
+    PrayerTitleScrollResponse response = responseEntity.getBody();
     assertThat(response).as(test + ": 기도 내용 목록 무한 스크롤 API 응답 결과가 NULL 입니다.").isNotNull();
 
     List<PrayerTitleInfo> titles = response.getPrayerTitles();
@@ -115,7 +115,8 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
 
       // next when
       responseEntity =
-          restTemplate.exchange(uri, HttpMethod.GET, requestEntity, PrayerScrollResponse.class);
+          restTemplate.exchange(
+              uri, HttpMethod.GET, requestEntity, PrayerTitleScrollResponse.class);
 
       // next then
       assertThat(responseEntity.getStatusCode())

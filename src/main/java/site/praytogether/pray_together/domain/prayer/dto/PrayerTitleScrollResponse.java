@@ -8,10 +8,10 @@ import site.praytogether.pray_together.domain.prayer.model.PrayerTitleInfo;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class PrayerScrollResponse {
+public class PrayerTitleScrollResponse {
   private final List<PrayerTitleInfo> prayerTitles;
 
-  public static PrayerScrollResponse from(List<PrayerTitleInfo> prayerTitles) {
-    return new PrayerScrollResponse(prayerTitles);
+  public static PrayerTitleScrollResponse from(List<PrayerTitleInfo> prayerTitles) {
+    return new PrayerTitleScrollResponse(prayerTitles);
   }
 }

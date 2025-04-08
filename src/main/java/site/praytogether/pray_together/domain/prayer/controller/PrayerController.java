@@ -18,8 +18,8 @@ import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.prayer.application.PrayerApplicationService;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerCreateRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerScrollRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerScrollResponse;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,12 +35,12 @@ public class PrayerController {
   }
 
   @GetMapping()
-  public ResponseEntity<PrayerScrollResponse> getPrayerTitlesByScroll(
+  public ResponseEntity<PrayerTitleScrollResponse> getPrayerTitlesByScroll(
       @NotNull(message = "잘 못된 방을 선택하셨습니다.") @Positive(message = "잘 못된 방을 선택하셨습니다.") @RequestParam
           Long roomId,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_AFTER) String after) {
-    PrayerScrollRequest request = PrayerScrollRequest.of(roomId, after);
-    PrayerScrollResponse response = prayerApplication.fetchPrayerTitleInfiniteScroll(request);
+    PrayerTitleScrollRequest request = PrayerTitleScrollRequest.of(roomId, after);
+    PrayerTitleScrollResponse response = prayerApplication.fetchPrayerTitleInfiniteScroll(request);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

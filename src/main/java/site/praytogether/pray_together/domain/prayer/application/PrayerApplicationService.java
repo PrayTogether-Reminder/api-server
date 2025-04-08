@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member_room.service.MemberRoomService;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerCreateRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerScrollRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerScrollResponse;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollResponse;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitleInfo;
 import site.praytogether.pray_together.domain.prayer.service.PrayerContentService;
@@ -25,10 +25,11 @@ public class PrayerApplicationService {
   private final RoomService roomService;
   private final MemberRoomService memberRoomService;
 
-  public PrayerScrollResponse fetchPrayerTitleInfiniteScroll(PrayerScrollRequest request) {
+  public PrayerTitleScrollResponse fetchPrayerTitleInfiniteScroll(
+      PrayerTitleScrollRequest request) {
     List<PrayerTitleInfo> titleInfos =
         titleService.fetchTitlesByRoom(request.getRoomId(), request.getAfter());
-    return PrayerScrollResponse.from(titleInfos);
+    return PrayerTitleScrollResponse.from(titleInfos);
   }
 
   @Transactional

@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class PrayerScrollRequest {
+public class PrayerTitleScrollRequest {
   private Long roomId;
   private String after;
 
-  public static PrayerScrollRequest of(Long roomId, String after) {
-    return new PrayerScrollRequest(roomId, after);
+  public static PrayerTitleScrollRequest of(Long roomId, String after) {
+    return new PrayerTitleScrollRequest(roomId, after);
   }
 }
