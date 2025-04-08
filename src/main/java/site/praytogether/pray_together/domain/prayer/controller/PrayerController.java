@@ -38,9 +38,11 @@ public class PrayerController {
   public ResponseEntity<PrayerTitleScrollResponse> getPrayerTitlesByScroll(
       @NotNull(message = "잘 못된 방을 선택하셨습니다.") @Positive(message = "잘 못된 방을 선택하셨습니다.") @RequestParam
           Long roomId,
-      @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_AFTER) String after) {
+      @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_AFTER) String after,
+      @PrincipalId Long memberId) {
     PrayerTitleScrollRequest request = PrayerTitleScrollRequest.of(roomId, after);
-    PrayerTitleScrollResponse response = prayerApplication.fetchPrayerTitleInfiniteScroll(request);
+    PrayerTitleScrollResponse response =
+        prayerApplication.fetchPrayerTitleInfiniteScroll(memberId, request);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }
