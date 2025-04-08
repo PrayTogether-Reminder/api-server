@@ -1,6 +1,6 @@
-package site.praytogether.pray_together.domain.prayers.model;
+package site.praytogether.pray_together.domain.prayer.model;
 
-import static site.praytogether.pray_together.constant.CoreConstant.PrayerTitleConstant.TITLE_MAX_LEN;
+import static site.praytogether.pray_together.constant.CoreConstant.PrayerTitleConstant.TITLE_ENTITY_MAX_LEN;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,6 +16,9 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -26,7 +29,9 @@ import site.praytogether.pray_together.domain.room.model.Room;
 @Entity
 @Table(name = "prayer_title")
 @Getter
-@NoArgsConstructor
+@Builder(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PrayerTitle extends BaseEntity {
 
   @Id
@@ -42,7 +47,7 @@ public class PrayerTitle extends BaseEntity {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Room room;
 
-  @Column(nullable = false, length = TITLE_MAX_LEN)
+  @Column(nullable = false, length = TITLE_ENTITY_MAX_LEN)
   private String title;
 
   @OneToMany(
@@ -50,5 +55,14 @@ public class PrayerTitle extends BaseEntity {
       fetch = FetchType.LAZY,
       cascade = CascadeType.ALL,
       orphanRemoval = true)
+  @Builder.Default
   private List<PrayerContent> prayerContents = new ArrayList<>();
+
+  public static PrayerTitle create(Room room, String title) {
+    return PrayerTitle.builder().title(title).room(room).build();
+  }
+
+  public void addContent(PrayerContent content) {
+    getPrayerContents().add(content);
+  }
 }

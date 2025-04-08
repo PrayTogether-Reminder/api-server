@@ -30,6 +30,8 @@ public class CoreConstant {
   }
 
   public static class PrayerTitleConstant {
-    public static final int TITLE_MAX_LEN = 50 * RDBMS_CHAR_LEN_BYTE;
+    public static final int TITLE_MAX_LEN = 50;
+    public static final int TITLE_MIN_LEN = 1;
+    public static final int TITLE_ENTITY_MAX_LEN = TITLE_MAX_LEN * RDBMS_CHAR_LEN_BYTE;
   }
 }

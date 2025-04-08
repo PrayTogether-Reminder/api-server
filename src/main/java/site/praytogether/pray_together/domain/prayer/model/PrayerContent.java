@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.prayers.model;
+package site.praytogether.pray_together.domain.prayer.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +10,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.praytogether.pray_together.domain.base.BaseEntity;
@@ -17,7 +20,9 @@ import site.praytogether.pray_together.domain.base.BaseEntity;
 @Entity
 @Table(name = "prayer_content")
 @Getter
-@NoArgsConstructor
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PrayerContent extends BaseEntity {
 
   @Id
@@ -40,4 +45,13 @@ public class PrayerContent extends BaseEntity {
 
   @Column(nullable = false, columnDefinition = "text")
   private String content;
+
+  public static PrayerContent create(PrayerTitle title, PrayerRequestContent reqContent) {
+    return PrayerContent.builder()
+        .prayerTitle(title)
+        .memberId(reqContent.getMemberId())
+        .memberName(reqContent.getMemberName())
+        .content(reqContent.getContent())
+        .build();
+  }
 }
