@@ -30,7 +30,7 @@ public class RoomCreateIntegrateTest extends IntegrateTest {
 
   @BeforeEach
   void setup() {
-    member = testUtils.createMember();
+    member = testUtils.createUniqueMember();
     memberRepository.save(member);
     headers = testUtils.create_Auth_HttpHeader_With_Member(member);
   }
@@ -70,7 +70,7 @@ public class RoomCreateIntegrateTest extends IntegrateTest {
     assertThat(memberRooms.get(0).getMember().getId()).isEqualTo(member.getId());
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "[{index}] {0}")
   @MethodSource("provideInvalidRoomCreateParameters")
   @DisplayName("Room 생성 시 유효하지 않은 파라미터인 경우 400 Bad Request 응답")
   void create_room_with_invalid_input_then_return_400_bad_request(

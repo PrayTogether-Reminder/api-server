@@ -34,7 +34,7 @@ public class RoomDeleteIntegrateTest extends IntegrateTest {
 
   @BeforeEach
   void setup() {
-    member = testUtils.createMember();
+    member = testUtils.createUniqueMember();
     memberRepository.save(member);
     headers = testUtils.create_Auth_HttpHeader_With_Member(member);
   }
@@ -76,7 +76,7 @@ public class RoomDeleteIntegrateTest extends IntegrateTest {
     assertThat(allMemberRooms).isEmpty();
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "[{index}] {0}")
   @MethodSource("provideInvalidRoomDeleteParameters")
   @DisplayName("Room 삭제시 유효하지 않은 ID인 경우 400 Bad Request 응답")
   void delete_room_with_invalid_id_then_return_400_bad_request(String test, String encodedUrl) {

@@ -6,17 +6,29 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
 import site.praytogether.pray_together.domain.member.model.Member;
+import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
+import site.praytogether.pray_together.domain.room.model.Room;
+import site.praytogether.pray_together.domain.room.model.RoomRole;
 import site.praytogether.pray_together.security.service.JwtService;
 
 @Component
 @RequiredArgsConstructor
 public class TestUtils {
 
-  private static int emailUnique = 0;
+  private static int emailUniqueId = 0;
+  private static int roomUniqueId = 0;
   private final JwtService jwtService;
 
-  public Member createMember() {
-    return Member.create("test", "test@test.com" + (emailUnique++), "test");
+  public Member createUniqueMember() {
+    return Member.create("test", "test@test.com" + (emailUniqueId++), "test");
+  }
+
+  public MemberRoom createUniqueMemberRoom_With_Member_AND_Room(Member member, Room room) {
+    return MemberRoom.builder().member(member).room(room).role(RoomRole.OWNER).build();
+  }
+
+  public Room createUniqueRoom() {
+    return Room.create("test-Room" + roomUniqueId++, "test-description" + roomUniqueId++);
   }
 
   public HttpHeaders create_Auth_HttpHeader_With_Member(Member member) {
