@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
+import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.domain.room.model.RoomRole;
 import site.praytogether.pray_together.security.service.JwtService;
@@ -17,10 +18,15 @@ public class TestUtils {
 
   private static int emailUniqueId = 0;
   private static int roomUniqueId = 0;
+  private static int prayerTitleUniqueId = 0;
   private final JwtService jwtService;
 
   public Member createUniqueMember() {
-    return Member.create("test", "test@test.com" + (emailUniqueId++), "test");
+    return Member.create("test" + (emailUniqueId), "test@test.com" + (emailUniqueId++), "test");
+  }
+
+  public PrayerTitle createUniquePrayerTitle_With_Room(Room room) {
+    return PrayerTitle.create(room, "test-prayer-title" + prayerTitleUniqueId++);
   }
 
   public MemberRoom createUniqueMemberRoom_With_Member_AND_Room(Member member, Room room) {
