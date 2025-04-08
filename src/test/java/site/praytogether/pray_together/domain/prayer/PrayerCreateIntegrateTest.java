@@ -35,8 +35,8 @@ public class PrayerCreateIntegrateTest extends IntegrateTest {
   private MemberRoom memberRoom;
   private HttpHeaders headers;
 
-  static Long validRoomId;
-  static Long validMemberId;
+  private static Long validRoomId;
+  private static Long validMemberId;
 
   @BeforeEach
   void setup() {
@@ -157,7 +157,7 @@ public class PrayerCreateIntegrateTest extends IntegrateTest {
 
   @DisplayName("기도 생성 요청 유효성 검사 실패 시 400 Bad Request 응답")
   @ParameterizedTest(name = "[{index}] {0}")
-  @MethodSource("provideInvalidPrayerArguments")
+  @MethodSource("provideInvalidPrayerCreateArguments")
   void create_prayer_with_invalid_input_then_return_400_bad_request(
       String test, Long roomId, String title, List<PrayerRequestContent> contents) {
 
@@ -181,7 +181,7 @@ public class PrayerCreateIntegrateTest extends IntegrateTest {
     assertThat(allContent.size()).as(test + ": 예외 발생 시 기도 내용이 저장되면 안됩니다.").isZero();
   }
 
-  private static Stream<Arguments> provideInvalidPrayerArguments() {
+  private static Stream<Arguments> provideInvalidPrayerCreateArguments() {
     String validTitle = "valid-title";
     String validMemberName = "valid-name";
     String validContentText = "valid-content";
@@ -206,7 +206,7 @@ public class PrayerCreateIntegrateTest extends IntegrateTest {
             validTitle,
             List.of(
                 PrayerRequestContent.builder()
-                    .memberId(null)
+                    .memberId(validMemberId)
                     .memberName(validMemberName)
                     .content("")
                     .build())),
@@ -216,7 +216,7 @@ public class PrayerCreateIntegrateTest extends IntegrateTest {
             validTitle,
             List.of(
                 PrayerRequestContent.builder()
-                    .memberId(null)
+                    .memberId(validMemberId)
                     .memberName("")
                     .content(validContentText)
                     .build())),

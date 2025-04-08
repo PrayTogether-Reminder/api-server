@@ -33,5 +33,7 @@ public class CoreConstant {
     public static final int TITLE_MAX_LEN = 50;
     public static final int TITLE_MIN_LEN = 1;
     public static final int TITLE_ENTITY_MAX_LEN = TITLE_MAX_LEN * RDBMS_CHAR_LEN_BYTE;
+    public static final String DEFAULT_INFINITE_SCROLL_AFTER = "0";
+    public static final int PRAYER_TITLES_INFINITE_SCROLL_SIZE = 7;
   }
 }
