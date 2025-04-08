@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.praytogether.pray_together.domain.prayer.exception.PrayerTitleNotFoundException;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitleInfo;
 import site.praytogether.pray_together.domain.prayer.respository.PrayerTitleRepository;
@@ -19,6 +20,12 @@ import site.praytogether.pray_together.domain.room.model.Room;
 @RequiredArgsConstructor
 public class PrayerTitleService {
   private final PrayerTitleRepository titleRepository;
+
+  public PrayerTitle fetchById(Long titleId) {
+    return titleRepository
+        .findById(titleId)
+        .orElseThrow(() -> new PrayerTitleNotFoundException(titleId));
+  }
 
   public List<PrayerTitleInfo> fetchTitlesByRoom(Long roomId, String after) {
     if (DEFAULT_INFINITE_SCROLL_AFTER.equals(after)) {
