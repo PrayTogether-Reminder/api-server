@@ -10,6 +10,7 @@ import site.praytogether.pray_together.domain.prayer.dto.PrayerContentResponse;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerCreateRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollResponse;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerUpdateRequest;
 import site.praytogether.pray_together.domain.prayer.model.PrayerContentInfo;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitleInfo;
@@ -22,18 +23,22 @@ import site.praytogether.pray_together.domain.room.service.RoomService;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PrayerApplicationService {
+
   private final PrayerTitleService titleService;
   private final PrayerContentService contentService;
   private final RoomService roomService;
   private final MemberRoomService memberRoomService;
 
   public PrayerContentResponse fetchPrayerContent(Long memberId, Long titleId) {
+    validateMemberExistInRoomByTitleId(memberId, titleId);
+    List<PrayerContentInfo> prayerContentInfos = contentService.fetchContents(titleId);
+    return PrayerContentResponse.from(prayerContentInfos);
+  }
+
+  private void validateMemberExistInRoomByTitleId(Long memberId, Long titleId) {
     PrayerTitle prayerTitle = titleService.fetchById(titleId);
     Room room = prayerTitle.getRoom();
     memberRoomService.validateMemberExistInRoom(memberId, room.getId());
-
-    List<PrayerContentInfo> prayerContentInfos = contentService.fetchContents(titleId);
-    return PrayerContentResponse.from(prayerContentInfos);
   }
 
   public PrayerTitleScrollResponse fetchPrayerTitleInfiniteScroll(
@@ -51,5 +56,14 @@ public class PrayerApplicationService {
     PrayerTitle title = titleService.create(roomRef, request.getTitle());
     contentService.save(title, request.getContents());
     return MessageResponse.of("기도 제목을 생성했습니다.");
+  }
+
+  @Transactional
+  public MessageResponse updatePrayers(Long memberId, Long titleId, PrayerUpdateRequest request) {
+    validateMemberExistInRoomByTitleId(memberId, titleId);
+    PrayerTitle prayerTitle = titleService.fetchById(titleId);
+    titleService.update(prayerTitle, request.getTitle());
+    contentService.update(prayerTitle, request.getContents());
+    return MessageResponse.of("기도를 변경했습니다.");
   }
 }

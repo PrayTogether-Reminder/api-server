@@ -65,4 +65,12 @@ public class PrayerTitle extends BaseEntity {
   public void addContent(PrayerContent content) {
     getPrayerContents().add(content);
   }
+
+  public void updateTitle(String title) {
+    this.title = title;
+  }
+
+  public void updateContents(List<PrayerContent> updated) {
+    this.prayerContents = updated;
+  }
 }

@@ -41,4 +41,9 @@ public class PrayerTitleService {
     PrayerTitle prayerTitle = PrayerTitle.create(roomRef, title);
     return titleRepository.save(prayerTitle);
   }
+
+  @Transactional
+  public void update(PrayerTitle prayerTitle, String newTitle) {
+    prayerTitle.updateTitle(newTitle);
+  }
 }

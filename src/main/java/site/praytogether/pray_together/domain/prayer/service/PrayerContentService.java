@@ -1,5 +1,6 @@
 package site.praytogether.pray_together.domain.prayer.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import site.praytogether.pray_together.domain.prayer.model.PrayerContent;
 import site.praytogether.pray_together.domain.prayer.model.PrayerContentInfo;
 import site.praytogether.pray_together.domain.prayer.model.PrayerRequestContent;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
+import site.praytogether.pray_together.domain.prayer.model.PrayerUpdateContent;
 import site.praytogether.pray_together.domain.prayer.respository.PrayerContentRepository;
 
 @Slf4j
@@ -29,5 +31,16 @@ public class PrayerContentService {
           PrayerContent newContent = PrayerContent.create(title, content);
           title.addContent(newContent);
         });
+  }
+
+  @Transactional
+  public void update(PrayerTitle title, List<PrayerUpdateContent> contents) {
+    List<PrayerContent> newContents = new ArrayList<>();
+    contents.forEach(
+        content -> {
+          PrayerContent newContent = PrayerContent.update(title, content);
+          newContents.add(newContent);
+        });
+    title.updateContents(newContents);
   }
 }

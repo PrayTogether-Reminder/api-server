@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,7 @@ import site.praytogether.pray_together.domain.prayer.dto.PrayerContentResponse;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerCreateRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollResponse;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerUpdateRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,6 +36,15 @@ public class PrayerController {
       @PrincipalId Long memberId, @Valid @RequestBody PrayerCreateRequest request) {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(prayerApplication.createPrayers(memberId, request));
+  }
+
+  @PutMapping("/{prayerTitleId}")
+  public ResponseEntity<MessageResponse> updatePrayers(
+      @PrincipalId Long memberId,
+      @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") @PathVariable Long prayerTitleId,
+      @Valid @RequestBody PrayerUpdateRequest request) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(prayerApplication.updatePrayers(memberId, prayerTitleId, request));
   }
 
   @GetMapping()

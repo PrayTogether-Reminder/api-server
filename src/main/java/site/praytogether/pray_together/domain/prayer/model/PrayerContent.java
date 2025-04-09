@@ -54,4 +54,14 @@ public class PrayerContent extends BaseEntity {
         .content(reqContent.getContent())
         .build();
   }
+
+  public static PrayerContent update(PrayerTitle title, PrayerUpdateContent reqContent) {
+    return PrayerContent.builder()
+        .id(reqContent.getId())
+        .prayerTitle(title)
+        .memberId(reqContent.getMemberId())
+        .memberName(reqContent.getMemberName())
+        .content(reqContent.getContent())
+        .build();
+  }
 }
