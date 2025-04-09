@@ -27,6 +27,12 @@ public class PrayerTitleService {
         .orElseThrow(() -> new PrayerTitleNotFoundException(titleId));
   }
 
+  public PrayerTitle fetchByIdWithContents(Long titleId) {
+    return titleRepository
+        .findByIdWithContents(titleId)
+        .orElseThrow(() -> new PrayerTitleNotFoundException(titleId));
+  }
+
   public List<PrayerTitleInfo> fetchTitlesByRoom(Long roomId, String after) {
     if (DEFAULT_INFINITE_SCROLL_AFTER.equals(after)) {
       return titleRepository.findFirstPrayerTitleInfosOrderByCreatedTimeDesc(

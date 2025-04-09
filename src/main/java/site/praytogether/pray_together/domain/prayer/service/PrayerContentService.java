@@ -1,6 +1,5 @@
 package site.praytogether.pray_together.domain.prayer.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +34,12 @@ public class PrayerContentService {
 
   @Transactional
   public void update(PrayerTitle title, List<PrayerUpdateContent> contents) {
-    List<PrayerContent> newContents = new ArrayList<>();
+    List<PrayerContent> prayerContents = title.getPrayerContents();
+    prayerContents.clear();
     contents.forEach(
         content -> {
-          PrayerContent newContent = PrayerContent.update(title, content);
-          newContents.add(newContent);
+          PrayerContent update = PrayerContent.update(title, content);
+          prayerContents.add(update);
         });
-    title.updateContents(newContents);
   }
 }

@@ -61,7 +61,7 @@ public class PrayerApplicationService {
   @Transactional
   public MessageResponse updatePrayers(Long memberId, Long titleId, PrayerUpdateRequest request) {
     validateMemberExistInRoomByTitleId(memberId, titleId);
-    PrayerTitle prayerTitle = titleService.fetchById(titleId);
+    PrayerTitle prayerTitle = titleService.fetchByIdWithContents(titleId);
     titleService.update(prayerTitle, request.getTitle());
     contentService.update(prayerTitle, request.getContents());
     return MessageResponse.of("기도를 변경했습니다.");
