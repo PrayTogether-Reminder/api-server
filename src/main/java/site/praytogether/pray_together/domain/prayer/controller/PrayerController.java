@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,6 +66,14 @@ public class PrayerController {
           Long prayerTitleId,
       @PrincipalId Long memberId) {
     PrayerContentResponse response = prayerApplication.fetchPrayerContent(memberId, prayerTitleId);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @DeleteMapping("/{prayerTitleId}")
+  public ResponseEntity<MessageResponse> deletePrayer(
+      @PrincipalId Long memberId,
+      @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") @PathVariable Long prayerTitleId) {
+    MessageResponse response = prayerApplication.deletePrayer(memberId, prayerTitleId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

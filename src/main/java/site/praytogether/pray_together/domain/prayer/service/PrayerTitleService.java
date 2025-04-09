@@ -52,4 +52,9 @@ public class PrayerTitleService {
   public void update(PrayerTitle prayerTitle, String newTitle) {
     prayerTitle.updateTitle(newTitle);
   }
+
+  @Transactional
+  public void delete(Long titleId) {
+    titleRepository.deleteById(titleId);
+  }
 }

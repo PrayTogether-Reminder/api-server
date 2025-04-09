@@ -35,12 +35,6 @@ public class PrayerApplicationService {
     return PrayerContentResponse.from(prayerContentInfos);
   }
 
-  private void validateMemberExistInRoomByTitleId(Long memberId, Long titleId) {
-    PrayerTitle prayerTitle = titleService.fetchById(titleId);
-    Room room = prayerTitle.getRoom();
-    memberRoomService.validateMemberExistInRoom(memberId, room.getId());
-  }
-
   public PrayerTitleScrollResponse fetchPrayerTitleInfiniteScroll(
       Long memberId, PrayerTitleScrollRequest request) {
     memberRoomService.validateMemberExistInRoom(memberId, request.getRoomId());
@@ -65,5 +59,18 @@ public class PrayerApplicationService {
     titleService.update(prayerTitle, request.getTitle());
     contentService.update(prayerTitle, request.getContents());
     return MessageResponse.of("기도를 변경했습니다.");
+  }
+
+  @Transactional
+  public MessageResponse deletePrayer(Long memberId, Long titleId) {
+    validateMemberExistInRoomByTitleId(memberId, titleId);
+    titleService.delete(titleId);
+    return MessageResponse.of("기도를 삭제했습니다.");
+  }
+
+  private void validateMemberExistInRoomByTitleId(Long memberId, Long titleId) {
+    PrayerTitle prayerTitle = titleService.fetchById(titleId);
+    Room room = prayerTitle.getRoom();
+    memberRoomService.validateMemberExistInRoom(memberId, room.getId());
   }
 }
