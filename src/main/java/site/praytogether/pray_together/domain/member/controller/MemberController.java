@@ -14,7 +14,7 @@ import site.praytogether.pray_together.domain.member.dto.MemberProfileResponse;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members")
 public class MemberController {
-  MemberApplicationService memberApplication;
+  private final MemberApplicationService memberApplication;
 
   @GetMapping("/me")
   public ResponseEntity<MemberProfileResponse> getProfile(@PrincipalId Long memberId) {
