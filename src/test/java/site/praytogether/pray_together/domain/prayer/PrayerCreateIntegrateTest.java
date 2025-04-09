@@ -66,16 +66,15 @@ public class PrayerCreateIntegrateTest extends IntegrateTest {
   @Test
   @DisplayName("기도(제목+내용) 생성 시 201 Created 응답")
   void create_prayer_with_valid_input_then_return_201_created() {
-
     // given
     List<Member> memberList = new ArrayList<>();
     // @Beforeach member 추가
-    memberList.add(member);
+    memberList.add(member); // 총 1명
 
     final int testCnt = 5;
     // 회원 추가 생성 - @Beforeach member 와 memberId == null 제외
     for (int i = 2; i < testCnt; i++) {
-      memberList.add(testUtils.createUniqueMember());
+      memberList.add(testUtils.createUniqueMember()); // 총 4명
     }
     memberRepository.saveAll(memberList);
 
@@ -88,11 +87,11 @@ public class PrayerCreateIntegrateTest extends IntegrateTest {
               .memberName(memberOne.getName())
               .content("test-prayer-content" + memberOne.getId())
               .build();
-      requestContents.add(content);
+      requestContents.add(content); // 총 4개
     }
 
     // memberId == null 추가
-    requestContents.add(
+    requestContents.add( //  총 5개
         PrayerRequestContent.builder()
             .memberName("test-memberName-id-null")
             .content("test-content-id-null")

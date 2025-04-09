@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Comparator;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,11 @@ public class PrayerContentFetchIntegrateTest extends IntegrateTest {
             .build();
     prayerContentRepository.save(prayerContent);
     headers = testUtils.create_Auth_HttpHeader_With_Member(member);
+  }
+
+  @AfterEach
+  void cleanup() {
+    cleanRepository();
   }
 
   @Test
