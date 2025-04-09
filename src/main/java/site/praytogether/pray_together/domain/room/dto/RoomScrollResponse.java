@@ -15,7 +15,7 @@ import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 public class RoomScrollResponse {
   private final List<RoomInfo> rooms;
 
-  public static RoomScrollResponse of(LinkedHashMap<Long, RoomInfo> roomInfos) {
+  public static RoomScrollResponse from(LinkedHashMap<Long, RoomInfo> roomInfos) {
     RoomScrollResponse response =
         new RoomScrollResponse(new ArrayList<>(ROOMS_INFINITE_SCROLL_SIZE));
     roomInfos.forEach((key, value) -> response.add(value));

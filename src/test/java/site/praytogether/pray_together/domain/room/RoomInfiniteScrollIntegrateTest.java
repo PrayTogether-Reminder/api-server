@@ -41,7 +41,7 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
   @BeforeEach
   void setup() {
     // member1 생성
-    member = testUtils.createMember();
+    member = testUtils.createUniqueMember();
     memberRepository.save(member);
     // room1 생성
 
@@ -67,7 +67,7 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
     }
 
     // member2 생성
-    Member member2 = testUtils.createMember();
+    Member member2 = testUtils.createUniqueMember();
     memberRepository.save(member2);
     // member2는 짝수 ID 방 추가
     for (int i = 0; i < 30; i++) {
@@ -89,7 +89,7 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
     cleanRepository();
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "[{index}] {0}")
   @MethodSource("provideRoomScrollParameters")
   @DisplayName("다양한 파라미터 조합 요청시 기본값으로 정상 처리되어 200 OK 응답")
   void fetch_rooms_list_with_default_values_for_different_params_then_return_200_ok(

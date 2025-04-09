@@ -95,9 +95,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     log.error("[ERROR] 타입 변환 실패 : {}", message);
   }
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<ExceptionResponse> handleAllException(Exception ex) {
-    log.error("[ERROR] 알 수 없는 예외 발생: {}", ex.getMessage());
-    return ResponseEntity.badRequest().body(ExceptionResponse.of(ex));
-  }
+  //  @ExceptionHandler(Exception.class)
+  //  public ResponseEntity<ExceptionResponse> handleAllException(Exception ex) {
+  //    log.error("[ERROR] 정의되지 않은 예외 발생: {}", ex.getMessage());
+  //    return ResponseEntity.badRequest().body(ExceptionResponse.of(ex));
+  //  }
 }

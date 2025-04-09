@@ -35,7 +35,7 @@ public class RoomMemberFetchIntegrateTest extends IntegrateTest {
   @BeforeEach
   void setup() {
     // 회원 생성 및 JWT 설정
-    member = testUtils.createMember();
+    member = testUtils.createUniqueMember();
     memberRepository.save(member);
     headers = testUtils.create_Auth_HttpHeader_With_Member(member);
 
@@ -53,7 +53,7 @@ public class RoomMemberFetchIntegrateTest extends IntegrateTest {
     List<MemberRoom> memberRoomList = new ArrayList<>();
     List<Member> memberList = new ArrayList<>();
     for (int i = 0; i < memberCount - 1; i++) {
-      Member newMember = testUtils.createMember();
+      Member newMember = testUtils.createUniqueMember();
       memberList.add(newMember);
       MemberRoom memberRoom =
           MemberRoom.builder()
