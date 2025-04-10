@@ -18,7 +18,7 @@ import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCount;
 import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 import site.praytogether.pray_together.domain.member_room.repository.MemberRoomRepository;
-import site.praytogether.pray_together.domain.room.dto.RoomScrollRequest;
+import site.praytogether.pray_together.domain.room.dto.RoomInfiniteScrollRequest;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.domain.room.model.RoomRole;
 
@@ -36,7 +36,7 @@ public class MemberRoomService {
   }
 
   public LinkedHashMap<Long, RoomInfo> fetchRoomsByMember(
-      Long memberId, RoomScrollRequest scrollRequest) {
+      Long memberId, RoomInfiniteScrollRequest scrollRequest) {
     // TODO: 전략 패턴으로 orderBy 및 dir에 따른 repository 메서드 차별화 구현 (time, name, memberCnt 등)
 
     List<RoomInfo> roomInfos;
@@ -53,7 +53,7 @@ public class MemberRoomService {
     return memberRoomRepository.findMemberCountByIds(roomIds);
   }
 
-  private List<RoomInfo> fetchRoomsByAfter(Long memberId, RoomScrollRequest scrollRequest) {
+  private List<RoomInfo> fetchRoomsByAfter(Long memberId, RoomInfiniteScrollRequest scrollRequest) {
     return memberRoomRepository.findRoomInfoOrderByJoinedTimeDesc(
         memberId,
         Instant.parse(scrollRequest.getAfter()),

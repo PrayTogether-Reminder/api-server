@@ -24,9 +24,9 @@ import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.room.applicatoin.RoomApplicationService;
 import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
+import site.praytogether.pray_together.domain.room.dto.RoomInfiniteScrollRequest;
+import site.praytogether.pray_together.domain.room.dto.RoomInfiniteScrollResponse;
 import site.praytogether.pray_together.domain.room.dto.RoomMemberResponse;
-import site.praytogether.pray_together.domain.room.dto.RoomScrollRequest;
-import site.praytogether.pray_together.domain.room.dto.RoomScrollResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,15 +38,15 @@ public class RoomController {
   private final RoomApplicationService roomApplication;
 
   @GetMapping
-  public ResponseEntity<RoomScrollResponse> getRoomsByScroll(
+  public ResponseEntity<RoomInfiniteScrollResponse> getRoomsByInfiniteScroll(
       @PrincipalId Long memberId,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_ORDER_BY) String orderBy,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_AFTER) String after,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_DIR) String dir) {
-    RoomScrollRequest request = RoomScrollRequest.of(orderBy, after, dir);
-    RoomScrollResponse roomScrollResponse =
+    RoomInfiniteScrollRequest request = RoomInfiniteScrollRequest.of(orderBy, after, dir);
+    RoomInfiniteScrollResponse roomInfiniteScrollResponse =
         roomApplication.fetchRoomsInfiniteScroll(memberId, request);
-    return ResponseEntity.status(HttpStatus.OK).body(roomScrollResponse);
+    return ResponseEntity.status(HttpStatus.OK).body(roomInfiniteScrollResponse);
   }
 
   @PostMapping

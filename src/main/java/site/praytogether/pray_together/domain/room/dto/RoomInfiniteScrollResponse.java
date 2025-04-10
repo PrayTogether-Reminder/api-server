@@ -12,12 +12,12 @@ import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class RoomScrollResponse {
+public class RoomInfiniteScrollResponse {
   private final List<RoomInfo> rooms;
 
-  public static RoomScrollResponse from(LinkedHashMap<Long, RoomInfo> roomInfos) {
-    RoomScrollResponse response =
-        new RoomScrollResponse(new ArrayList<>(ROOMS_INFINITE_SCROLL_SIZE));
+  public static RoomInfiniteScrollResponse from(LinkedHashMap<Long, RoomInfo> roomInfos) {
+    RoomInfiniteScrollResponse response =
+        new RoomInfiniteScrollResponse(new ArrayList<>(ROOMS_INFINITE_SCROLL_SIZE));
     roomInfos.forEach((key, value) -> response.add(value));
     return response;
   }

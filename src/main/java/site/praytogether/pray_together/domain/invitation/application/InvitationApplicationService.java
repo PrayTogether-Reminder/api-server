@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.invitation.dto.InvitationCreateRequest;
-import site.praytogether.pray_together.domain.invitation.dto.InvitationInfoListResponse;
+import site.praytogether.pray_together.domain.invitation.dto.InvitationInfoScrollResponse;
 import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
 import site.praytogether.pray_together.domain.invitation.service.InvitationService;
 import site.praytogether.pray_together.domain.member.model.Member;
@@ -25,10 +25,10 @@ public class InvitationApplicationService {
   private final MemberService memberService;
   private final MemberRoomService memberRoomService;
 
-  public InvitationInfoListResponse getInvitationInfos(Long memberId) {
+  public InvitationInfoScrollResponse getInvitationInfoScroll(Long memberId) {
     List<InvitationInfo> invitationInfos =
-        invitationService.fetchInvitationInfosByMemberId(memberId);
-    return InvitationInfoListResponse.from(invitationInfos);
+        invitationService.fetchInvitationInfoScrollByMemberId(memberId);
+    return InvitationInfoScrollResponse.from(invitationInfos);
   }
 
   @Transactional

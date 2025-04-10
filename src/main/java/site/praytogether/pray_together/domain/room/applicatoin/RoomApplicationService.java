@@ -15,9 +15,9 @@ import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCoun
 import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 import site.praytogether.pray_together.domain.member_room.service.MemberRoomService;
 import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
+import site.praytogether.pray_together.domain.room.dto.RoomInfiniteScrollRequest;
+import site.praytogether.pray_together.domain.room.dto.RoomInfiniteScrollResponse;
 import site.praytogether.pray_together.domain.room.dto.RoomMemberResponse;
-import site.praytogether.pray_together.domain.room.dto.RoomScrollRequest;
-import site.praytogether.pray_together.domain.room.dto.RoomScrollResponse;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.domain.room.model.RoomRole;
 import site.praytogether.pray_together.domain.room.service.RoomService;
@@ -41,8 +41,8 @@ public class RoomApplicationService {
     return MessageResponse.of("방 생성을 완료했습니다.");
   }
 
-  public RoomScrollResponse fetchRoomsInfiniteScroll(
-      Long memberId, RoomScrollRequest scrollRequest) {
+  public RoomInfiniteScrollResponse fetchRoomsInfiniteScroll(
+      Long memberId, RoomInfiniteScrollRequest scrollRequest) {
     LinkedHashMap<Long, RoomInfo> roomInfoMap =
         memberRoomService.fetchRoomsByMember(memberId, scrollRequest);
 
@@ -55,7 +55,7 @@ public class RoomApplicationService {
                 .get(roomMemberCount.getRoomId())
                 .setMemberCnt(roomMemberCount.getMemberCnt()));
 
-    return RoomScrollResponse.from(roomInfoMap);
+    return RoomInfiniteScrollResponse.from(roomInfoMap);
   }
 
   @Transactional

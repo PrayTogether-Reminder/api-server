@@ -17,7 +17,7 @@ import site.praytogether.pray_together.domain.room.model.Room;
 public class InvitationService {
   private final InvitationRepository invitationRepository;
 
-  public List<InvitationInfo> fetchInvitationInfosByMemberId(Long memberId) {
+  public List<InvitationInfo> fetchInvitationInfoScrollByMemberId(Long memberId) {
     return invitationRepository.findInfosByMemberId(memberId, InvitationStatus.PENDING);
   }
 

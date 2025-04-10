@@ -13,7 +13,7 @@ import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.invitation.application.InvitationApplicationService;
 import site.praytogether.pray_together.domain.invitation.dto.InvitationCreateRequest;
-import site.praytogether.pray_together.domain.invitation.dto.InvitationInfoListResponse;
+import site.praytogether.pray_together.domain.invitation.dto.InvitationInfoScrollResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,9 +29,9 @@ public class InvitationController {
   }
 
   @GetMapping
-  public ResponseEntity<InvitationInfoListResponse> getPendingInvitations(
+  public ResponseEntity<InvitationInfoScrollResponse> getPendingScrollInvitations(
       @PrincipalId Long memberId) {
-    InvitationInfoListResponse response = invitationApplication.getInvitationInfos(memberId);
+    InvitationInfoScrollResponse response = invitationApplication.getInvitationInfoScroll(memberId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

@@ -10,10 +10,10 @@ import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class InvitationInfoListResponse {
+public class InvitationInfoScrollResponse {
   private List<InvitationInfo> invitations;
 
-  public static InvitationInfoListResponse from(List<InvitationInfo> invitationInfos) {
-    return new InvitationInfoListResponse(invitationInfos);
+  public static InvitationInfoScrollResponse from(List<InvitationInfo> invitationInfos) {
+    return new InvitationInfoScrollResponse(invitationInfos);
   }
 }
