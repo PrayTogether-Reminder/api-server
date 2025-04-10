@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import site.praytogether.pray_together.domain.invite.repository.InvitationRepository;
+import site.praytogether.pray_together.domain.invitation.repository.InvitationRepository;
 import site.praytogether.pray_together.domain.member.repository.MemberRepository;
 import site.praytogether.pray_together.domain.member_room.repository.MemberRoomRepository;
 import site.praytogether.pray_together.domain.prayer.respository.PrayerContentRepository;

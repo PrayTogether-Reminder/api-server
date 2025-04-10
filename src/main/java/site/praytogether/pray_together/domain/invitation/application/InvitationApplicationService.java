@@ -1,11 +1,14 @@
-package site.praytogether.pray_together.domain.invite.application;
+package site.praytogether.pray_together.domain.invitation.application;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
-import site.praytogether.pray_together.domain.invite.dto.InvitationCreateRequest;
-import site.praytogether.pray_together.domain.invite.service.InvitationService;
+import site.praytogether.pray_together.domain.invitation.dto.InvitationCreateRequest;
+import site.praytogether.pray_together.domain.invitation.dto.InvitationInfoListResponse;
+import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
+import site.praytogether.pray_together.domain.invitation.service.InvitationService;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.domain.member_room.service.MemberRoomService;
@@ -21,6 +24,12 @@ public class InvitationApplicationService {
   private final RoomService roomService;
   private final MemberService memberService;
   private final MemberRoomService memberRoomService;
+
+  public InvitationInfoListResponse getInvitationInfos(Long memberId) {
+    List<InvitationInfo> invitationInfos =
+        invitationService.fetchInvitationInfosByMemberId(memberId);
+    return InvitationInfoListResponse.from(invitationInfos);
+  }
 
   @Transactional
   public MessageResponse inviteMemberToRoom(Long inviterMemberId, InvitationCreateRequest request) {

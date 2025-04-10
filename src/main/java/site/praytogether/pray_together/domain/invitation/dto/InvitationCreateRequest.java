@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.invite.dto;
+package site.praytogether.pray_together.domain.invitation.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

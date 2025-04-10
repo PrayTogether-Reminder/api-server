@@ -1,17 +1,19 @@
-package site.praytogether.pray_together.domain.invite.controller;
+package site.praytogether.pray_together.domain.invitation.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
-import site.praytogether.pray_together.domain.invite.application.InvitationApplicationService;
-import site.praytogether.pray_together.domain.invite.dto.InvitationCreateRequest;
+import site.praytogether.pray_together.domain.invitation.application.InvitationApplicationService;
+import site.praytogether.pray_together.domain.invitation.dto.InvitationCreateRequest;
+import site.praytogether.pray_together.domain.invitation.dto.InvitationInfoListResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,5 +26,12 @@ public class InvitationController {
       @PrincipalId Long memberId, @Valid @RequestBody InvitationCreateRequest request) {
     MessageResponse response = invitationApplication.inviteMemberToRoom(memberId, request);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
+
+  @GetMapping
+  public ResponseEntity<InvitationInfoListResponse> getPendingInvitations(
+      @PrincipalId Long memberId) {
+    InvitationInfoListResponse response = invitationApplication.getInvitationInfos(memberId);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

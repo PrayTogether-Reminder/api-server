@@ -1,10 +1,13 @@
-package site.praytogether.pray_together.domain.invite.service;
+package site.praytogether.pray_together.domain.invitation.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.praytogether.pray_together.domain.invite.model.Invitation;
-import site.praytogether.pray_together.domain.invite.repository.InvitationRepository;
+import site.praytogether.pray_together.domain.invitation.model.Invitation;
+import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
+import site.praytogether.pray_together.domain.invitation.model.InvitationStatus;
+import site.praytogether.pray_together.domain.invitation.repository.InvitationRepository;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.room.model.Room;
 
@@ -13,6 +16,10 @@ import site.praytogether.pray_together.domain.room.model.Room;
 @RequiredArgsConstructor
 public class InvitationService {
   private final InvitationRepository invitationRepository;
+
+  public List<InvitationInfo> fetchInvitationInfosByMemberId(Long memberId) {
+    return invitationRepository.findInfosByMemberId(memberId, InvitationStatus.PENDING);
+  }
 
   @Transactional
   public Invitation create(Member inviter, Member invitee, Room room) {
