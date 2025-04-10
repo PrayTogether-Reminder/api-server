@@ -57,10 +57,10 @@ public class Invitation extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private InvitationStatus status;
 
-  @Column(name = "response_time", nullable = false)
+  @Column(name = "response_time")
   private Instant responseTime;
 
-  public static Invitation create(Room room, Member member, String inviterName) {
+  public static Invitation create(Member member, Room room, String inviterName) {
     return Invitation.builder()
         .room(room)
         .member(member)
