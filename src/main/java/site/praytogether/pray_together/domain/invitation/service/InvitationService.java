@@ -36,10 +36,12 @@ public class InvitationService {
   }
 
   @Transactional
-  public void updateStatus(Invitation invitation, InvitationStatus updatedStatus) {
-    switch (updatedStatus) {
-      case ACCEPTED -> invitation.accept();
-      case REJECTED -> invitation.reject();
-    }
+  public void accept(Invitation invitation) {
+    invitation.accept();
+  }
+
+  @Transactional
+  public void reject(Invitation invitation) {
+    invitation.reject();
   }
 }

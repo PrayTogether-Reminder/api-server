@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
@@ -81,6 +82,8 @@ public class InvitationUpdateStatusIntegrateTest extends IntegrateTest {
     HttpEntity<InvitationStatusUpdateRequest> requestEntity = new HttpEntity<>(request, headers);
     String url = INVITATIONS_API_URL + "/" + invitation.getId();
 
+    int memberRoomCnt = memberRoomRepository.findAll().size();
+
     // when
     ResponseEntity<MessageResponse> responseEntity =
         restTemplate.exchange(url, HttpMethod.POST, requestEntity, MessageResponse.class);
@@ -106,6 +109,21 @@ public class InvitationUpdateStatusIntegrateTest extends IntegrateTest {
     assertThat(response.getMessage())
         .as("초대장 상태 변경 API 응답 메시지가 예상과 다릅니다.")
         .contains(updatedStatus.getKoreanName());
+
+    // 방 참가 인원 수 확인
+    List<MemberRoom> allMemberRoom = memberRoomRepository.findAll();
+    if (updatedStatus == InvitationStatus.ACCEPTED) {
+      // 방 인원 증가
+      assertThat(allMemberRoom.size())
+          .as("초대장 수락시 방 참가 인원이 달라져야(1 증가해야) 합니다.")
+          .isEqualTo(memberRoomCnt + 1);
+
+    } else if (updatedStatus == InvitationStatus.REJECTED) {
+      // 방 인원 유지
+      assertThat(allMemberRoom.size())
+          .as("초대장 수락시 방 참가 인원이 이전과 동일해야 합니다.")
+          .isEqualTo(memberRoomCnt);
+    }
   }
 
   private static Stream<Arguments> provideValidInvitationStatusUpdateParameters() {
@@ -124,6 +142,7 @@ public class InvitationUpdateStatusIntegrateTest extends IntegrateTest {
     Map<String, Object> requestMap = new HashMap<>();
     requestMap.put("status", invalidStatus);
     String requestBody = objectMapper.writeValueAsString(requestMap);
+    int memberRoomCnt = memberRoomRepository.findAll().size();
 
     HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
     String url = INVITATIONS_API_URL + "/" + invitation.getId();
@@ -156,6 +175,10 @@ public class InvitationUpdateStatusIntegrateTest extends IntegrateTest {
 
     // 응답 시간이 여전히 null인지 확인
     assertThat(unchangedInvitation.getResponseTime()).as("잘못된 요청에도 초대장 응답 시간이 설정되었습니다.").isNull();
+
+    // 아무도 방에 초대되지 않음
+    List<MemberRoom> allMemberRoom = memberRoomRepository.findAll();
+    assertThat(allMemberRoom.size()).isEqualTo(memberRoomCnt);
   }
 
   private static Stream<Arguments> provideInvalidInvitationStatusUpdateParameters() {

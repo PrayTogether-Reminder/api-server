@@ -15,6 +15,7 @@ import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.domain.member_room.service.MemberRoomService;
 import site.praytogether.pray_together.domain.room.model.Room;
+import site.praytogether.pray_together.domain.room.model.RoomRole;
 import site.praytogether.pray_together.domain.room.service.RoomService;
 
 @Service
@@ -37,7 +38,15 @@ public class InvitationApplicationService {
   public MessageResponse updateInvitationStatus(
       Long memberId, Long invitationId, InvitationStatusUpdateRequest request) {
     Invitation invitation = invitationService.fetchByInviteeIdAndId(memberId, invitationId);
-    invitationService.updateStatus(invitation, request.getStatus());
+    switch (request.getStatus()) {
+      case ACCEPTED -> {
+        invitationService.accept(invitation);
+        Member invitee = invitation.getInvitee();
+        Room room = invitation.getRoom();
+        memberRoomService.addMemberToRoom(invitee, room, RoomRole.MEMBER);
+      }
+      case REJECTED -> invitationService.reject(invitation);
+    }
     return MessageResponse.of(
         String.format("기도방 초대를 %s했습니다.", request.getStatus().getKoreanName()));
   }
