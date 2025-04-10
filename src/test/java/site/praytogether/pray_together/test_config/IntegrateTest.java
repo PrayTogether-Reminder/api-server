@@ -1,5 +1,6 @@
 package site.praytogether.pray_together.test_config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -15,6 +16,7 @@ import site.praytogether.pray_together.domain.room.repository.RoomRepository;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IntegrateTest {
   @Autowired protected TestRestTemplate restTemplate;
+  @Autowired protected ObjectMapper objectMapper;
   @Autowired protected RoomRepository roomRepository;
   @Autowired protected MemberRepository memberRepository;
   @Autowired protected MemberRoomRepository memberRoomRepository;
