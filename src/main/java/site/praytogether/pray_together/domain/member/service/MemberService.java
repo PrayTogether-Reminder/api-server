@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.member.expcetion.MemberAlreadyExistException;
 import site.praytogether.pray_together.domain.member.expcetion.MemberNotFoundException;
 import site.praytogether.pray_together.domain.member.model.Member;
+import site.praytogether.pray_together.domain.member.model.MemberProfile;
 import site.praytogether.pray_together.domain.member.repository.MemberRepository;
 
 @Service
@@ -46,5 +47,11 @@ public class MemberService {
 
   public boolean isExistMember(String email) {
     return memberRepository.existsByEmail(email);
+  }
+
+  public MemberProfile fetchProfileById(Long memberId) {
+    return memberRepository
+        .findMemberProfileById(memberId)
+        .orElseThrow(() -> new MemberNotFoundException(memberId));
   }
 }
