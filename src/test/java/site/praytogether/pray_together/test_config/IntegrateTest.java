@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import site.praytogether.pray_together.domain.invite.repository.InvitationRepository;
 import site.praytogether.pray_together.domain.member.repository.MemberRepository;
 import site.praytogether.pray_together.domain.member_room.repository.MemberRoomRepository;
 import site.praytogether.pray_together.domain.prayer.respository.PrayerContentRepository;
@@ -19,13 +20,18 @@ public class IntegrateTest {
   @Autowired protected MemberRoomRepository memberRoomRepository;
   @Autowired protected PrayerTitleRepository prayerTitleRepository;
   @Autowired protected PrayerContentRepository prayerContentRepository;
+  @Autowired protected InvitationRepository invitationRepository;
   @Autowired protected TestUtils testUtils;
-  protected final String ROOMS_API_URL = "/api/v1/rooms";
-  protected final String PRAYERS_API_URL = "/api/v1/prayers";
-  protected final String MEMBERS_API_URL = "/api/v1/members";
+
+  private final String API_VERSION = "/api/v1";
+  protected final String ROOMS_API_URL = API_VERSION + "/rooms";
+  protected final String PRAYERS_API_URL = API_VERSION + "/prayers";
+  protected final String MEMBERS_API_URL = API_VERSION + "/members";
+  protected final String INVITATIONS_API_URL = API_VERSION + "/invitations";
 
   protected void cleanRepository() {
     // delete order is very important
+    invitationRepository.deleteAll();
     prayerContentRepository.deleteAll();
     prayerTitleRepository.deleteAll();
     memberRoomRepository.deleteAll();
