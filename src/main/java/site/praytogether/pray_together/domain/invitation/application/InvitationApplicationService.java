@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.invitation.dto.InvitationCreateRequest;
 import site.praytogether.pray_together.domain.invitation.dto.InvitationInfoScrollResponse;
+import site.praytogether.pray_together.domain.invitation.dto.InvitationStatusUpdateRequest;
+import site.praytogether.pray_together.domain.invitation.model.Invitation;
 import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
 import site.praytogether.pray_together.domain.invitation.service.InvitationService;
 import site.praytogether.pray_together.domain.member.model.Member;
@@ -27,8 +29,17 @@ public class InvitationApplicationService {
 
   public InvitationInfoScrollResponse getInvitationInfoScroll(Long memberId) {
     List<InvitationInfo> invitationInfos =
-        invitationService.fetchInvitationInfoScrollByMemberId(memberId);
+        invitationService.fetchInvitationScrollByMemberId(memberId);
     return InvitationInfoScrollResponse.from(invitationInfos);
+  }
+
+  @Transactional
+  public MessageResponse updateInvitationStatus(
+      Long memberId, Long invitationId, InvitationStatusUpdateRequest request) {
+    Invitation invitation = invitationService.fetchByInviteeIdAndId(memberId, invitationId);
+    invitationService.updateStatus(invitation, request.getStatus());
+    return MessageResponse.of(
+        String.format("기도방 초대를 %s했습니다.", request.getStatus().getKoreanName()));
   }
 
   @Transactional

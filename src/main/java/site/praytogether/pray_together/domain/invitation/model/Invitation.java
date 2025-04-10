@@ -1,5 +1,7 @@
 package site.praytogether.pray_together.domain.invitation.model;
 
+import static site.praytogether.pray_together.domain.invitation.model.InvitationStatus.PENDING;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import site.praytogether.pray_together.domain.base.BaseEntity;
+import site.praytogether.pray_together.domain.invitation.exception.AlreadyRespondedInvitationException;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.room.model.Room;
 
@@ -65,17 +68,25 @@ public class Invitation extends BaseEntity {
         .room(room)
         .invitee(invitee)
         .inviterName(inviter.getName())
-        .status(InvitationStatus.PENDING)
+        .status(PENDING)
         .build();
   }
 
   public void accept() {
+    validatePendingStatus();
     this.status = InvitationStatus.ACCEPTED;
     this.responseTime = Instant.now();
   }
 
   public void reject() {
+    validatePendingStatus();
     this.status = InvitationStatus.REJECTED;
     this.responseTime = Instant.now();
+  }
+
+  private void validatePendingStatus() {
+    if (this.status != PENDING) {
+      throw new AlreadyRespondedInvitationException(this.id, this.status);
+    }
   }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.praytogether.pray_together.domain.invitation.exception.InvitationNotFoundException;
 import site.praytogether.pray_together.domain.invitation.model.Invitation;
 import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
 import site.praytogether.pray_together.domain.invitation.model.InvitationStatus;
@@ -17,8 +18,14 @@ import site.praytogether.pray_together.domain.room.model.Room;
 public class InvitationService {
   private final InvitationRepository invitationRepository;
 
-  public List<InvitationInfo> fetchInvitationInfoScrollByMemberId(Long memberId) {
+  public List<InvitationInfo> fetchInvitationScrollByMemberId(Long memberId) {
     return invitationRepository.findInfosByMemberId(memberId, InvitationStatus.PENDING);
+  }
+
+  public Invitation fetchByInviteeIdAndId(Long inviteeId, Long invitationId) {
+    return invitationRepository
+        .findByInvitee_IdAndId(inviteeId, invitationId)
+        .orElseThrow(() -> new InvitationNotFoundException(inviteeId, invitationId));
   }
 
   @Transactional
@@ -26,5 +33,13 @@ public class InvitationService {
     Invitation invitation = Invitation.create(inviter, invitee, room);
 
     return invitationRepository.save(invitation);
+  }
+
+  @Transactional
+  public void updateStatus(Invitation invitation, InvitationStatus updatedStatus) {
+    switch (updatedStatus) {
+      case ACCEPTED -> invitation.accept();
+      case REJECTED -> invitation.reject();
+    }
   }
 }

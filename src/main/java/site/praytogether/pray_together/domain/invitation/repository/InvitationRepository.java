@@ -1,6 +1,7 @@
 package site.praytogether.pray_together.domain.invitation.repository;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import site.praytogether.pray_together.domain.invitation.model.Invitation;
@@ -8,6 +9,8 @@ import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
 import site.praytogether.pray_together.domain.invitation.model.InvitationStatus;
 
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
+
+  Optional<Invitation> findByInvitee_IdAndId(Long memberId, Long id);
 
   @Query(
       """
