@@ -23,11 +23,12 @@ public class InvitationApplicationService {
   private final MemberRoomService memberRoomService;
 
   @Transactional
-  public MessageResponse inviteMemberToRoom(Long memberId, InvitationCreateRequest request) {
-    Member memberRef = memberService.getRefOrThrow(memberId);
+  public MessageResponse inviteMemberToRoom(Long inviterMemberId, InvitationCreateRequest request) {
+    memberRoomService.validateMemberExistInRoom(inviterMemberId, request.getRoomId());
+    Member inviter = memberService.getById(inviterMemberId);
+    Member invitee = memberService.getByEmail(request.getEmail());
     Room roomRef = roomService.getRefOrThrow(request.getRoomId());
-    memberRoomService.validateMemberExistInRoom(memberRef.getId(), roomRef.getId());
-    invitationService.create(memberRef, roomRef, request);
+    invitationService.create(inviter, invitee, roomRef);
     return MessageResponse.of("초대를 완료했습니다.");
   }
 }

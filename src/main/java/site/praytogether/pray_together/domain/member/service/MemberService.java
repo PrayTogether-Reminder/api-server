@@ -33,6 +33,16 @@ public class MemberService {
     return memberRepository.getReferenceById(memberId);
   }
 
+  public Member getByEmail(String email) {
+    return memberRepository
+        .findByEmail(email)
+        .orElseThrow(() -> new MemberNotFoundException(email));
+  }
+
+  public Member getById(Long id) {
+    return memberRepository.findById(id).orElseThrow(() -> new MemberNotFoundException(id));
+  }
+
   public void validateMemberExists(Long memberId) {
     if (isExistMember(memberId) == false) throw new MemberNotFoundException(memberId);
   }

@@ -9,6 +9,10 @@ public class MemberNotFoundException extends MemberException {
     this(ExceptionField.builder().add("memberId", memberId).build());
   }
 
+  public MemberNotFoundException(String email) {
+    this(ExceptionField.builder().add("email", email).build());
+  }
+
   protected MemberNotFoundException(ExceptionField field) {
     super(MemberExceptionSpec.MEMBER_NOT_FOUND, field);
   }

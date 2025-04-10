@@ -48,7 +48,7 @@ public class Invitation extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "invitee_id", nullable = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private Member member;
+  private Member invitee;
 
   @Column(name = "inviter_name", nullable = false)
   private String inviterName;
@@ -60,11 +60,11 @@ public class Invitation extends BaseEntity {
   @Column(name = "response_time")
   private Instant responseTime;
 
-  public static Invitation create(Member member, Room room, String inviterName) {
+  public static Invitation create(Member inviter, Member invitee, Room room) {
     return Invitation.builder()
         .room(room)
-        .member(member)
-        .inviterName(inviterName)
+        .invitee(invitee)
+        .inviterName(inviter.getName())
         .status(InvitationStatus.PENDING)
         .build();
   }
