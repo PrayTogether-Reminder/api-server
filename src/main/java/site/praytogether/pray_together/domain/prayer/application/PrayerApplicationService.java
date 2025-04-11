@@ -8,8 +8,8 @@ import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member_room.service.MemberRoomService;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerContentResponse;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerCreateRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollResponse;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleInfiniteScrollRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleInfiniteScrollResponse;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerUpdateRequest;
 import site.praytogether.pray_together.domain.prayer.model.PrayerContentInfo;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
@@ -35,12 +35,12 @@ public class PrayerApplicationService {
     return PrayerContentResponse.from(prayerContentInfos);
   }
 
-  public PrayerTitleScrollResponse fetchPrayerTitleInfiniteScroll(
-      Long memberId, PrayerTitleScrollRequest request) {
+  public PrayerTitleInfiniteScrollResponse fetchPrayerTitleInfiniteScroll(
+      Long memberId, PrayerTitleInfiniteScrollRequest request) {
     memberRoomService.validateMemberExistInRoom(memberId, request.getRoomId());
     List<PrayerTitleInfo> titleInfos =
         titleService.fetchTitlesByRoom(request.getRoomId(), request.getAfter());
-    return PrayerTitleScrollResponse.from(titleInfos);
+    return PrayerTitleInfiniteScrollResponse.from(titleInfos);
   }
 
   @Transactional

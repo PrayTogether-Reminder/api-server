@@ -20,7 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
-import site.praytogether.pray_together.domain.room.dto.RoomScrollResponse;
+import site.praytogether.pray_together.domain.room.dto.RoomInfiniteScrollResponse;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.domain.room.model.RoomRole;
 import site.praytogether.pray_together.test_config.IntegrateTest;
@@ -90,7 +90,7 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
   }
 
   @ParameterizedTest(name = "[{index}] {0}")
-  @MethodSource("provideRoomScrollParameters")
+  @MethodSource("provideRoomInfiniteScrollParameters")
   @DisplayName("다양한 파라미터 조합 요청시 기본값으로 정상 처리되어 200 OK 응답")
   void fetch_rooms_list_with_default_values_for_different_params_then_return_200_ok(
       String test, String orderBy, String after, String dir) {
@@ -107,14 +107,14 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
     HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
     // when
-    ResponseEntity<RoomScrollResponse> responseEntity =
-        restTemplate.exchange(uri, HttpMethod.GET, requestEntity, RoomScrollResponse.class);
+    ResponseEntity<RoomInfiniteScrollResponse> responseEntity =
+        restTemplate.exchange(uri, HttpMethod.GET, requestEntity, RoomInfiniteScrollResponse.class);
 
     // then
     assertThat(responseEntity.getStatusCode())
         .as("방 목록 무한 스크롤 API 응답 상태 코드가 200 OK가 아닙니다.")
         .isEqualTo(HttpStatus.OK);
-    RoomScrollResponse response = responseEntity.getBody();
+    RoomInfiniteScrollResponse response = responseEntity.getBody();
     assertThat(response).as("방 목록 무한 스크롤 API 응답 결과가 NULL 입니다.").isNotNull();
     List<RoomInfo> rooms = response.getRooms();
     assertThat(rooms.size()).as("방 목록 무한 스크롤 API 응답 결과 데이터가 없습니다.").isGreaterThan(0);
@@ -127,7 +127,7 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
     assertThat(rooms).as("모든 방의 ID가 홀수여야 합니다.").allMatch(room -> room.getRoomId() % 2 == 1);
   }
 
-  private static Stream<Arguments> provideRoomScrollParameters() {
+  private static Stream<Arguments> provideRoomInfiniteScrollParameters() {
     return Stream.of(
         // 기본값 테스트
         Arguments.of("기본값", "time", "0", "desc"),
@@ -166,8 +166,8 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
     HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
     // 첫 번째 요청
-    ResponseEntity<RoomScrollResponse> responseEntity =
-        restTemplate.exchange(uri, HttpMethod.GET, requestEntity, RoomScrollResponse.class);
+    ResponseEntity<RoomInfiniteScrollResponse> responseEntity =
+        restTemplate.exchange(uri, HttpMethod.GET, requestEntity, RoomInfiniteScrollResponse.class);
 
     assertThat(responseEntity.getStatusCode())
         .as("첫 번째 요청: 방 목록 무한 스크롤 API 응답 상태 코드가 200 OK가 아닙니다.")
@@ -197,7 +197,8 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
 
       // 다음 요청 수행
       responseEntity =
-          restTemplate.exchange(uri, HttpMethod.GET, requestEntity, RoomScrollResponse.class);
+          restTemplate.exchange(
+              uri, HttpMethod.GET, requestEntity, RoomInfiniteScrollResponse.class);
 
       assertThat(responseEntity.getStatusCode())
           .as("연속 요청: 방 목록 무한 스크롤 API 응답 상태 코드가 200 OK가 아닙니다.")

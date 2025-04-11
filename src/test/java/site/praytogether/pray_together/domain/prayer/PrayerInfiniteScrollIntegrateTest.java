@@ -21,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleScrollResponse;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleInfiniteScrollResponse;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitleInfo;
 import site.praytogether.pray_together.domain.room.model.Room;
@@ -66,7 +66,7 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
   }
 
   @ParameterizedTest(name = "[{index}] {0}")
-  @MethodSource("providePrayerScrollParameters")
+  @MethodSource("providePrayerInfiniteScrollParameters")
   @DisplayName("다양한 파라미터 조합 요청시 기본값으로 정상 처리되어 200 OK 응답")
   void fetch_prayer_contents_list_with_default_values_for_different_params_then_return_200_ok(
       String test, String after) {
@@ -80,14 +80,15 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
     HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
     // when
-    ResponseEntity<PrayerTitleScrollResponse> responseEntity =
-        restTemplate.exchange(uri, HttpMethod.GET, requestEntity, PrayerTitleScrollResponse.class);
+    ResponseEntity<PrayerTitleInfiniteScrollResponse> responseEntity =
+        restTemplate.exchange(
+            uri, HttpMethod.GET, requestEntity, PrayerTitleInfiniteScrollResponse.class);
 
     // then
     assertThat(responseEntity.getStatusCode())
         .as(test + ": 기도 내용 목록 무한 스크롤 API 응답 상태 코드가 200 OK가 아닙니다.")
         .isEqualTo(HttpStatus.OK);
-    PrayerTitleScrollResponse response = responseEntity.getBody();
+    PrayerTitleInfiniteScrollResponse response = responseEntity.getBody();
     assertThat(response).as(test + ": 기도 내용 목록 무한 스크롤 API 응답 결과가 NULL 입니다.").isNotNull();
 
     List<PrayerTitleInfo> titles = response.getPrayerTitles();
@@ -116,7 +117,7 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
       // next when
       responseEntity =
           restTemplate.exchange(
-              uri, HttpMethod.GET, requestEntity, PrayerTitleScrollResponse.class);
+              uri, HttpMethod.GET, requestEntity, PrayerTitleInfiniteScrollResponse.class);
 
       // next then
       assertThat(responseEntity.getStatusCode())
@@ -132,7 +133,7 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
     assertThat(titles).as(test + ": 마지막 요청 결과가 빈 리스트가 아닙니다.").isEmpty();
   }
 
-  private static Stream<Arguments> providePrayerScrollParameters() {
+  private static Stream<Arguments> providePrayerInfiniteScrollParameters() {
     return Stream.of(
         // 기본값 테스트 (after=0)
         Arguments.of("after=0", "0"),

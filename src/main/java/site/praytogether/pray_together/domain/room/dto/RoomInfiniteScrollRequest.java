@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class RoomScrollRequest {
+public class RoomInfiniteScrollRequest {
   private String orderBy;
   private String after;
   private String dir;
 
-  public static RoomScrollRequest of(String orderBy, String after, String dir) {
-    return new RoomScrollRequest(orderBy, after, dir);
+  public static RoomInfiniteScrollRequest of(String orderBy, String after, String dir) {
+    return new RoomInfiniteScrollRequest(orderBy, after, dir);
   }
 }

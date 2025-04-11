@@ -2,6 +2,7 @@ package site.praytogether.pray_together.domain.member_room.repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,8 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
   int deleteByMember_IdAndRoom_Id(Long memberId, Long roomId);
 
   boolean existsByMember_IdAndRoom_Id(Long memberId, Long roomId);
+
+  Optional<MemberRoom> findByMember_IdAndRoom_Id(Long memberId, Long roomId);
 
   @Query(
       """
