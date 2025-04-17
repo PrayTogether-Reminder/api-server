@@ -84,6 +84,10 @@ public class MemberRoomService {
     return memberRoomRepository.findMember_IdAndNameByRoom_Id(roomId);
   }
 
+  public List<Long> fetchMemberIdsInRoom(Long roomId) {
+    return memberRoomRepository.findMember_IdByRoom_Id(roomId);
+  }
+
   public void validateMemberExistInRoom(Long memberId, Long roomId) {
     if (memberRoomRepository.existsByMember_IdAndRoom_Id(memberId, roomId) == false) {
       throw new MemberRoomNotFoundException(memberId, roomId);

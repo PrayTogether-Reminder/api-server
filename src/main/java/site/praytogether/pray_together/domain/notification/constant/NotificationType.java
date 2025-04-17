@@ -5,7 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum NotificationType {
-  PRAYER_COMPLETION,
-  ;
+public class NotificationType {
+  public static final String PRAYER_COMPLETION = "PRAYER_COMPLETION";
 }

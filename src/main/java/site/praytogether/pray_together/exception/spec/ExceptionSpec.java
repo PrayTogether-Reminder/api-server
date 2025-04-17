@@ -7,7 +7,7 @@ public interface ExceptionSpec {
 
   String getCode();
 
-  String getDebugMessage(); // server log message
+  String getDebugMessage();
 
   String name();
 }

@@ -16,7 +16,7 @@ import site.praytogether.pray_together.domain.base.BaseEntity;
     discriminatorType = DiscriminatorType.STRING,
     length = 50)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notification extends BaseEntity {
 
   @Id
