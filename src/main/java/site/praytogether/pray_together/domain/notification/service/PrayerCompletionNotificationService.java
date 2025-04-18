@@ -23,7 +23,7 @@ public class PrayerCompletionNotificationService {
           if (Objects.equals(recipientId, senderId)) return;
           notifications.add(
               PrayerCompletionNotification.builder()
-                  .prayerTitleId(prayerTitle.getCreatedBy())
+                  .prayerTitleId(prayerTitle.getId())
                   .recipientId(recipientId)
                   .senderId(senderId)
                   .message(message)
