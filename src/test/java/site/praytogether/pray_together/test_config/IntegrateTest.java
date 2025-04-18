@@ -8,6 +8,8 @@ import org.springframework.test.context.ActiveProfiles;
 import site.praytogether.pray_together.domain.invitation.repository.InvitationRepository;
 import site.praytogether.pray_together.domain.member.repository.MemberRepository;
 import site.praytogether.pray_together.domain.member_room.repository.MemberRoomRepository;
+import site.praytogether.pray_together.domain.notification.repository.PrayerCompletionNotificationRepository;
+import site.praytogether.pray_together.domain.prayer.respository.PrayerCompletionRepository;
 import site.praytogether.pray_together.domain.prayer.respository.PrayerContentRepository;
 import site.praytogether.pray_together.domain.prayer.respository.PrayerTitleRepository;
 import site.praytogether.pray_together.domain.room.repository.RoomRepository;
@@ -23,6 +25,11 @@ public class IntegrateTest {
   @Autowired protected PrayerTitleRepository prayerTitleRepository;
   @Autowired protected PrayerContentRepository prayerContentRepository;
   @Autowired protected InvitationRepository invitationRepository;
+  @Autowired protected PrayerCompletionRepository prayerCompletionRepository;
+
+  @Autowired
+  protected PrayerCompletionNotificationRepository prayerCompletionNotificationRepository;
+
   @Autowired protected TestUtils testUtils;
 
   private final String API_VERSION = "/api/v1";
@@ -33,6 +40,8 @@ public class IntegrateTest {
 
   protected void cleanRepository() {
     // delete order is very important
+    prayerCompletionRepository.deleteAll();
+    prayerCompletionNotificationRepository.deleteAll();
     invitationRepository.deleteAll();
     prayerContentRepository.deleteAll();
     prayerTitleRepository.deleteAll();
