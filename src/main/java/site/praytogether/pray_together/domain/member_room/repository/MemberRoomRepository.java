@@ -32,6 +32,15 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
   @Query(
       """
+    SELECT mr.member.id
+    FROM MemberRoom mr
+    WHERE mr.room.id = :roomId
+
+""")
+  List<Long> findMember_IdByRoom_Id(Long roomId);
+
+  @Query(
+      """
       SELECT new site.praytogether.pray_together.domain.member_room.model.RoomInfo(
         r.id ,r.name, r.description,mr.createdTime ,mr.isNotification
       )

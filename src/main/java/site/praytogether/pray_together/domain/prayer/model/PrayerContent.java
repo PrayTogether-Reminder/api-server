@@ -43,7 +43,7 @@ public class PrayerContent extends BaseEntity {
   @Column(nullable = false, length = 30)
   private String memberName;
 
-  @Column(nullable = false, columnDefinition = "text")
+  @Column(nullable = false, columnDefinition = "CLOB")
   private String content;
 
   public static PrayerContent create(PrayerTitle title, PrayerRequestContent reqContent) {

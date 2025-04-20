@@ -54,7 +54,7 @@ public class InvitationApplicationService {
   @Transactional
   public MessageResponse inviteMemberToRoom(Long inviterMemberId, InvitationCreateRequest request) {
     memberRoomService.validateMemberExistInRoom(inviterMemberId, request.getRoomId());
-    Member inviter = memberService.getById(inviterMemberId);
+    Member inviter = memberService.fetchById(inviterMemberId);
     Member invitee = memberService.getByEmail(request.getEmail());
     Room roomRef = roomService.getRefOrThrow(request.getRoomId());
     invitationService.create(inviter, invitee, roomRef);

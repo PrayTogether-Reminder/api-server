@@ -17,7 +17,9 @@ public abstract class BaseException extends RuntimeException {
     this.exceptionField = fields;
   }
 
-  public String getLogMessage() {
+  public String
+      getLogMessage() { // todo: Client 메시지는 Global exception 혹은 개별 커스텀 Exception에서 직접 생성하여 처리하기,
+                        // Log는 spec 처리하기
     StringJoiner joiner = new StringJoiner(", ", "[ ", " ]");
     exceptionField.get().forEach((key, value) -> joiner.add(key + "=" + value));
     return String.format(

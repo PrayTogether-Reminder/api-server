@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.prayer.application.PrayerApplicationService;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerCompletionCreateRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerContentResponse;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerCreateRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleInfiniteScrollRequest;
@@ -74,6 +75,16 @@ public class PrayerController {
       @PrincipalId Long memberId,
       @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") @PathVariable Long prayerTitleId) {
     MessageResponse response = prayerApplication.deletePrayer(memberId, prayerTitleId);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @PostMapping("/{prayerTitleId}/completion")
+  public ResponseEntity<MessageResponse> completePrayer(
+      @PrincipalId Long memberId,
+      @NotNull(message = "잘 못된 기도제목 입니다.") @Positive(message = "잘 못된 기도제목 입니다.") @PathVariable
+          Long prayerTitleId,
+      @Valid @RequestBody PrayerCompletionCreateRequest request) {
+    MessageResponse response = prayerApplication.completePrayer(memberId, prayerTitleId, request);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

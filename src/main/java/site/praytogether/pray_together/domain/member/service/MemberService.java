@@ -39,7 +39,7 @@ public class MemberService {
         .orElseThrow(() -> new MemberNotFoundException(email));
   }
 
-  public Member getById(Long id) {
+  public Member fetchById(Long id) {
     return memberRepository.findById(id).orElseThrow(() -> new MemberNotFoundException(id));
   }
 
