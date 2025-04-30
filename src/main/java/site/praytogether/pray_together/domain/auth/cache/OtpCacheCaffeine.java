@@ -2,15 +2,13 @@ package site.praytogether.pray_together.domain.auth.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import site.praytogether.pray_together.domain.auth.exception.OtpNotFoundException;
 
+@RequiredArgsConstructor
 public class OtpCacheCaffeine implements OtpCache {
 
   private final Cache<String, String> cache;
-
-  public OtpCacheCaffeine(Cache<String, String> otpCache) {
-    cache = otpCache;
-  }
 
   @Override
   public void put(String key, String value) {

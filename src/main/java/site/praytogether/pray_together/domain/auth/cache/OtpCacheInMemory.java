@@ -1,16 +1,11 @@
 package site.praytogether.pray_together.domain.auth.cache;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
-@Component
+@RequiredArgsConstructor
 public class OtpCacheInMemory implements OtpCache {
   private final Map<String, String> cache;
-
-  public OtpCacheInMemory() {
-    cache = new ConcurrentHashMap<>();
-  }
 
   @Override
   public void put(String key, String value) {
