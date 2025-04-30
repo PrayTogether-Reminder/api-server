@@ -13,7 +13,7 @@ public class OtpCacheInMemory implements OtpCache {
   }
 
   @Override
-  public void save(String key, String value) {
+  public void put(String key, String value) {
     cache.put(key, value);
   }
 

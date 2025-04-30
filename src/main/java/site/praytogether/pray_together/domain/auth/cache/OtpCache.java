@@ -1,7 +1,7 @@
 package site.praytogether.pray_together.domain.auth.cache;
 
 public interface OtpCache {
-  void save(String key, String value);
+  void put(String key, String value);
 
   String delete(String key);
 
