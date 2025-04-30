@@ -36,4 +36,8 @@ public class CoreConstant {
     public static final String DEFAULT_INFINITE_SCROLL_AFTER = "0";
     public static final int PRAYER_TITLES_INFINITE_SCROLL_SIZE = 7;
   }
+
+  public static class OtpConstant {
+    public static final int OTP_TTL_MINUTE = 3;
+  }
 }

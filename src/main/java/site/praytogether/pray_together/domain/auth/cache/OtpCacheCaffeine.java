@@ -1,21 +1,15 @@
 package site.praytogether.pray_together.domain.auth.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 import site.praytogether.pray_together.domain.auth.exception.OtpNotFoundException;
 
-@Primary
-@Component
 public class OtpCacheCaffeine implements OtpCache {
 
   private final Cache<String, String> cache;
 
-  private OtpCacheCaffeine() {
-    cache = Caffeine.newBuilder().expireAfterWrite(3, TimeUnit.MINUTES).build();
+  public OtpCacheCaffeine(Cache<String, String> otpCache) {
+    cache = otpCache;
   }
 
   @Override
