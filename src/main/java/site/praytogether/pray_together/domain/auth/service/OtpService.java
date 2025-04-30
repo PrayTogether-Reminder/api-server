@@ -38,7 +38,7 @@ public class OtpService {
     } catch (MessagingException e) {
       throw new OtpSendFailException(email);
     }
-    otpCache.save(email, otp); // Todo: set OTP TTL 3 minute
+    otpCache.put(email, otp); // Todo: set OTP TTL 3 minute
   }
 
   public boolean verifyOtp(String email, String otp) {
