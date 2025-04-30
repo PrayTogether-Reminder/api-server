@@ -39,5 +39,6 @@ public class CoreConstant {
 
   public static class OtpConstant {
     public static final int OTP_TTL_MINUTE = 3;
+    public static final int REFRESH_TOKEN_TTL_DAYS = 7;
   }
 }
