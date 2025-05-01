@@ -14,8 +14,8 @@ public enum AuthExceptionSpec implements ExceptionSpec {
   INCORRECT_EMAIL_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH-003", "이메일 또는 비밀번호가 올바르지 않습니다."),
   UNKNOWN_AUTHENTICATION_FAILURE(
       HttpStatus.BAD_REQUEST, "AUTH-004", "Auth Entry Point 에서 알 수 없는 이유로 인증에 실패했습니다."),
-  JWT_EXCEPTION(HttpStatus.BAD_REQUEST, "AUTH-005", "JWT 인증에 실패했습니다."),
-  JWT_EXPIRED(HttpStatus.BAD_REQUEST, "AUTH-006", "JWT가 만료되었습니다."),
+  ACCESS_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "AUTH-005", "JWT(accessToken) 인증에 실패했습니다."),
+  ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH-006", "JWT(accessToken)가 만료되었습니다."),
   REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH-007", "RefreshToken을 cache에서 찾을 수 없습니다."),
   REFRESH_TOKEN_NOT_VALID(HttpStatus.BAD_REQUEST, "AUTH-008", "RefreshToken이 유효하지 않습니다."),
   OTP_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH-009", "email에 해당하는 OTP가 없습니다."),
