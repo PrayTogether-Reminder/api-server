@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RoomInfo {
-  private Long roomId;
+  private Long id;
   private String name;
   private Long memberCnt;
   private String description;
@@ -19,7 +19,7 @@ public class RoomInfo {
 
   public RoomInfo(
       Long id, String name, String description, Instant createdTime, boolean isNotification) {
-    this.roomId = id;
+    this.id = id;
     this.name = name;
     this.memberCnt = 0L;
     this.description = description;

@@ -69,7 +69,7 @@ public class MemberRoomService {
     return roomInfos.stream()
         .collect(
             Collectors.toMap(
-                RoomInfo::getRoomId,
+                RoomInfo::getId,
                 roomInfo -> roomInfo,
                 (existing, replacement) -> existing,
                 LinkedHashMap::new));
