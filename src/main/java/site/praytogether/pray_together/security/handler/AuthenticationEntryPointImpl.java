@@ -1,7 +1,7 @@
 package site.praytogether.pray_together.security.handler;
 
-import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.JWT_EXCEPTION;
-import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.JWT_EXPIRED;
+import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.ACCESS_TOKEN_EXCEPTION;
+import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.ACCESS_TOKEN_EXPIRED;
 import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.UNKNOWN_AUTHENTICATION_FAILURE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,11 +61,11 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     String code;
 
     if (e instanceof ExpiredJwtException) {
-      status = JWT_EXPIRED.getStatus().value();
-      code = JWT_EXPIRED.getCode();
+      status = ACCESS_TOKEN_EXPIRED.getStatus().value();
+      code = ACCESS_TOKEN_EXPIRED.getCode();
     } else {
-      status = JWT_EXCEPTION.getStatus().value();
-      code = JWT_EXPIRED.getCode();
+      status = ACCESS_TOKEN_EXCEPTION.getStatus().value();
+      code = ACCESS_TOKEN_EXCEPTION.getCode();
     }
 
     ExceptionResponse errorResponse = ExceptionResponse.of(status, code, message);
