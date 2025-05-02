@@ -124,7 +124,7 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
         .isSortedAccordingTo(
             (room1, room2) -> room2.getJoinedTime().compareTo(room1.getJoinedTime()));
 
-    assertThat(rooms).as("모든 방의 ID가 홀수여야 합니다.").allMatch(room -> room.getRoomId() % 2 == 1);
+    assertThat(rooms).as("모든 방의 ID가 홀수여야 합니다.").allMatch(room -> room.getId() % 2 == 1);
   }
 
   private static Stream<Arguments> provideRoomInfiniteScrollParameters() {
@@ -183,7 +183,7 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
           .isSortedAccordingTo(
               (room1, room2) -> room2.getJoinedTime().compareTo(room1.getJoinedTime()));
 
-      assertThat(rooms).as("모든 방의 ID가 홀수여야 합니다.").allMatch(room -> room.getRoomId() % 2 == 1);
+      assertThat(rooms).as("모든 방의 ID가 홀수여야 합니다.").allMatch(room -> room.getId() % 2 == 1);
 
       // 다음 요청 준비
       RoomInfo lastRoom = rooms.get(rooms.size() - 1);
