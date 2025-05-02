@@ -12,6 +12,7 @@ import site.praytogether.pray_together.domain.auth.exception.RefreshTokenNotVali
 import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
 import site.praytogether.pray_together.domain.auth.service.OtpService;
 import site.praytogether.pray_together.domain.auth.service.RefreshTokenService;
+import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.security.service.JwtService;
 
@@ -42,22 +43,25 @@ public class AuthApplicationService {
     return otpService.verifyOtp(request.getEmail(), request.getOtp());
   }
 
-  public AuthTokenReissueResponse reissueAuthToken(
-      PrayTogetherPrincipal principal, AuthTokenReissueRequest request) {
-
-    String memberId = String.valueOf(principal.getId());
-    refreshTokenService.validateRefreshTokenExist(memberId, request.getRefreshToken());
-
+  public AuthTokenReissueResponse reissueAuthToken(AuthTokenReissueRequest request) {
+    Long memberId = 0L;
     try {
+      String refreshToken = request.getRefreshToken();
+      memberId = jwtService.extractMemberId(refreshToken);
+      refreshTokenService.validateRefreshTokenExist(String.valueOf(memberId), refreshToken);
+
       jwtService.isValid(request.getRefreshToken());
     } catch (JwtException e) {
-      throw new RefreshTokenNotValidException(Long.valueOf(memberId));
+      throw new RefreshTokenNotValidException(memberId);
     }
 
-    refreshTokenService.delete(memberId);
+    refreshTokenService.delete(String.valueOf(memberId));
+    Member member = memberService.fetchById(memberId);
+    PrayTogetherPrincipal principal =
+        PrayTogetherPrincipal.builder().id(member.getId()).email(member.getEmail()).build();
     String access = jwtService.issueAccessToken(principal);
     String refresh = jwtService.issueRefreshToken(principal);
-    refreshTokenService.save(memberId, refresh);
+    refreshTokenService.save(String.valueOf(memberId), refresh);
 
     return AuthTokenReissueResponse.of(access, refresh);
   }

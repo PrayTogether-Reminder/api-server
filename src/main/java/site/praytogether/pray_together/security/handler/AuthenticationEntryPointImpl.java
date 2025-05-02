@@ -70,6 +70,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     ExceptionResponse errorResponse = ExceptionResponse.of(status, code, message);
     response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+    response.setStatus(status);
   }
 
   private String findJwtExceptionMessage(JwtException jwtException) {

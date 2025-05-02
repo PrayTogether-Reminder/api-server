@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +17,6 @@ import site.praytogether.pray_together.domain.auth.dto.AuthTokenReissueResponse;
 import site.praytogether.pray_together.domain.auth.dto.EmailOtpRequest;
 import site.praytogether.pray_together.domain.auth.dto.OtpVerifyRequest;
 import site.praytogether.pray_together.domain.auth.dto.SignupRequest;
-import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 
 @RestController
@@ -67,11 +65,10 @@ public class AuthController {
 
   @PostMapping("/reissue-token")
   public ResponseEntity<AuthTokenReissueResponse> reissueRefreshToken(
-      @AuthenticationPrincipal PrayTogetherPrincipal principal,
       @Valid @RequestBody AuthTokenReissueRequest request) {
-    log.info("[API] JWT 재발급 요청 시작 memberId={}", principal.getId());
-    AuthTokenReissueResponse response = authApplication.reissueAuthToken(principal, request);
-    log.info("[API] JWT 재발급 요청 종료 memberId={}", principal.getId());
+    log.info("[API] JWT 재발급 요청 시작");
+    AuthTokenReissueResponse response = authApplication.reissueAuthToken(request);
+    log.info("[API] JWT 재발급 요청 종료");
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }
