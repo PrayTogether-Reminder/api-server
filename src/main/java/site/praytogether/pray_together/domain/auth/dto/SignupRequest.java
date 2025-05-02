@@ -2,7 +2,6 @@ package site.praytogether.pray_together.domain.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -22,6 +21,7 @@ public class SignupRequest {
 
   @NotBlank(message = "비밀번호를 입력해 주세요.")
   @Size(min = 6, max = 15, message = "비밀번호는 6자 이상 15자 이하로 입력해 주세요.")
-  @Pattern(regexp = "^.*[!@#$%^&*(),.?\":{}|<>].*$", message = "비밀번호는 최소 1개 이상의 특수 문자를 포함해야 합니다.")
+  //  @Pattern(regexp = "^.*[!@#$%^&*(),.?\":{}|<>].*$", message = "비밀번호는 최소 1개 이상의 특수 문자를 포함해야
+  // 합니다.")
   private final String password;
 }
