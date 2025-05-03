@@ -15,7 +15,7 @@ public interface PrayerTitleRepository extends JpaRepository<PrayerTitle, Long> 
       """
     SELECT pt
     FROM PrayerTitle pt
-    JOIN FETCH pt.prayerContents
+    LEFT JOIN FETCH pt.prayerContents
     WHERE pt.id = :titleId
 """)
   Optional<PrayerTitle> findByIdWithContents(Long titleId);
