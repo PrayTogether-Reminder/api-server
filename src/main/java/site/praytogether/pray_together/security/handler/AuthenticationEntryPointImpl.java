@@ -2,6 +2,7 @@ package site.praytogether.pray_together.security.handler;
 
 import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.ACCESS_TOKEN_EXCEPTION;
 import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.ACCESS_TOKEN_EXPIRED;
+import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.AUTHENTICATION_FAIL;
 import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.UNKNOWN_AUTHENTICATION_FAILURE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -34,16 +36,35 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
       HttpServletResponse response,
       AuthenticationException authException)
       throws IOException {
-    logger.error("인증 실패 예외 타입={}", authException.getCause().getClass());
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setCharacterEncoding("UTF-8");
+    response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-    if (authException.getCause() instanceof JwtException) {
+    if (authException.getCause() == null) { // 인증이 없는 요청시 예외 발생
+      setUnAuthorizationExceptionResponse(response);
+      return;
+    }
+
+    logger.error("인증 실패 예외 타입={}", authException.getCause().getClass());
+
+    if (authException.getCause() instanceof JwtException) { // JWT 관련 예외 발생
       setJwtExceptionResponse(response, (JwtException) authException.getCause());
       return;
     }
 
-    response.setStatus(UNKNOWN_AUTHENTICATION_FAILURE.getStatus().value());
+    setDefaultResponse(response); // 알 수 없는 예외 발생
+  }
+
+  private void setUnAuthorizationExceptionResponse(HttpServletResponse response)
+      throws IOException {
+    logger.error("인증되지 않은 요청입니다.");
+    ExceptionResponse exceptionResponse =
+        ExceptionResponse.of(
+            AUTHENTICATION_FAIL.getStatus().value(), AUTHENTICATION_FAIL.getCode(), "로그인을 해주세요.");
+    response.getWriter().write(objectMapper.writeValueAsString(exceptionResponse));
+  }
+
+  private void setDefaultResponse(HttpServletResponse response) throws IOException {
     ExceptionResponse errorResponse =
         ExceptionResponse.of(
             UNKNOWN_AUTHENTICATION_FAILURE.getStatus().value(),
@@ -67,10 +88,9 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
       status = ACCESS_TOKEN_EXCEPTION.getStatus().value();
       code = ACCESS_TOKEN_EXCEPTION.getCode();
     }
-
+    response.setStatus(status);
     ExceptionResponse errorResponse = ExceptionResponse.of(status, code, message);
     response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-    response.setStatus(status);
   }
 
   private String findJwtExceptionMessage(JwtException jwtException) {

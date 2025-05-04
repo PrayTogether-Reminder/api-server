@@ -49,8 +49,10 @@ public class SecurityConfig {
             JwtLogoutFilter.class)
         .addFilterBefore(
             new JwtValidationFilter(jwtService, authenticationEntryPoint), JwtAuthFilter.class)
+        .exceptionHandling(
+            exceptions -> exceptions.authenticationEntryPoint(authenticationEntryPoint))
         .csrf(AbstractHttpConfigurer::disable)
-        .anonymous(AbstractHttpConfigurer::disable)
+        //        .anonymous(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
         .build();
   }
