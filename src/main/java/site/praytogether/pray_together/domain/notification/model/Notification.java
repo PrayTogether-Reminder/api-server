@@ -17,7 +17,7 @@ import site.praytogether.pray_together.domain.base.BaseEntity;
     length = 50)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notification extends BaseEntity {
+public abstract class Notification extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_seq_generator")
