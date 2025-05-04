@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,13 @@ import site.praytogether.pray_together.domain.room.model.RoomRole;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Builder
-@Table(name = "member_room")
+@Table(
+    name = "member_room",
+    uniqueConstraints = {
+      @UniqueConstraint(
+          name = "uk_member_room_member_id_room_id",
+          columnNames = {"member_id", "room_id"})
+    })
 @SequenceGenerator(
     name = "MEMBER_ROOM_SEQ_GENERATOR",
     sequenceName = "MEMBER_ROOM_SEQ",

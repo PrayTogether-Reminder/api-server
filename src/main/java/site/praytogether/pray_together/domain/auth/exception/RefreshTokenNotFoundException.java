@@ -4,6 +4,10 @@ import site.praytogether.pray_together.exception.ExceptionField;
 
 public class RefreshTokenNotFoundException extends AuthException {
 
+  public RefreshTokenNotFoundException() {
+    this(ExceptionField.builder().build());
+  }
+
   public RefreshTokenNotFoundException(Long memberId) {
     this(ExceptionField.builder().add("memberId", memberId).build());
   }

@@ -3,6 +3,7 @@ package site.praytogether.pray_together.domain.auth.cache;
 import com.github.benmanes.caffeine.cache.Cache;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import site.praytogether.pray_together.domain.auth.exception.RefreshTokenNotFoundException;
 
 @RequiredArgsConstructor
 public class RefreshTokenCaffeine implements RefreshTokenCache {
@@ -22,7 +23,8 @@ public class RefreshTokenCaffeine implements RefreshTokenCache {
 
   @Override
   public String get(String key) {
-    return Optional.ofNullable(cache.getIfPresent(key)).orElseThrow(); // todo : 커스텀 예외 추가
+    return Optional.ofNullable(cache.getIfPresent(key))
+        .orElseThrow(RefreshTokenNotFoundException::new);
   }
 
   @Override

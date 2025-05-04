@@ -21,7 +21,7 @@ public class PrayerCompletionNotification extends Notification {
   private Long prayerTitleId;
 
   @Builder
-  public PrayerCompletionNotification(
+  private PrayerCompletionNotification(
       Long senderId, Long recipientId, String message, Long prayerTitleId) {
     super(null, senderId, recipientId, message);
     this.prayerTitleId = prayerTitleId;

@@ -86,7 +86,7 @@ public class InvitationUpdateStatusIntegrateTest extends IntegrateTest {
 
     // when
     ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.exchange(url, HttpMethod.POST, requestEntity, MessageResponse.class);
+        restTemplate.exchange(url, HttpMethod.PATCH, requestEntity, MessageResponse.class);
 
     // then
     assertThat(responseEntity.getStatusCode())
@@ -149,7 +149,7 @@ public class InvitationUpdateStatusIntegrateTest extends IntegrateTest {
 
     // when
     ResponseEntity<ExceptionResponse> responseEntity =
-        restTemplate.exchange(url, HttpMethod.POST, requestEntity, ExceptionResponse.class);
+        restTemplate.exchange(url, HttpMethod.PATCH, requestEntity, ExceptionResponse.class);
 
     // then
     assertThat(responseEntity.getStatusCode())
@@ -215,7 +215,7 @@ public class InvitationUpdateStatusIntegrateTest extends IntegrateTest {
 
     // when
     ResponseEntity<ExceptionResponse> responseEntity =
-        restTemplate.exchange(url, HttpMethod.POST, requestEntity, ExceptionResponse.class);
+        restTemplate.exchange(url, HttpMethod.PATCH, requestEntity, ExceptionResponse.class);
 
     // then
     assertThat(responseEntity.getStatusCode())

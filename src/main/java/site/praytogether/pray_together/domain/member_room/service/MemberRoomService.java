@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.model.MemberIdName;
+import site.praytogether.pray_together.domain.member_room.exception.MemberRoomAlreadyExistException;
 import site.praytogether.pray_together.domain.member_room.exception.MemberRoomNotFoundException;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCount;
@@ -91,6 +92,12 @@ public class MemberRoomService {
   public void validateMemberExistInRoom(Long memberId, Long roomId) {
     if (memberRoomRepository.existsByMember_IdAndRoom_Id(memberId, roomId) == false) {
       throw new MemberRoomNotFoundException(memberId, roomId);
+    }
+  }
+
+  public void validateMemberNotExistInRoom(Long memberId, Long roomId) {
+    if (memberRoomRepository.existsByMember_IdAndRoom_Id(memberId, roomId) == true) {
+      throw new MemberRoomAlreadyExistException(memberId, roomId);
     }
   }
 }

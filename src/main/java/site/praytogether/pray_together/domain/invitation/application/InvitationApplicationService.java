@@ -56,6 +56,7 @@ public class InvitationApplicationService {
     memberRoomService.validateMemberExistInRoom(inviterMemberId, request.getRoomId());
     Member inviter = memberService.fetchById(inviterMemberId);
     Member invitee = memberService.getByEmail(request.getEmail());
+    memberRoomService.validateMemberNotExistInRoom(invitee.getId(), request.getRoomId());
     Room roomRef = roomService.getRefOrThrow(request.getRoomId());
     invitationService.create(inviter, invitee, roomRef);
     return MessageResponse.of("초대를 완료했습니다.");
