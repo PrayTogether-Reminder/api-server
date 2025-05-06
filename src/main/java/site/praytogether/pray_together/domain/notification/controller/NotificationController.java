@@ -1,5 +1,6 @@
 package site.praytogether.pray_together.domain.notification.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class NotificationController {
 
   @PostMapping("fcm-token")
   public ResponseEntity<Void> registerFcmToken(
-      @PrincipalId Long memberId, @RequestBody FcmTokenRegisterRequest request) {
+      @PrincipalId Long memberId, @Valid @RequestBody FcmTokenRegisterRequest request) {
     notificationApplication.registerFcmToken(request, memberId);
     return ResponseEntity.status(HttpStatus.OK).build();
   }
