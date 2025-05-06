@@ -20,6 +20,8 @@ public class NotificationApplicationService {
   public void registerFcmToken(FcmTokenRegisterRequest request, Long memberId) {
     Member memberRef = memberService.getRefOrThrow(memberId);
     FcmToken fcmToken = fcmService.create(request, memberRef);
-    fcmService.save(fcmToken);
+    if (fcmService.isExist(fcmToken)) {
+      fcmService.save(fcmToken);
+    }
   }
 }

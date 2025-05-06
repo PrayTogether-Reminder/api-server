@@ -19,4 +19,8 @@ public class FcmService {
   public FcmToken save(FcmToken fcmToken) {
     return fcmTokenRepository.save(fcmToken);
   }
+
+  public boolean isExist(FcmToken fcmToken) {
+    return fcmTokenRepository.existsByTokenAndMember(fcmToken.getToken(), fcmToken.getMember());
+  }
 }
