@@ -9,19 +9,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
-import site.praytogether.pray_together.domain.notification.application.NotificationApplicationService;
+import site.praytogether.pray_together.domain.notification.application.FcmTokenApplicationService;
 import site.praytogether.pray_together.domain.notification.dto.FcmTokenRegisterRequest;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/notifications")
-public class NotificationController {
-  private final NotificationApplicationService notificationApplication;
+@RequestMapping("/api/v1/fcm-token")
+public class FcmTokenController {
+  private final FcmTokenApplicationService fcmTokenApplication;
 
-  @PostMapping("fcm-token")
+  @PostMapping
   public ResponseEntity<Void> registerFcmToken(
       @PrincipalId Long memberId, @Valid @RequestBody FcmTokenRegisterRequest request) {
-    notificationApplication.registerFcmToken(request, memberId);
+    fcmTokenApplication.registerFcmToken(request, memberId);
     return ResponseEntity.status(HttpStatus.OK).build();
   }
 }

@@ -10,7 +10,9 @@ import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.domain.member_room.service.MemberRoomService;
-import site.praytogether.pray_together.domain.notification.event.EventPublisher;
+import site.praytogether.pray_together.domain.notification.model.FcmToken;
+import site.praytogether.pray_together.domain.notification.service.FcmTokenService;
+import site.praytogether.pray_together.domain.notification.service.NotificationGateway;
 import site.praytogether.pray_together.domain.notification.service.PrayerCompletionNotificationService;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerCompletionCreateRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerContentResponse;
@@ -39,7 +41,8 @@ public class PrayerApplicationService {
   private final MemberService memberService;
   private final PrayerCompletionService completionService;
   private final PrayerCompletionNotificationService notificationService;
-  private final EventPublisher eventPublisher;
+  private final FcmTokenService fcmTokenService;
+  private final NotificationGateway notificationGateway;
 
   public PrayerContentResponse fetchPrayerContent(Long memberId, Long titleId) {
     validateMemberExistInRoomByTitleId(memberId, titleId);
@@ -81,18 +84,18 @@ public class PrayerApplicationService {
   }
 
   @Transactional
-  public MessageResponse completePrayer(
+  public MessageResponse completePrayerAndNotify(
       Long senderId, Long prayerTitleId, PrayerCompletionCreateRequest request) {
     validateMemberExistInRoomByTitleId(senderId, prayerTitleId);
     PrayerTitle prayerTitle = titleService.fetchById(prayerTitleId);
     completionService.create(senderId, prayerTitle);
 
     List<Long> memberIds = memberRoomService.fetchMemberIdsInRoom(request.getRoomId());
-    Member member = memberService.fetchById(senderId);
-    String message = String.format(PrayerCompletion, member.getName(), prayerTitle.getTitle());
+    Member sender = memberService.fetchById(senderId);
+    String message = String.format(PrayerCompletion, sender.getName(), prayerTitle.getTitle());
     notificationService.create(senderId, memberIds, message, prayerTitle);
-
-    eventPublisher.publishPrayerComplete();
+    List<FcmToken> fcmTokens = fcmTokenService.fetchTokensByMemberIds(memberIds);
+    notificationGateway.notifyCompletePrayer(fcmTokens, sender.getName());
     return MessageResponse.of("기도 완료 알림을 전송했습니다.");
   }
 

@@ -84,7 +84,8 @@ public class PrayerController {
       @NotNull(message = "잘 못된 기도제목 입니다.") @Positive(message = "잘 못된 기도제목 입니다.") @PathVariable
           Long prayerTitleId,
       @Valid @RequestBody PrayerCompletionCreateRequest request) {
-    MessageResponse response = prayerApplication.completePrayer(memberId, prayerTitleId, request);
+    MessageResponse response =
+        prayerApplication.completePrayerAndNotify(memberId, prayerTitleId, request);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }
