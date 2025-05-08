@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.notification.service;
+package site.praytogether.pray_together.domain.notification.gateway;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -8,8 +8,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import site.praytogether.pray_together.domain.fcm_token.model.FcmToken;
 import site.praytogether.pray_together.domain.notification.constant.NotificationMessageFormat;
-import site.praytogether.pray_together.domain.notification.model.FcmToken;
 
 @Slf4j
 @Service

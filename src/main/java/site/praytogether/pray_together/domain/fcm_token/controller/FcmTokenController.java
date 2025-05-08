@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.notification.controller;
+package site.praytogether.pray_together.domain.fcm_token.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
-import site.praytogether.pray_together.domain.notification.application.FcmTokenApplicationService;
-import site.praytogether.pray_together.domain.notification.dto.FcmTokenRegisterRequest;
+import site.praytogether.pray_together.domain.fcm_token.application.FcmTokenApplicationService;
+import site.praytogether.pray_together.domain.fcm_token.dto.FcmTokenRegisterRequest;
 
 @RestController
 @RequiredArgsConstructor

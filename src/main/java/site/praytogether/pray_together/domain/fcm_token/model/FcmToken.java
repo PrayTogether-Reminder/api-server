@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.notification.model;
+package site.praytogether.pray_together.domain.fcm_token.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,8 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.praytogether.pray_together.domain.base.BaseEntity;
+import site.praytogether.pray_together.domain.fcm_token.dto.FcmTokenRegisterRequest;
 import site.praytogether.pray_together.domain.member.model.Member;
-import site.praytogether.pray_together.domain.notification.dto.FcmTokenRegisterRequest;
 
 @Entity
 @Getter

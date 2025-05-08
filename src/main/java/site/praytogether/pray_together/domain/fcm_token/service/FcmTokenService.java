@@ -1,13 +1,13 @@
-package site.praytogether.pray_together.domain.notification.service;
+package site.praytogether.pray_together.domain.fcm_token.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import site.praytogether.pray_together.domain.fcm_token.dto.FcmTokenRegisterRequest;
+import site.praytogether.pray_together.domain.fcm_token.model.FcmToken;
+import site.praytogether.pray_together.domain.fcm_token.repository.FcmTokenRepository;
 import site.praytogether.pray_together.domain.member.model.Member;
-import site.praytogether.pray_together.domain.notification.dto.FcmTokenRegisterRequest;
-import site.praytogether.pray_together.domain.notification.model.FcmToken;
-import site.praytogether.pray_together.domain.notification.repository.FcmTokenRepository;
 
 @Slf4j
 @Service

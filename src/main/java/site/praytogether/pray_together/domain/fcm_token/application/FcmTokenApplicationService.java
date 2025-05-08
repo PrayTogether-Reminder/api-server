@@ -1,13 +1,13 @@
-package site.praytogether.pray_together.domain.notification.application;
+package site.praytogether.pray_together.domain.fcm_token.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.praytogether.pray_together.domain.fcm_token.dto.FcmTokenRegisterRequest;
+import site.praytogether.pray_together.domain.fcm_token.model.FcmToken;
+import site.praytogether.pray_together.domain.fcm_token.service.FcmTokenService;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
-import site.praytogether.pray_together.domain.notification.dto.FcmTokenRegisterRequest;
-import site.praytogether.pray_together.domain.notification.model.FcmToken;
-import site.praytogether.pray_together.domain.notification.service.FcmTokenService;
 
 @Service
 @Transactional

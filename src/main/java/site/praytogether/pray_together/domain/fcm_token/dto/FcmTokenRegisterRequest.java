@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.notification.dto;
+package site.praytogether.pray_together.domain.fcm_token.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
