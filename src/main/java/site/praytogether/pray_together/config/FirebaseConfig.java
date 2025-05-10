@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 
 @Configuration
+@Profile("!test")
 public class FirebaseConfig {
 
   @Bean

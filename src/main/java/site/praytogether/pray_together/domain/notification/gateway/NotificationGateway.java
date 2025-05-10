@@ -7,25 +7,21 @@ import com.google.firebase.messaging.Notification;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import site.praytogether.pray_together.domain.fcm_token.model.FcmToken;
-import site.praytogether.pray_together.domain.notification.constant.NotificationMessageFormat;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
 public class NotificationGateway {
   private final FirebaseMessaging firebaseMessaging;
 
-  public void notifyCompletePrayer(List<FcmToken> fcmTokens, String senderName) {
-    fcmTokens.forEach(token -> sendCompletePrayerMessage(token, senderName));
+  public void notifyCompletePrayer(List<FcmToken> fcmTokens, String message) {
+    fcmTokens.forEach(token -> sendCompletePrayerMessage(token, message));
   }
 
-  private void sendCompletePrayerMessage(FcmToken token, String senderName) {
-    sendMessage(
-        token.getToken(),
-        "기도 완료 알림",
-        String.format(NotificationMessageFormat.PrayerCompletion, senderName));
+  private void sendCompletePrayerMessage(FcmToken token, String message) {
+    sendMessage(token.getToken(), "기도 완료 알림", message);
   }
 
   public void sendMessage(String token, String title, String body) {
