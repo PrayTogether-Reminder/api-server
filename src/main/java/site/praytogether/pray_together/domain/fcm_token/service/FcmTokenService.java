@@ -30,4 +30,8 @@ public class FcmTokenService {
   public List<FcmToken> fetchTokensByMemberIds(List<Long> memberIds) {
     return fcmTokenRepository.findByMemberIds(memberIds);
   }
+
+  public void deleteByMemberId(Long memberId) {
+    fcmTokenRepository.deleteByMember_Id(memberId);
+  }
 }

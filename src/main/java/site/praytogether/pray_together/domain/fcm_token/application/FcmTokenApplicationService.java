@@ -20,8 +20,7 @@ public class FcmTokenApplicationService {
   public void registerFcmToken(FcmTokenRegisterRequest request, Long memberId) {
     Member memberRef = memberService.getRefOrThrow(memberId);
     FcmToken fcmToken = fcmTokenService.create(request, memberRef);
-    if (!fcmTokenService.isExist(fcmToken)) {
-      fcmTokenService.save(fcmToken);
-    }
+    fcmTokenService.deleteByMemberId(memberRef.getId());
+    fcmTokenService.save(fcmToken);
   }
 }
