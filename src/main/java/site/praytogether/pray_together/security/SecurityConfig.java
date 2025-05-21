@@ -52,7 +52,6 @@ public class SecurityConfig {
         .exceptionHandling(
             exceptions -> exceptions.authenticationEntryPoint(authenticationEntryPoint))
         .csrf(AbstractHttpConfigurer::disable)
-        //        .anonymous(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
         .build();
   }
