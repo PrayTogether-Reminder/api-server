@@ -19,4 +19,6 @@ public interface FcmTokenRepository extends JpaRepository<FcmToken, Long> {
   List<FcmToken> findByMemberIds(List<Long> memberIds);
 
   void deleteByMember_Id(Long memberId);
+
+  void deleteFcmTokenByTokenAndMember_Id(String token, Long member_id);
 }

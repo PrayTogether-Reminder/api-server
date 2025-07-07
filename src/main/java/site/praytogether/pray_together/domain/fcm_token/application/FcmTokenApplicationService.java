@@ -3,6 +3,7 @@ package site.praytogether.pray_together.domain.fcm_token.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.praytogether.pray_together.domain.fcm_token.dto.FcmTokenDeleteRequest;
 import site.praytogether.pray_together.domain.fcm_token.dto.FcmTokenRegisterRequest;
 import site.praytogether.pray_together.domain.fcm_token.model.FcmToken;
 import site.praytogether.pray_together.domain.fcm_token.service.FcmTokenService;
@@ -22,5 +23,9 @@ public class FcmTokenApplicationService {
     FcmToken fcmToken = fcmTokenService.create(request, memberRef);
     fcmTokenService.deleteByMemberId(memberRef.getId());
     fcmTokenService.save(fcmToken);
+  }
+
+  public void deleteFcmToken(FcmTokenDeleteRequest request,Long memberId) {
+    fcmTokenService.deleteByToken(request.getFcmToken(),memberId);
   }
 }
