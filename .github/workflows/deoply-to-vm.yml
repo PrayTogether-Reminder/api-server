@@ -37,23 +37,44 @@ jobs:
             # 최신 이미지 Pull
             docker pull ghcr.io/${{ steps.repo.outputs.repository }}:latest
             
-            # 환경변수 로드와 동시에 컨테이너 실행
-            source ~/load-secret.sh && docker run -d \
-              --name pray-together-api \
-              --restart unless-stopped \
-              --memory=600m \
-              -p 8080:8080 \
-              -e ORACLE_DB_DRIVER="$ORACLE_DB_DRIVER" \
-              -e ORACLE_DB_URL="$ORACLE_DB_URL" \
-              -e ORACLE_DB_USERNAME="$ORACLE_DB_USERNAME" \
-              -e ORACLE_DB_PASSWORD="$ORACLE_DB_PASSWORD" \
-              -e ORACLE_DB_DIALECT="$ORACLE_DB_DIALECT" \
-              -e MAIL_USERNAME="$MAIL_USERNAME" \
-              -e MAIL_PASSWORD="$MAIL_PASSWORD" \
-              -e JWT_SECRET_KEY="$JWT_SECRET_KEY" \
-              -e ACCESS_EXPIRE_TIME="$ACCESS_EXPIRE_TIME" \
-              -e REFRESH_EXPIRE_TIME="$REFRESH_EXPIRE_TIME" \
-              ghcr.io/${{ steps.repo.outputs.repository }}:latest
+            # 환경변수 로드 및 docker.env 파일 생성
+            source ~/load-secret.sh
+            
+            # docker.env 파일 생성
+            cat > ~/docker.env << EOF
+            ORACLE_DB_DRIVER=$ORACLE_DB_DRIVER
+            ORACLE_DB_URL=$ORACLE_DB_URL
+            ORACLE_DB_USERNAME=$ORACLE_DB_USERNAME
+            ORACLE_DB_PASSWORD=$ORACLE_DB_PASSWORD
+            ORACLE_DB_DIALECT=$ORACLE_DB_DIALECT
+            MAIL_USERNAME=$MAIL_USERNAME
+            MAIL_PASSWORD=$MAIL_PASSWORD
+            JWT_SECRET_KEY=$JWT_SECRET_KEY
+            ACCESS_EXPIRE_TIME=$ACCESS_EXPIRE_TIME
+            REFRESH_EXPIRE_TIME=$REFRESH_EXPIRE_TIME
+            EOF
+            
+            # docker.env 파일 확인 (디버깅용)
+            echo "=== docker.env 파일 생성 확인 ==="
+            echo "파일 존재: $([ -f ~/docker.env ] && echo 'YES' || echo 'NO')"
+            echo "파일 크기: $(wc -l < ~/docker.env) lines"
+            
+            # 민감하지 않은 환경변수만 출력 (디버깅용)
+            echo "=== 환경변수 설정 확인 ==="
+            grep -E "ORACLE_DB_DRIVER|ORACLE_DB_DIALECT|ACCESS_EXPIRE_TIME|REFRESH_EXPIRE_TIME" ~/docker.env || echo "일부 환경변수 누락"
+            
+            # 컨테이너 실행
+            docker run -d \
+            --name pray-together-api \
+            --restart unless-stopped \
+            --memory=600m \
+            -p 8080:8080 \
+            -v /home/user/pray-log:/root/log-pray \
+            --log-driver json-file \
+            --log-opt max-size=50m \
+            --log-opt max-file=10 \
+            --env-file ~/docker.env \
+            ghcr.io/${{ steps.repo.outputs.repository }}:latest
 
       - name: Verify deployment
         uses: appleboy/ssh-action@v1.0.0

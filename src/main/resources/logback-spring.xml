@@ -1,5 +1,5 @@
 <configuration>
-  <property name="LOG_ROOT_PATH" value="${user.home}/pray-log"/>
+  <property name="LOG_ROOT_PATH" value="${user.home}/log-pray"/>
   <property name="LOG_FILE_NAME" value="springboot-log"/>
 
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
