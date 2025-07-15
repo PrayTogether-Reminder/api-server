@@ -38,4 +38,8 @@ public class FcmTokenService {
   public void deleteByToken(String token,Long memberId) {
     fcmTokenRepository.deleteFcmTokenByTokenAndMember_Id(token, memberId);
   }
+
+  public void deleteByToken(String token) {
+    fcmTokenRepository.deleteFcmTokenByToken(token);
+  }
 }

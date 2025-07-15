@@ -95,7 +95,7 @@ public class PrayerApplicationService {
     String message = String.format(PrayerCompletion, sender.getName(), prayerTitle.getTitle());
     notificationService.create(senderId, memberIds, message, prayerTitle);
     List<FcmToken> fcmTokens = fcmTokenService.fetchTokensByMemberIds(memberIds);
-    notificationGateway.notifyCompletePrayer(fcmTokens, message);
+    notificationGateway.notifyCompletePrayer(fcmTokens, message, fcmTokenService::deleteByToken);
     return MessageResponse.of("기도 완료 알림을 전송했습니다.");
   }
 
