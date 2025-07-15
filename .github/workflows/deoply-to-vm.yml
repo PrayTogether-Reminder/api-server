@@ -1,0 +1,76 @@
+name: Deploy to Oracle Cloud VM
+
+on:
+  workflow_run:
+    workflows: ["Docker Build and Push to GHCR"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Deploy to Oracle Cloud VM
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SUB_VM_HOST }}
+          username: ${{ secrets.SUB_VM_USERNAME }}
+          key: ${{ secrets.SUB_VM_SSH_KEY }}
+          port: 22
+          script: |
+            # GitHub Container Registry 로그인
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            
+            # 기존 컨테이너 중지 및 삭제
+            docker stop pray-together-api || true
+            docker rm pray-together-api || true
+            
+            # 기존 이미지 삭제 (선택사항)
+            docker rmi ghcr.io/${{ github.repository }}:latest || true
+            
+            # 최신 이미지 Pull
+            docker pull ghcr.io/${{ github.repository }}:latest
+            
+            # 새 컨테이너 실행
+            docker run -d \
+              --name pray-together-api \
+              --restart unless-stopped \
+              --memory=600m \
+              -p 8080:8080 \
+              ghcr.io/${{ github.repository }}:latest
+
+      - name: Verify deployment
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SUB_VM_HOST }}
+          username: ${{ secrets.SUB_VM_USERNAME }}
+          key: ${{ secrets.SUB_VM_SSH_KEY }}
+          port: 22
+          script: |
+            # 컨테이너 상태 확인
+            sleep 10
+            docker ps -f name=pray-together-api
+            
+            # 애플리케이션 헬스 체크 (선택사항)
+            curl -f http://localhost:8080/actuator/health || echo "Health check failed"
+
+      - name: Send Discord Deployment Status
+        if: always()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          status: ${{ job.status }}
+          color: ${{ job.status == 'success' && '0x00ff00' || '0xff0000' }}
+          title: "[${{ github.repository }}] ${{ job.status == 'success' && '🚀 Deployment Successful' || '❌ Deployment Failed' }}"
+          description: |
+            Oracle Cloud VM deployment status for **${{ github.repository }}**.
+
+            **Target:** Oracle Cloud VM
+            **Image:** `ghcr.io/${{ github.repository }}:latest`
+            **Port:** 8080
+
+            ${{ job.status == 'success' && '✅ Application is running successfully!' || '❌ Deployment failed! Please check the logs.' }}
+          url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          username: "기도함께 도우미"

@@ -2,4 +2,4 @@
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 COPY app/*.jar ./app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0","-jar", "app.jar"]
