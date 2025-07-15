@@ -1,12 +1,15 @@
 name: Docker Build and Push to GHCR
 
 on:
-  repository_dispatch:
-    types: [trigger-docker-workflow]
+  workflow_run:
+    workflows: ["Spring Build With Gradle"]
+    types:
+      - completed
 
 jobs:
   docker-build-and-push:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
       packages: write
@@ -14,14 +17,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.client_payload.sha }}
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Download JAR Artifact
         uses: actions/download-artifact@v4
         with:
-          name: app-jar-${{ github.event.client_payload.sha }}
+          name: app-jar-${{ github.event.workflow_run.head_sha }}
           path: app
-          run-id: ${{ github.event.client_payload.run_id }}
+          run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
@@ -43,7 +46,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        id: docker_build # 빌드 단계 ID (선택사항)
+        id: docker_build
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -60,16 +63,15 @@ jobs:
         uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          status: ${{ job.status }} # (success, failure, cancelled, skipped)
+          status: ${{ job.status }}
           color: ${{ job.status == 'success' && '0x00ff00' || '0xff0000' }}
           title: "[${{ github.repository }}] ${{ job.status == 'success' && '✅ Docker Image Pushed' || '❌ Docker Build/Push Failed' }}"
           description: |
             Docker build & push job status for **${{ github.repository }}**.
 
             **Image:** `ghcr.io/${{ github.repository }}`
-            **Commit:** [`${{ steps.vars.outputs.sha_short }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.event.client_payload.sha }})
+            **Commit:** [`${{ steps.vars.outputs.sha_short }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.event.workflow_run.head_sha }})
 
             ${{ job.status == 'success' && format('**Tags Applied:**\n```{0}```', steps.meta.outputs.tags) || '**Failure detected!** Please check the workflow logs.' }}
           url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           username: "기도함께 도우미"
-          # avatar_url: "봇_이미지_URL"
