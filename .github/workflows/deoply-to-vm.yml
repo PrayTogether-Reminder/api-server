@@ -43,7 +43,7 @@ jobs:
               --restart unless-stopped \
               --memory=600m \
               -p 8080:8080 \
-              -v /home/user/pray-log:/root/pray-log \
+              -v /home/ubuntu/log-pray:/root/log-pray \
               --log-driver json-file \
               --log-opt max-size=50m \
               --log-opt max-file=10 \
