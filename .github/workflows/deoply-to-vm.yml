@@ -39,7 +39,7 @@ jobs:
             
             script: |
               # 환경변수 로드와 동시에 컨테이너 실행
-              source ~/load-secrets.sh && docker run -d \
+              source ~/load-secret.sh && docker run -d \
                 --name pray-together-api \
                 --restart unless-stopped \
                 --memory=600m \
