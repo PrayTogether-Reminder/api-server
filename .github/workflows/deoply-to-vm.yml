@@ -27,9 +27,6 @@ jobs:
             # GitHub Container Registry 로그인
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            # 환경변수 로드
-            source ./load-secrets.sh
-            
             # 기존 컨테이너 중지 및 삭제
             docker stop pray-together-api || true
             docker rm pray-together-api || true
@@ -40,23 +37,24 @@ jobs:
             # 최신 이미지 Pull
             docker pull ghcr.io/${{ steps.repo.outputs.repository }}:latest
             
-            # 새 컨테이너 실행 (환경변수 포함)
-            docker run -d \
-              --name pray-together-api \
-              --restart unless-stopped \
-              --memory=600m \
-              -p 8080:8080 \
-              -e ORACLE_DB_DRIVER="$ORACLE_DB_DRIVER" \
-              -e ORACLE_DB_URL="$ORACLE_DB_URL" \
-              -e ORACLE_DB_USERNAME="$ORACLE_DB_USERNAME" \
-              -e ORACLE_DB_PASSWORD="$ORACLE_DB_PASSWORD" \
-              -e ORACLE_DB_DIALECT="$ORACLE_DB_DIALECT" \
-              -e MAIL_USERNAME="$MAIL_USERNAME" \
-              -e MAIL_PASSWORD="$MAIL_PASSWORD" \
-              -e JWT_SECRET_KEY="$JWT_SECRET_KEY" \
-              -e ACCESS_EXPIRE_TIME="$ACCESS_EXPIRE_TIME" \
-              -e REFRESH_EXPIRE_TIME="$REFRESH_EXPIRE_TIME" \
-              ghcr.io/${{ steps.repo.outputs.repository }}:latest
+            script: |
+              # 환경변수 로드와 동시에 컨테이너 실행
+              source ./load-secrets.sh && docker run -d \
+                --name pray-together-api \
+                --restart unless-stopped \
+                --memory=600m \
+                -p 8080:8080 \
+                -e ORACLE_DB_DRIVER="$ORACLE_DB_DRIVER" \
+                -e ORACLE_DB_URL="$ORACLE_DB_URL" \
+                -e ORACLE_DB_USERNAME="$ORACLE_DB_USERNAME" \
+                -e ORACLE_DB_PASSWORD="$ORACLE_DB_PASSWORD" \
+                -e ORACLE_DB_DIALECT="$ORACLE_DB_DIALECT" \
+                -e MAIL_USERNAME="$MAIL_USERNAME" \
+                -e MAIL_PASSWORD="$MAIL_PASSWORD" \
+                -e JWT_SECRET_KEY="$JWT_SECRET_KEY" \
+                -e ACCESS_EXPIRE_TIME="$ACCESS_EXPIRE_TIME" \
+                -e REFRESH_EXPIRE_TIME="$REFRESH_EXPIRE_TIME" \
+                ghcr.io/${{ steps.repo.outputs.repository }}:latest
 
       - name: Verify deployment
         uses: appleboy/ssh-action@v1.0.0
