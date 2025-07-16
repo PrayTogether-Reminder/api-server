@@ -23,13 +23,13 @@ RUN --mount=type=secret,id=wallet_base64 \
     cat /run/secrets/wallet_base64 | base64 -d | tar -xz -C /app/src/main/resources
 
 # =========================================================================
-# 2. 파일 Secret 처리 (JSON 내용 -> 파일 생성)
+# 2. 파일 Secret 처리 (Base43 -> JSON 내용 -> 파일 생성)
 # =========================================================================
-# 'config_json' id로 secret을 마운트합니다.
-RUN --mount=type=secret,id=firebase_json \
+# id로 secret을 마운트합니다.
+RUN --mount=type=secret,id=firebase_base64 \
     # 먼저 디렉토리를 생성하고 파일을 생성합니다. \
     # Secret 파일 내용을 /app/src/main/resources/pray-together-firebase-adminsdk.json 파일에 씁니다.
-    cat /run/secrets/firebase_json > /app/src/main/resources/pray-together-firebase-adminsdk.json
+    cat /run/secrets/firebase_base64 | base64 -d > /app/src/main/resources/pray-together-firebase-adminsdk.json
 
 ENV SPRING_PROFILES_ACTIVE=prod
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
