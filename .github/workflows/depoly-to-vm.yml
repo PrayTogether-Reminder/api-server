@@ -117,12 +117,10 @@ jobs:
             # 헬스체크 실행
             if check_health; then
               echo "🎉 Deployment successful! Service is healthy."
-              echo "DEPLOYMENT_STATUS=success" >> $GITHUB_ENV
             else
               echo "🚨 Deployment failed! Health check did not pass."
               echo "=== 최근 로그 확인 ==="
               docker logs --tail=50 pray-together-api
-              echo "DEPLOYMENT_STATUS=failed" >> $GITHUB_ENV
               exit 1
             fi
 
