@@ -23,7 +23,8 @@ jobs:
         run : |
           echo '${{secrets.ORACLE_MAIN_WALLET_COMPRESSED_BASE64}}' | base64 -d > main-wallet.tar.gz
           tar -xzf main-wallet.tar.gz -C src/main/resources/
-          chmod -R 600 src/main/resources/main-wallet/
+          find src/main/resources/main-wallet -type f -exec chmod 600 {} \;
+          find src/main/resources/main-wallet -type d -exec chmod 700 {} \;
           rm main-wallet.tar.gz
           
           echo '${{secrets.FIREBASE_ADMIN_SDK_JSON}}' > src/main/resources/pray-together-firebase-adminsdk.json
