@@ -58,17 +58,18 @@ jobs:
               -e ACCESS_EXPIRE_TIME="${{ secrets.ACCESS_EXPIRE_TIME }}" \
               -e REFRESH_EXPIRE_TIME="${{ secrets.REFRESH_EXPIRE_TIME }}" \
               ghcr.io/${{ steps.repo.outputs.repository }}:latest
-      
+            
             # 컨테이너 상태 확인
             echo "=== 컨테이너 상태 확인 ==="
             docker ps | grep pray-together-api || echo "컨테이너 실행 실패"
-      
+            
             # 로그 확인 (시작 부분만)
             echo "=== 애플리케이션 시작 로그 ==="
-            sleep 10
+            sleep 30
             docker logs pray-together-api | head -20
 
-      - name: Verify deployment
+      - name: Health Check and Verify Deployment
+        id: health_check
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SUB_VM_HOST }}
@@ -77,27 +78,96 @@ jobs:
           port: 22
           script: |
             # 컨테이너 상태 확인
-            sleep 10
-            docker ps -f name=pray-together-api
+            echo "=== 컨테이너 상태 확인 ==="
+            if ! docker ps -f name=pray-together-api | grep -q pray-together-api; then
+              echo "❌ 컨테이너가 실행되지 않았습니다."
+              exit 1
+            fi
             
-            # 애플리케이션 헬스 체크 (선택사항)
-            curl -f http://localhost:8080/actuator/health || echo "Health check failed"
+            # 헬스체크 함수 정의
+            check_health() {
+              local max_attempts=5
+              local attempt=1
+            
+              while [ $attempt -le $max_attempts ]; do
+                echo "Health check attempt $attempt/$max_attempts..."
+            
+                # curl로 헬스체크 요청 (타임아웃 20초)
+                response=$(curl -s -w "%{http_code}" --connect-timeout 20 --max-time 20 http://localhost:8080/health 2>/dev/null || echo "000")
+                http_code="${response: -3}"
+                body="${response%???}"
+            
+                echo "HTTP Status: $http_code"
+                echo "Response: $body"
+            
+                # HTTP 상태코드가 200이고 응답에 "healthy"가 포함되어 있는지 확인
+                if [ "$http_code" = "200" ] && echo "$body" | grep -q "healthy"; then
+                  echo "✅ Health check passed! Service is healthy."
+                  return 0
+                fi
+            
+                echo "❌ Health check failed. Retrying in 15 seconds..."
+                sleep 15
+                ((attempt++))
+              done
+            
+              return 1
+            }
+            
+            # 헬스체크 실행
+            if check_health; then
+              echo "🎉 Deployment successful! Service is healthy."
+              echo "DEPLOYMENT_STATUS=success" >> $GITHUB_ENV
+            else
+              echo "🚨 Deployment failed! Health check did not pass."
+              echo "=== 최근 로그 확인 ==="
+              docker logs --tail=50 pray-together-api
+              echo "DEPLOYMENT_STATUS=failed" >> $GITHUB_ENV
+              exit 1
+            fi
 
-      - name: Send Discord Deployment Status
-        if: always()
+      - name: Send Discord Success Notification
+        if: success()
         uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          status: ${{ job.status }}
-          color: ${{ job.status == 'success' && '0x00ff00' || '0xff0000' }}
-          title: "[${{ github.repository }}] ${{ job.status == 'success' && '🚀 Deployment Successful' || '❌ Deployment Failed' }}"
+          status: success
+          color: 0x00ff00
+          title: "[${{ github.repository }}] 🚀 Deployment Successful"
           description: |
-            Oracle Cloud VM deployment status for **${{ github.repository }}**.
+            Oracle Cloud VM deployment completed successfully!
 
             **Target:** Oracle Cloud VM
             **Image:** `ghcr.io/${{ steps.repo.outputs.repository }}:latest`
             **Port:** 8080
+            **Health Check:** ✅ PASSED
 
-            ${{ job.status == 'success' && '✅ Application is running successfully!' || '❌ Deployment failed! Please check the logs.' }}
+            ✅ Application is running and responding to health checks!
+          url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          username: "기도함께 도우미"
+
+      - name: Send Discord Failure Notification
+        if: failure()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          status: failure
+          color: 0xff0000
+          title: "[${{ github.repository }}] ❌ Deployment Failed"
+          description: |
+            Oracle Cloud VM deployment failed!
+
+            **Target:** Oracle Cloud VM
+            **Image:** `ghcr.io/${{ steps.repo.outputs.repository }}:latest`
+            **Port:** 8080
+            **Health Check:** ❌ FAILED
+
+            ❌ Application is not responding to health checks. Please check the logs and container status.
+            
+            **Possible issues:**
+            - Service failed to start properly
+            - Health endpoint is not accessible
+            - Database connection issues
+            - Memory/Resource constraints
           url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           username: "기도함께 도우미"
