@@ -56,6 +56,9 @@ jobs:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          secrets: | 
+            "wallet_base64=${{secrets.ORACLE_MAIN_WALLET_COMPRESSED_BASE64}}"
+            "firebase_json=${{secrets.FIREBASE_ADMIN_SDK_JSON}}"
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Get short commit SHA

@@ -19,17 +19,6 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name : Set Private Folder And File
-        run : |
-          echo '${{secrets.ORACLE_MAIN_WALLET_COMPRESSED_BASE64}}' | base64 -d > main-wallet.tar.gz
-          tar -xzf main-wallet.tar.gz -C src/main/resources/
-          find src/main/resources/main-wallet -type f -exec chmod 600 {} \;
-          find src/main/resources/main-wallet -type d -exec chmod 700 {} \;
-          rm main-wallet.tar.gz
-          
-          echo '${{secrets.FIREBASE_ADMIN_SDK_JSON}}' > src/main/resources/pray-together-firebase-adminsdk.json
-          chmod 600 src/main/resources/pray-together-firebase-adminsdk.json
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -74,9 +63,3 @@ jobs:
           url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           username: "기도함께 도우미"
           # avatar_url: "봇_이미지_URL"
-
-      - name: Clean up sensitive files from workspace
-        if: always()
-        run: |
-          rm -rf src/main/resources/main-wallet/
-          rm -f src/main/resources/pray-together-firebase-adminsdk.json
