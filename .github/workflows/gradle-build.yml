@@ -19,16 +19,13 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-        # 파일 세팅
       - name : Set Private Folder And File
         run : |
-        # Oracle Wallet
           echo '${{secrets.ORACLE_MAIN_WALLET_COMPRESSED_BASE64}}' | base64 -d > main-wallet.tar.gz
           tar -xzf main-wallet.tar.gz -C src/main/resources/
           chmod -R 600 src/main/resources/main-wallet/
           rm main-wallet.tar.gz
           
-        # Firebase
           echo '${{secrets.FIREBASE_ADMIN_SDK_JSON}}' > src/main/resources/pray-together-firebase-adminsdk.json
           chmod 600 src/main/resources/pray-together-firebase-adminsdk.json
 
