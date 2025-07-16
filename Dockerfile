@@ -1,8 +1,8 @@
-# 빌드의 첫 번째 스테이지로 가벼운 Alpine Linux 사용
-FROM alpine:latest as tools
-# apk 패키지 매니저로 coreutils를 설치합니다. (base64, tar 포함)
-# --no-cache 옵션으로 불필요한 캐시를 남기지 않습니다.
-RUN apk add --no-cache coreutils
+FROM ubuntu:22.04 as tools
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    coreutils && \
+    rm -rf /var/lib/apt/lists/*
 
 # JRE만 있는 가벼운 이미지 사용
 FROM eclipse-temurin:17-jre-jammy
