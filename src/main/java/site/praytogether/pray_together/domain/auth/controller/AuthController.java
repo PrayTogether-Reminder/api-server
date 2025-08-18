@@ -40,7 +40,7 @@ public class AuthController {
     authApplication.withdraw(memberId);
     log.info("[API] 회원 탈퇴 요청 종료 memberId={}", memberId);
     return ResponseEntity.status(HttpStatus.OK)
-        .body(MessageResponse.of("회워 탈퇴를 완료했습니다.\n 함께 기도해 주셔 감사합니다."));
+        .body(MessageResponse.of("회원 탈퇴를 완료했습니다.\n 함께 기도해 주셔 감사합니다."));
   }
 
   @PostMapping("/otp/email")

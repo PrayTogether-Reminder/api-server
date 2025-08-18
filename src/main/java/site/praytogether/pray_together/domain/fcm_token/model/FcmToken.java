@@ -15,6 +15,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import site.praytogether.pray_together.domain.base.BaseEntity;
 import site.praytogether.pray_together.domain.fcm_token.dto.FcmTokenRegisterRequest;
 import site.praytogether.pray_together.domain.member.model.Member;
@@ -36,6 +38,7 @@ public class FcmToken extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id", nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Member member;
 
   @Column(name = "token", nullable = false, length = 512)
