@@ -18,4 +18,6 @@ public interface PrayerContentRepository extends JpaRepository<PrayerContent, Lo
     ORDER BY pc.memberName ASC
 """)
   List<PrayerContentInfo> findPrayerContentsByTitleId(Long titleId);
+
+  boolean existsByIdAndPrayerTitleId(Long contentId, Long titleId);
 }
