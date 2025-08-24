@@ -67,7 +67,7 @@ public class PrayerApplicationService {
     return PrayerTitleResponse.of(
         title.getId(), 
         title.getTitle(), 
-        title.getCreatedTime().toString()
+        title.getCreatedTime()
     );
   }
 
