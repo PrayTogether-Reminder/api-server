@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.praytogether.pray_together.domain.prayer.exception.PrayerContentNotFoundException;
 import site.praytogether.pray_together.domain.prayer.model.PrayerContent;
 import site.praytogether.pray_together.domain.prayer.model.PrayerContentInfo;
 import site.praytogether.pray_together.domain.prayer.model.PrayerRequestContent;
@@ -23,23 +24,36 @@ public class PrayerContentService {
     return contentRepository.findPrayerContentsByTitleId(titleId);
   }
 
-  @Transactional
-  public void save(PrayerTitle title, List<PrayerRequestContent> contents) {
-    contents.forEach(
-        content -> {
-          PrayerContent newContent = PrayerContent.create(title, content);
-          title.addContent(newContent);
-        });
+  public boolean existsByIdAndTitleId(Long contentId, Long titleId) {
+    return contentRepository.existsByIdAndPrayerTitleId(contentId, titleId);
   }
 
   @Transactional
-  public void update(PrayerTitle title, List<PrayerUpdateContent> contents) {
+  public PrayerContent save(PrayerTitle title, PrayerRequestContent content) {
+    PrayerContent newContent = PrayerContent.create(title, content);
+    title.addContent(newContent);
+    return contentRepository.save(newContent);
+  }
+
+  @Transactional
+  public PrayerContent update(Long contentId, PrayerUpdateContent content) {
+    PrayerContent prayerContent = contentRepository.findById(contentId)
+        .orElseThrow(() -> new PrayerContentNotFoundException(contentId));
+    prayerContent.updateContent(content.getContent());
+    return prayerContent;
+  }
+
+  @Transactional
+  public void deleteById(Long titleId, Long contentId) {
+    if (!contentRepository.existsByIdAndPrayerTitleId(contentId, titleId)) {
+      throw new PrayerContentNotFoundException(contentId, titleId);
+    }
+    contentRepository.deleteById(contentId);
+  }
+
+  @Transactional
+  public void deleteAll(PrayerTitle title) {
     List<PrayerContent> prayerContents = title.getPrayerContents();
     prayerContents.clear();
-    contents.forEach(
-        content -> {
-          PrayerContent update = PrayerContent.update(title, content);
-          prayerContents.add(update);
-        });
   }
 }
