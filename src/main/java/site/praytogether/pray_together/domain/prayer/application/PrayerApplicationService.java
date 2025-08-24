@@ -16,10 +16,14 @@ import site.praytogether.pray_together.domain.notification.gateway.NotificationG
 import site.praytogether.pray_together.domain.notification.service.PrayerCompletionNotificationService;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerCompletionCreateRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerContentResponse;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerCreateRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleInfiniteScrollRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleInfiniteScrollResponse;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerUpdateRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleCreateRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleUpdateRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleResponse;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerContentUpdateRequest;
+import site.praytogether.pray_together.domain.prayer.exception.PrayerContentNotFoundException;
 import site.praytogether.pray_together.domain.prayer.model.PrayerContentInfo;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitleInfo;
@@ -44,11 +48,6 @@ public class PrayerApplicationService {
   private final FcmTokenService fcmTokenService;
   private final NotificationGateway notificationGateway;
 
-  public PrayerContentResponse fetchPrayerContent(Long memberId, Long titleId) {
-    validateMemberExistInRoomByTitleId(memberId, titleId);
-    List<PrayerContentInfo> prayerContentInfos = contentService.fetchContents(titleId);
-    return PrayerContentResponse.from(prayerContentInfos);
-  }
 
   public PrayerTitleInfiniteScrollResponse fetchPrayerTitleInfiniteScroll(
       Long memberId, PrayerTitleInfiniteScrollRequest request) {
@@ -58,29 +57,64 @@ public class PrayerApplicationService {
     return PrayerTitleInfiniteScrollResponse.from(titleInfos);
   }
 
+
   @Transactional
-  public MessageResponse createPrayers(Long memberId, PrayerCreateRequest request) {
+  public PrayerTitleResponse createPrayerTitle(Long memberId, PrayerTitleCreateRequest request) {
     Room roomRef = roomService.getRefOrThrow(request.getRoomId());
     memberRoomService.validateMemberExistInRoom(memberId, roomRef.getId());
+    
     PrayerTitle title = titleService.create(roomRef, request.getTitle());
-    contentService.save(title, request.getContents());
-    return MessageResponse.of("기도 제목을 생성했습니다.");
+    return PrayerTitleResponse.of(
+        title.getId(), 
+        title.getTitle(), 
+        title.getCreatedTime().toString()
+    );
   }
 
   @Transactional
-  public MessageResponse updatePrayers(Long memberId, Long titleId, PrayerUpdateRequest request) {
+  public MessageResponse updatePrayerTitle(Long memberId, Long titleId, PrayerTitleUpdateRequest request) {
     validateMemberExistInRoomByTitleId(memberId, titleId);
-    PrayerTitle prayerTitle = titleService.fetchByIdWithContents(titleId);
+    PrayerTitle prayerTitle = titleService.fetchById(titleId);
     titleService.update(prayerTitle, request.getTitle());
-    contentService.update(prayerTitle, request.getContents());
-    return MessageResponse.of("기도를 변경했습니다.");
+    return MessageResponse.of("기도 제목을 변경했습니다.");
   }
 
   @Transactional
-  public MessageResponse deletePrayer(Long memberId, Long titleId) {
+  public MessageResponse deletePrayerTitle(Long memberId, Long titleId) {
     validateMemberExistInRoomByTitleId(memberId, titleId);
     titleService.delete(titleId);
-    return MessageResponse.of("기도를 삭제했습니다.");
+    return MessageResponse.of("기도 제목을 삭제했습니다.");
+  }
+
+  @Transactional
+  public MessageResponse createPrayerContent(Long memberId, Long titleId, PrayerContentCreateRequest request) {
+    validateMemberExistInRoomByTitleId(memberId, titleId);
+    PrayerTitle title = titleService.fetchById(titleId);
+    contentService.save(title, request.getContent());
+    return MessageResponse.of("기도 내용을 생성했습니다.");
+  }
+
+  @Transactional
+  public MessageResponse updatePrayerContent(Long memberId, Long titleId, Long contentId, PrayerContentUpdateRequest request) {
+    validateMemberExistInRoomByTitleId(memberId, titleId);
+    if (!contentService.existsByIdAndTitleId(contentId, titleId)) {
+      throw new PrayerContentNotFoundException(contentId, titleId);
+    }
+    contentService.update(contentId, request.getContent());
+    return MessageResponse.of("기도 내용을 변경했습니다.");
+  }
+
+  public PrayerContentResponse fetchPrayerContents(Long memberId, Long titleId) {
+    validateMemberExistInRoomByTitleId(memberId, titleId);
+    List<PrayerContentInfo> prayerContentInfos = contentService.fetchContents(titleId);
+    return PrayerContentResponse.from(prayerContentInfos);
+  }
+
+  @Transactional
+  public MessageResponse deletePrayerContent(Long memberId, Long titleId, Long contentId) {
+    validateMemberExistInRoomByTitleId(memberId, titleId);
+    contentService.deleteById(titleId, contentId);
+    return MessageResponse.of("기도 내용을 삭제했습니다.");
   }
 
   @Transactional
