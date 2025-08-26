@@ -20,4 +20,6 @@ public interface PrayerContentRepository extends JpaRepository<PrayerContent, Lo
   List<PrayerContentInfo> findPrayerContentsByTitleId(Long titleId);
 
   boolean existsByIdAndPrayerTitleId(Long contentId, Long titleId);
+  
+  boolean existsByPrayerTitleIdAndMemberName(Long titleId, String memberName);
 }
