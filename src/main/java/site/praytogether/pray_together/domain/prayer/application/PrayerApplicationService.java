@@ -75,7 +75,7 @@ public class PrayerApplicationService {
   public MessageResponse updatePrayerTitle(Long memberId, Long titleId, PrayerTitleUpdateRequest request) {
     validateMemberExistInRoomByTitleId(memberId, titleId);
     PrayerTitle prayerTitle = titleService.fetchById(titleId);
-    titleService.update(prayerTitle, request.getTitle());
+    titleService.update(prayerTitle, request.getChangedTitle());
     return MessageResponse.of("기도 제목을 변경했습니다.");
   }
 
@@ -90,7 +90,7 @@ public class PrayerApplicationService {
   public MessageResponse createPrayerContent(Long memberId, Long titleId, PrayerContentCreateRequest request) {
     validateMemberExistInRoomByTitleId(memberId, titleId);
     PrayerTitle title = titleService.fetchById(titleId);
-    contentService.save(title, request.getContent());
+    contentService.save(title, request);
     return MessageResponse.of("기도 내용을 생성했습니다.");
   }
 
@@ -100,7 +100,7 @@ public class PrayerApplicationService {
     if (!contentService.existsByIdAndTitleId(contentId, titleId)) {
       throw new PrayerContentNotFoundException(contentId, titleId);
     }
-    contentService.update(contentId, request.getContent());
+    contentService.update(contentId, request.getChangedContent());
     return MessageResponse.of("기도 내용을 변경했습니다.");
   }
 

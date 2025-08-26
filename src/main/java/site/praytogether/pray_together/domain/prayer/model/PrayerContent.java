@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.praytogether.pray_together.domain.base.BaseEntity;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
 
 @Entity
 @Table(name = "prayer_content")
@@ -46,7 +47,7 @@ public class PrayerContent extends BaseEntity {
   @Column(nullable = false, columnDefinition = "CLOB")
   private String content;
 
-  public static PrayerContent create(PrayerTitle title, PrayerRequestContent reqContent) {
+  public static PrayerContent create(PrayerTitle title, PrayerContentCreateRequest reqContent) {
     return PrayerContent.builder()
         .prayerTitle(title)
         .memberId(reqContent.getMemberId())

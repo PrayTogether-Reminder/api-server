@@ -16,5 +16,5 @@ import lombok.Getter;
 public class PrayerTitleUpdateRequest {
   @NotBlank(message = "기도 제목을 작성해 주세요.")
   @Size(message = "기도 제목은 1자 이상 50자 이하로 작성해 주세요.", min = TITLE_MIN_LEN, max = TITLE_MAX_LEN)
-  private final String title;
+  private final String changedTitle;
 }
