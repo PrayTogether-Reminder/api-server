@@ -38,7 +38,7 @@ public class PrayerController {
 
   // ========== 기도 제목 관련 API ==========
   
-  @PostMapping("/titles")
+  @PostMapping
   public ResponseEntity<PrayerTitleResponse> createPrayerTitle(
       @PrincipalId Long memberId, 
       @Valid @RequestBody PrayerTitleCreateRequest request) {
@@ -46,7 +46,7 @@ public class PrayerController {
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
-  @PutMapping("/titles/{titleId}")
+  @PutMapping("/{titleId}")
   public ResponseEntity<MessageResponse> updatePrayerTitle(
       @PrincipalId Long memberId,
       @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") @PathVariable Long titleId,
@@ -55,7 +55,7 @@ public class PrayerController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @DeleteMapping("/titles/{titleId}")
+  @DeleteMapping("/{titleId}")
   public ResponseEntity<MessageResponse> deletePrayerTitle(
       @PrincipalId Long memberId,
       @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") @PathVariable Long titleId) {
@@ -63,7 +63,7 @@ public class PrayerController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @GetMapping("/titles")
+  @GetMapping
   public ResponseEntity<PrayerTitleInfiniteScrollResponse> getPrayerTitlesByInfiniteScroll(
       @NotNull(message = "잘 못된 방을 선택하셨습니다.") 
       @Positive(message = "잘 못된 방을 선택하셨습니다.") 
@@ -78,7 +78,7 @@ public class PrayerController {
 
   // ========== 기도 내용 관련 API ==========
   
-  @PostMapping("/titles/{titleId}/contents")
+  @PostMapping("/{titleId}/contents")
   public ResponseEntity<MessageResponse> createPrayerContent(
       @PrincipalId Long memberId,
       @NotNull(message = "잘 못된 기도 제목을 선택하셨습니다.") 
@@ -89,7 +89,7 @@ public class PrayerController {
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
-  @PutMapping("/titles/{titleId}/contents/{contentId}")
+  @PutMapping("/{titleId}/contents/{contentId}")
   public ResponseEntity<MessageResponse> updatePrayerContent(
       @PrincipalId Long memberId,
       @NotNull(message = "잘 못된 기도 제목을 선택하셨습니다.") 
@@ -103,7 +103,7 @@ public class PrayerController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @GetMapping("/titles/{titleId}/contents")
+  @GetMapping("/{titleId}/contents")
   public ResponseEntity<PrayerContentResponse> getPrayerContents(
       @PrincipalId Long memberId,
       @NotNull(message = "잘 못된 기도 제목을 선택하셨습니다.") 
@@ -113,7 +113,7 @@ public class PrayerController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @DeleteMapping("/titles/{titleId}/contents/{contentId}")
+  @DeleteMapping("/{titleId}/contents/{contentId}")
   public ResponseEntity<MessageResponse> deletePrayerContent(
       @PrincipalId Long memberId,
       @NotNull(message = "잘 못된 기도 제목을 선택하셨습니다.") 
@@ -128,7 +128,7 @@ public class PrayerController {
 
   // ========== 기타 기능 API ==========
   
-  @PostMapping("/titles/{titleId}/completion")
+  @PostMapping("/{titleId}/completion")
   public ResponseEntity<MessageResponse> completePrayer(
       @PrincipalId Long memberId,
       @NotNull(message = "잘 못된 기도제목 입니다.") @Positive(message = "잘 못된 기도제목 입니다.") @PathVariable
