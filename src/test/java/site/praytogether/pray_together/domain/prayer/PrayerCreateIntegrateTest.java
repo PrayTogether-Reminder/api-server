@@ -2,8 +2,6 @@ package site.praytogether.pray_together.domain.prayer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
@@ -20,9 +18,10 @@ import org.springframework.http.ResponseEntity;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerCreateRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleCreateRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleResponse;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
 import site.praytogether.pray_together.domain.prayer.model.PrayerContent;
-import site.praytogether.pray_together.domain.prayer.model.PrayerRequestContent;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.test_config.IntegrateTest;
@@ -64,110 +63,81 @@ public class PrayerCreateIntegrateTest extends IntegrateTest {
   }
 
   @Test
-  @DisplayName("기도(제목+내용) 생성 시 201 Created 응답")
-  void create_prayer_with_valid_input_then_return_201_created() {
+  @DisplayName("기도 제목 생성 시 201 Created 응답")
+  void create_prayer_title_then_return_201_created() {
     // given
-    List<Member> memberList = new ArrayList<>();
-    // @Beforeach member 추가
-    memberList.add(member); // 총 1명
-
-    final int testCnt = 5;
-    // 회원 추가 생성 - @Beforeach member 와 memberId == null 제외
-    for (int i = 2; i < testCnt; i++) {
-      memberList.add(testUtils.createUniqueMember()); // 총 4명
-    }
-    memberRepository.saveAll(memberList);
-
-    // 기도 내용 작성 - memberId == null 제외
-    List<PrayerRequestContent> requestContents = new ArrayList<>();
-    for (Member memberOne : memberList) {
-      PrayerRequestContent content =
-          PrayerRequestContent.builder()
-              .memberId(memberOne.getId())
-              .memberName(memberOne.getName())
-              .content("test-prayer-content" + memberOne.getId())
-              .build();
-      requestContents.add(content); // 총 4개
-    }
-
-    // memberId == null 추가
-    requestContents.add( //  총 5개
-        PrayerRequestContent.builder()
-            .memberName("test-memberName-id-null")
-            .content("test-content-id-null")
-            .build());
-
-    // dto 생성
-    PrayerCreateRequest requestDto =
-        PrayerCreateRequest.builder()
+    PrayerTitleCreateRequest titleRequest =
+        PrayerTitleCreateRequest.builder()
             .title("test-prayer-title")
             .roomId(room.getId())
-            .contents(requestContents)
             .build();
 
-    HttpEntity<PrayerCreateRequest> requestEntity = new HttpEntity<>(requestDto, headers);
+    HttpEntity<PrayerTitleCreateRequest> requestEntity = new HttpEntity<>(titleRequest, headers);
+    String url = PRAYERS_API_URL;
 
     // when
-    ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.postForEntity(PRAYERS_API_URL, requestEntity, MessageResponse.class);
+    ResponseEntity<PrayerTitleResponse> responseEntity =
+        restTemplate.postForEntity(url, requestEntity, PrayerTitleResponse.class);
 
     // then
     assertThat(responseEntity.getStatusCode())
-        .as("기도 생성 API 응답 상태 코드가 201 Created가 아닙니다.")
+        .as("기도 제목 생성 API 응답 상태 코드가 201 Created가 아닙니다.")
         .isEqualTo(HttpStatus.CREATED);
 
     List<PrayerTitle> allTitle = prayerTitleRepository.findAll();
     assertThat(allTitle.size()).as("저장된 기도 제목의 개수가 예상과 다릅니다.").isEqualTo(1);
-
-    List<PrayerContent> allContent = prayerContentRepository.findAll();
-    assertThat(allContent.size()).as("저장된 기도 내용의 개수가 예상과 다릅니다.").isEqualTo(testCnt);
-    allContent.forEach(content -> System.out.println(content.getId()));
+    assertThat(allTitle.get(0).getTitle()).as("제목이 올바르게 저장되지 않았습니다.").isEqualTo("test-prayer-title");
+    assertThat(responseEntity.getBody()).isNotNull();
+    assertThat(responseEntity.getBody().getId()).isNotNull();
   }
 
   @Test
-  @DisplayName("기도(제목) 생성 시 201 Created 응답")
-  void create_prayer_title_only_then_return_201_created() {
+  @DisplayName("기도 내용 생성 시 201 Created 응답")
+  void create_prayer_content_then_return_201_created() {
     // given
-    PrayerCreateRequest requestDto =
-        PrayerCreateRequest.builder()
-            .title("test-prayer-title-only")
-            .roomId(room.getId())
-            .contents(Collections.emptyList())
+    // 먼저 기도 제목 생성
+    PrayerTitle prayerTitle = PrayerTitle.create(room, "test-prayer-title");
+    prayerTitleRepository.save(prayerTitle);
+    
+    PrayerContentCreateRequest contentRequest =
+        PrayerContentCreateRequest.builder()
+            .memberId(member.getId())
+            .memberName(member.getName())
+            .content("test-prayer-content")
             .build();
 
-    HttpEntity<PrayerCreateRequest> requestEntity = new HttpEntity<>(requestDto, headers);
+    HttpEntity<PrayerContentCreateRequest> requestEntity = new HttpEntity<>(contentRequest, headers);
+    String url = PRAYERS_API_URL + "/" + prayerTitle.getId() + "/contents";
 
     // when
     ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.postForEntity(PRAYERS_API_URL, requestEntity, MessageResponse.class);
+        restTemplate.postForEntity(url, requestEntity, MessageResponse.class);
 
     // then
     assertThat(responseEntity.getStatusCode())
-        .as("기도 제목만 생성 API 응답 상태 코드가 201 Created가 아닙니다.")
+        .as("기도 내용 생성 API 응답 상태 코드가 201 Created가 아닙니다.")
         .isEqualTo(HttpStatus.CREATED);
 
-    List<PrayerTitle> allTitle = prayerTitleRepository.findAll();
-    assertThat(allTitle.size()).as("저장된 기도 제목의 개수가 예상과 다릅니다.").isEqualTo(1);
-    assertThat(allTitle.get(0).getRoom().getId()).isEqualTo(this.room.getId());
-
     List<PrayerContent> allContent = prayerContentRepository.findAll();
-    assertThat(allContent.size()).as("기도 제목만 생성 시 기도 내용은 저장되지 않아야 합니다.").isZero();
+    assertThat(allContent.size()).as("저장된 기도 내용의 개수가 예상과 다릅니다.").isEqualTo(1);
+    assertThat(allContent.get(0).getContent()).isEqualTo("test-prayer-content");
   }
 
-  @DisplayName("기도 생성 요청 유효성 검사 실패 시 400 Bad Request 응답")
+  @DisplayName("기도 제목 생성 요청 유효성 검사 실패 시 400 Bad Request 응답")
   @ParameterizedTest(name = "[{index}] {0}")
-  @MethodSource("provideInvalidPrayerCreateArguments")
-  void create_prayer_with_invalid_input_then_return_400_bad_request(
-      String test, Long roomId, String title, List<PrayerRequestContent> contents) {
+  @MethodSource("provideInvalidPrayerTitleCreateArguments")
+  void create_prayer_title_with_invalid_input_then_return_400_bad_request(
+      String test, Long roomId, String title) {
 
     // given
-    PrayerCreateRequest requestDto =
-        PrayerCreateRequest.builder().roomId(roomId).title(title).contents(contents).build();
-    HttpEntity<PrayerCreateRequest> requestEntity = new HttpEntity<>(requestDto, headers);
+    PrayerTitleCreateRequest requestDto =
+        PrayerTitleCreateRequest.builder().roomId(roomId).title(title).build();
+    HttpEntity<PrayerTitleCreateRequest> requestEntity = new HttpEntity<>(requestDto, headers);
+    String url = PRAYERS_API_URL;
 
     // when
     ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.postForEntity(PRAYERS_API_URL, requestEntity, MessageResponse.class);
+        restTemplate.postForEntity(url, requestEntity, MessageResponse.class);
 
     // then
     assertThat(responseEntity.getStatusCode())
@@ -176,51 +146,69 @@ public class PrayerCreateIntegrateTest extends IntegrateTest {
 
     List<PrayerTitle> allTitle = prayerTitleRepository.findAll();
     assertThat(allTitle.size()).as(test + ": 예외 발생 시 기도 제목이 저장되면 안됩니다.").isZero();
+  }
+  
+  @DisplayName("기도 내용 생성 요청 유효성 검사 실패 시 400 Bad Request 응답")
+  @ParameterizedTest(name = "[{index}] {0}")
+  @MethodSource("provideInvalidPrayerContentCreateArguments")
+  void create_prayer_content_with_invalid_input_then_return_400_bad_request(
+      String test, String memberName, String content) {
+
+    // given
+    // 먼저 기도 제목 생성
+    PrayerTitle prayerTitle = PrayerTitle.create(room, "test-prayer-title");
+    prayerTitleRepository.save(prayerTitle);
+    
+    PrayerContentCreateRequest requestDto =
+        PrayerContentCreateRequest.builder()
+            .memberId(member.getId())
+            .memberName(memberName)
+            .content(content)
+            .build();
+    HttpEntity<PrayerContentCreateRequest> requestEntity = new HttpEntity<>(requestDto, headers);
+    String url = PRAYERS_API_URL + "/" + prayerTitle.getId() + "/contents";
+
+    // when
+    ResponseEntity<MessageResponse> responseEntity =
+        restTemplate.postForEntity(url, requestEntity, MessageResponse.class);
+
+    // then
+    assertThat(responseEntity.getStatusCode())
+        .as(test + ": 응답 상태 코드가 400 Bad Request가 아닙니다.")
+        .isEqualTo(HttpStatus.BAD_REQUEST);
+
     List<PrayerContent> allContent = prayerContentRepository.findAll();
     assertThat(allContent.size()).as(test + ": 예외 발생 시 기도 내용이 저장되면 안됩니다.").isZero();
   }
 
-  private static Stream<Arguments> provideInvalidPrayerCreateArguments() {
+  private static Stream<Arguments> provideInvalidPrayerTitleCreateArguments() {
     String validTitle = "valid-title";
-    String validMemberName = "valid-name";
-    String validContentText = "valid-content";
-    List<PrayerRequestContent> emptyContents = Collections.emptyList();
 
     return Stream.of(
-
         // --- roomId 유효성 검사 ---
-        Arguments.of("roomId가 0일 때", 0L, validTitle, emptyContents),
-        Arguments.of("roomId가 음수일 때", -1L, validTitle, emptyContents),
-        Arguments.of("roomId가 null일 때", null, validTitle, emptyContents),
+        Arguments.of("roomId가 0일 때", 0L, validTitle),
+        Arguments.of("roomId가 음수일 때", -1L, validTitle),
+        Arguments.of("roomId가 null일 때", null, validTitle),
 
         // --- title 유효성 검사 ---
-        Arguments.of("title ''일 때", validRoomId, "", emptyContents),
-        Arguments.of("title이 null일 때", validRoomId, null, emptyContents),
-        Arguments.of("title이 50자 초과일 때", validRoomId, "a".repeat(51), emptyContents),
+        Arguments.of("title이 ''일 때", validRoomId, ""),
+        Arguments.of("title이 null일 때", validRoomId, null),
+        Arguments.of("title이 50자 초과일 때", validRoomId, "a".repeat(51))
+    );
+  }
+  
+  private static Stream<Arguments> provideInvalidPrayerContentCreateArguments() {
+    String validMemberName = "valid-name";
+    String validContent = "valid-content";
 
-        // --- contents (List size 1) 유효성 검사 ---
-        Arguments.of(
-            "contents의 content가 '' 일 때 (empty)",
-            validRoomId,
-            validTitle,
-            List.of(
-                PrayerRequestContent.builder()
-                    .memberId(validMemberId)
-                    .memberName(validMemberName)
-                    .content("")
-                    .build())),
-        Arguments.of(
-            "contents의 memberName이 '' 일 때 (empty)",
-            validRoomId,
-            validTitle,
-            List.of(
-                PrayerRequestContent.builder()
-                    .memberId(validMemberId)
-                    .memberName("")
-                    .content(validContentText)
-                    .build())),
-
-        // --- contents 리스트 자체 유효성 검사 ---
-        Arguments.of("contents 리스트가 null일 때", validRoomId, validTitle, null));
+    return Stream.of(
+        // --- content 유효성 검사 ---
+        Arguments.of("content가 '' 일 때 (empty)", validMemberName, ""),
+        Arguments.of("content가 null일 때", validMemberName, null),
+        
+        // --- memberName 유효성 검사 ---
+        Arguments.of("memberName이 '' 일 때 (empty)", "", validContent),
+        Arguments.of("memberName이 null일 때", null, validContent)
+    );
   }
 }

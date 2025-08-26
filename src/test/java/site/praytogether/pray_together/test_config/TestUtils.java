@@ -26,7 +26,7 @@ public class TestUtils {
   }
 
   public PrayerTitle createUniquePrayerTitle_With_Room(Room room) {
-    return PrayerTitle.create(room, "test-prayer-title" + prayerTitleUniqueId++);
+    return PrayerTitle.create(room, "test-prayer-changedTitle" + prayerTitleUniqueId++);
   }
 
   public MemberRoom createUniqueMemberRoom_With_Member_AND_Room(Member member, Room room) {
