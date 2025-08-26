@@ -62,7 +62,7 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
     prayerTitle = PrayerTitle.create(room, "original-prayer-changedTitle");
     prayerTitleRepository.save(prayerTitle);
 
-    // 기도 내용 생성
+    // 기도 내용 생성 - 각각 다른 이름으로 생성
     prayerContents = new ArrayList<>();
     for (int i = 0; i < TEST_CNT; i++) {
       PrayerContent content =
@@ -70,7 +70,7 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
               prayerTitle,
               PrayerContentCreateRequest.builder()
                   .memberId(member.getId())
-                  .memberName(member.getName())
+                  .memberName(member.getName() + "-" + i)  // 각각 다른 이름 사용
                   .content("original-prayer-content-" + i)
                   .build());
       prayerTitle.addContent(content);
@@ -147,7 +147,7 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
     String newContent = "new-prayer-content";
     PrayerContentCreateRequest contentRequest = PrayerContentCreateRequest.builder()
         .memberId(member.getId())
-        .memberName(member.getName())
+        .memberName(member.getName() + "-new")  // 새로운 이름 사용
         .content(newContent)
         .build();
     
