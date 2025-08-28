@@ -12,9 +12,7 @@ import lombok.Getter;
 public class PrayerRequestContent {
   private final Long memberId;
 
-  @NotBlank(message = "기도자의 이름을 작성해 주세요.")
   private final String memberName;
 
-  @NotBlank(message = "기도 내용을 입력해 주세요.")
   private final String content;
 }

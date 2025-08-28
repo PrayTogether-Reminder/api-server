@@ -21,8 +21,8 @@ import org.springframework.http.ResponseEntity;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
 import site.praytogether.pray_together.domain.prayer.model.PrayerContent;
-import site.praytogether.pray_together.domain.prayer.model.PrayerRequestContent;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.exception.ExceptionResponse;
@@ -56,7 +56,7 @@ public class PrayerDeleteIntegrateTest extends IntegrateTest {
     headers = testUtils.create_Auth_HttpHeader_With_Member(member);
 
     // 기도 제목 생성
-    prayerTitle = PrayerTitle.create(room, "test-prayer-title");
+    prayerTitle = PrayerTitle.create(room, "test-prayer-changedTitle");
     prayerTitleRepository.save(prayerTitle);
 
     // 기도 내용 생성
@@ -67,7 +67,7 @@ public class PrayerDeleteIntegrateTest extends IntegrateTest {
       prayerContent =
           PrayerContent.create(
               prayerTitle,
-              PrayerRequestContent.builder()
+              PrayerContentCreateRequest.builder()
                   .memberId(newMember.getId())
                   .memberName(newMember.getName())
                   .content("test-prayer-content" + i)

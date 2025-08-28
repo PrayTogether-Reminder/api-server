@@ -21,8 +21,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import site.praytogether.pray_together.domain.base.BaseEntity;
 import site.praytogether.pray_together.domain.room.model.Room;
 
@@ -44,7 +42,6 @@ public class PrayerTitle extends BaseEntity {
 
   @JoinColumn(name = "room_id", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
-  @OnDelete(action = OnDeleteAction.CASCADE)
   private Room room;
 
   @Column(nullable = false, length = TITLE_ENTITY_MAX_LEN)

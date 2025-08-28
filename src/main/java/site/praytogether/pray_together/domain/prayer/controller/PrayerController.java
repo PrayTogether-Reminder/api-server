@@ -21,11 +21,14 @@ import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.prayer.application.PrayerApplicationService;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerCompletionCreateRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerContentResponse;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerCreateRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerContentUpdateRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleCreateRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleInfiniteScrollRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleInfiniteScrollResponse;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerUpdateRequest;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleResponse;
+import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleUpdateRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,26 +36,38 @@ import site.praytogether.pray_together.domain.prayer.dto.PrayerUpdateRequest;
 public class PrayerController {
   private final PrayerApplicationService prayerApplication;
 
+  // ========== 기도 제목 관련 API ==========
+  
   @PostMapping
-  public ResponseEntity<MessageResponse> createPrayers(
-      @PrincipalId Long memberId, @Valid @RequestBody PrayerCreateRequest request) {
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(prayerApplication.createPrayers(memberId, request));
+  public ResponseEntity<PrayerTitleResponse> createPrayerTitle(
+      @PrincipalId Long memberId, 
+      @Valid @RequestBody PrayerTitleCreateRequest request) {
+    PrayerTitleResponse response = prayerApplication.createPrayerTitle(memberId, request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
-  @PutMapping("/{prayerTitleId}")
-  public ResponseEntity<MessageResponse> updatePrayers(
+  @PutMapping("/{titleId}")
+  public ResponseEntity<MessageResponse> updatePrayerTitle(
       @PrincipalId Long memberId,
-      @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") @PathVariable Long prayerTitleId,
-      @Valid @RequestBody PrayerUpdateRequest request) {
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(prayerApplication.updatePrayers(memberId, prayerTitleId, request));
+      @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") @PathVariable Long titleId,
+      @Valid @RequestBody PrayerTitleUpdateRequest request) {
+    MessageResponse response = prayerApplication.updatePrayerTitle(memberId, titleId, request);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @GetMapping()
+  @DeleteMapping("/{titleId}")
+  public ResponseEntity<MessageResponse> deletePrayerTitle(
+      @PrincipalId Long memberId,
+      @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") @PathVariable Long titleId) {
+    MessageResponse response = prayerApplication.deletePrayerTitle(memberId, titleId);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @GetMapping
   public ResponseEntity<PrayerTitleInfiniteScrollResponse> getPrayerTitlesByInfiniteScroll(
-      @NotNull(message = "잘 못된 방을 선택하셨습니다.") @Positive(message = "잘 못된 방을 선택하셨습니다.") @RequestParam
-          Long roomId,
+      @NotNull(message = "잘 못된 방을 선택하셨습니다.") 
+      @Positive(message = "잘 못된 방을 선택하셨습니다.") 
+      @RequestParam Long roomId,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_AFTER) String after,
       @PrincipalId Long memberId) {
     PrayerTitleInfiniteScrollRequest request = PrayerTitleInfiniteScrollRequest.of(roomId, after);
@@ -61,31 +76,66 @@ public class PrayerController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @GetMapping("/{prayerTitleId}/contents")
-  public ResponseEntity<PrayerContentResponse> getPrayerContent(
-      @NotNull(message = "잘 못된 방을 선택하셨습니다.") @Positive(message = "잘 못된 방을 선택하셨습니다.") @PathVariable
-          Long prayerTitleId,
-      @PrincipalId Long memberId) {
-    PrayerContentResponse response = prayerApplication.fetchPrayerContent(memberId, prayerTitleId);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
-  }
-
-  @DeleteMapping("/{prayerTitleId}")
-  public ResponseEntity<MessageResponse> deletePrayer(
+  // ========== 기도 내용 관련 API ==========
+  
+  @PostMapping("/{titleId}/contents")
+  public ResponseEntity<MessageResponse> createPrayerContent(
       @PrincipalId Long memberId,
-      @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") @PathVariable Long prayerTitleId) {
-    MessageResponse response = prayerApplication.deletePrayer(memberId, prayerTitleId);
+      @NotNull(message = "잘 못된 기도 제목을 선택하셨습니다.") 
+      @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") 
+      @PathVariable Long titleId,
+      @Valid @RequestBody PrayerContentCreateRequest request) {
+    MessageResponse response = prayerApplication.createPrayerContent(memberId, titleId, request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
+
+  @PutMapping("/{titleId}/contents/{contentId}")
+  public ResponseEntity<MessageResponse> updatePrayerContent(
+      @PrincipalId Long memberId,
+      @NotNull(message = "잘 못된 기도 제목을 선택하셨습니다.") 
+      @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") 
+      @PathVariable Long titleId,
+      @NotNull(message = "잘 못된 기도 내용을 선택하셨습니다.") 
+      @Positive(message = "잘 못된 기도 내용을 선택하셨습니다.") 
+      @PathVariable Long contentId,
+      @Valid @RequestBody PrayerContentUpdateRequest request) {
+    MessageResponse response = prayerApplication.updatePrayerContent(memberId, titleId, contentId, request);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @PostMapping("/{prayerTitleId}/completion")
+  @GetMapping("/{titleId}/contents")
+  public ResponseEntity<PrayerContentResponse> getPrayerContents(
+      @PrincipalId Long memberId,
+      @NotNull(message = "잘 못된 기도 제목을 선택하셨습니다.") 
+      @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") 
+      @PathVariable Long titleId) {
+    PrayerContentResponse response = prayerApplication.fetchPrayerContents(memberId, titleId);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @DeleteMapping("/{titleId}/contents/{contentId}")
+  public ResponseEntity<MessageResponse> deletePrayerContent(
+      @PrincipalId Long memberId,
+      @NotNull(message = "잘 못된 기도 제목을 선택하셨습니다.") 
+      @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") 
+      @PathVariable Long titleId,
+      @NotNull(message = "잘 못된 기도 내용을 선택하셨습니다.") 
+      @Positive(message = "잘 못된 기도 내용을 선택하셨습니다.") 
+      @PathVariable Long contentId) {
+    MessageResponse response = prayerApplication.deletePrayerContent(memberId, titleId, contentId);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  // ========== 기타 기능 API ==========
+  
+  @PostMapping("/{titleId}/completion")
   public ResponseEntity<MessageResponse> completePrayer(
       @PrincipalId Long memberId,
       @NotNull(message = "잘 못된 기도제목 입니다.") @Positive(message = "잘 못된 기도제목 입니다.") @PathVariable
-          Long prayerTitleId,
+          Long titleId,
       @Valid @RequestBody PrayerCompletionCreateRequest request) {
     MessageResponse response =
-        prayerApplication.completePrayerAndNotify(memberId, prayerTitleId, request);
+        prayerApplication.completePrayerAndNotify(memberId, titleId, request);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }
