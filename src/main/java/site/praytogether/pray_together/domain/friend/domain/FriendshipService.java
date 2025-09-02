@@ -2,6 +2,7 @@ package site.praytogether.pray_together.domain.friend.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import site.praytogether.pray_together.domain.friend.domain.exception.FriendshipAlreadyExistException;
 import site.praytogether.pray_together.domain.member.model.Member;
 
 @Component
@@ -15,7 +16,7 @@ public class FriendshipService {
 
     boolean exist = friendshipRepository.isExist(memberId1,memberId2);
     if (exist) {
-      //
+      throw new FriendshipAlreadyExistException(inviter.getId(), invitee.getId());
     }
   }
 }
