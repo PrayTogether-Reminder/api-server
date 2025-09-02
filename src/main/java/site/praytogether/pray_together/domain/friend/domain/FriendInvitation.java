@@ -56,4 +56,13 @@ public class FriendInvitation extends BaseEntity {
 
   @Column(name = "response_time")
   private Instant responseTime;
+
+  public static FriendInvitation create(Member inviter, Member invitee) {
+    return FriendInvitation.builder()
+        .sender(inviter)
+        .receiver(invitee)
+        .status(FriendInvitationStatus.PENDING)
+        .responseTime(Instant.now())
+        .build();
+  }
 }

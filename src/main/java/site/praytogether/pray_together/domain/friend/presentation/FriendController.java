@@ -18,8 +18,8 @@ public class FriendController {
 private final FriendApplicationService friendApplication;
 
   @PostMapping("/{inviteeId}/requests")
-  public ResponseEntity<MessageResponse> inviteFriend(@PathVariable Long inviteeId,@PrincipalId Long inviterId) {
-    MessageResponse response = friendApplication.inviteFriend(inviteeId, inviterId);
+  public ResponseEntity<MessageResponse> inviteFriend(@PrincipalId Long inviterId, @PathVariable Long inviteeId) {
+    MessageResponse response = friendApplication.inviteFriend(inviterId, inviteeId);
     return ResponseEntity.ok(response);
   }
 }

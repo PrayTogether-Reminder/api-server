@@ -7,5 +7,10 @@ import site.praytogether.pray_together.domain.friend.domain.FriendshipRepository
 @Repository
 @RequiredArgsConstructor
 public class FriendshipRepositoryImpl implements FriendshipRepository {
-  private final FriendshipJpaRepository friendshipJpaRepository;
+  private final FriendshipJpaRepository jpaRepository;
+
+  @Override
+  public boolean isExist(Long memberId1, Long memberId2) {
+    return jpaRepository.existsByMember1_IdAndMember2_Id(memberId1,memberId2);
+  }
 }
