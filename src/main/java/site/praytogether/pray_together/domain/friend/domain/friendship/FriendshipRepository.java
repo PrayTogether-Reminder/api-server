@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.friend.domain;
+package site.praytogether.pray_together.domain.friend.domain.friendship;
 
 public interface FriendshipRepository {
 

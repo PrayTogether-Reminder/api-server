@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
-import site.praytogether.pray_together.domain.friend.domain.FriendInvitationService;
-import site.praytogether.pray_together.domain.friend.domain.FriendshipService;
+import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitationService;
+import site.praytogether.pray_together.domain.friend.domain.friendship.FriendshipService;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 
