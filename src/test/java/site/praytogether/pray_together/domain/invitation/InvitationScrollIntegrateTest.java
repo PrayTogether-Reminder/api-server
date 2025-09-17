@@ -1,17 +1,18 @@
 package site.praytogether.pray_together.domain.invitation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import site.praytogether.pray_together.domain.invitation.dto.InvitationInfoScrollResponse;
 import site.praytogether.pray_together.domain.invitation.model.Invitation;
 import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
@@ -23,15 +24,15 @@ import site.praytogether.pray_together.test_config.IntegrateTest;
 public class InvitationScrollIntegrateTest extends IntegrateTest {
 
   private Member inviteeMember;
-  private HttpHeaders headers;
+  private String token;
   private final int INVITATION_COUNT = 5;
 
   @BeforeEach
-  void setup() {
+  void setup() throws Exception {
     // 초대 받을 회원 생성
     inviteeMember = testUtils.createUniqueMember();
     memberRepository.save(inviteeMember);
-    headers = testUtils.create_Auth_HttpHeader_With_Member(inviteeMember);
+    token = testUtils.createBearerToken(inviteeMember);
 
     // 초대한 회원들 생성 및 초대장 생성
     for (int i = 0; i < INVITATION_COUNT; i++) {
@@ -49,28 +50,20 @@ public class InvitationScrollIntegrateTest extends IntegrateTest {
     }
   }
 
-  @AfterEach
-  void cleanup() {
-    cleanRepository();
-  }
-
   @Test
   @DisplayName("회원의 초대 목록 조회 시 200 OK 응답 및 초대 목록 확인")
-  void fetch_invitation_scroll_then_return_200_ok() {
+  void fetch_invitation_scroll_then_return_200_ok() throws Exception {
     // given
-    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
     // when
-    ResponseEntity<InvitationInfoScrollResponse> responseEntity =
-        restTemplate.exchange(
-            INVITATIONS_API_URL, HttpMethod.GET, requestEntity, InvitationInfoScrollResponse.class);
+    MvcResult result = mockMvc.perform(get(INVITATIONS_API_URL)
+            .header(HttpHeaders.AUTHORIZATION, token))
+        .andExpect(status().isOk())
+        .andReturn();
 
     // then
-    assertThat(responseEntity.getStatusCode())
-        .as("초대 목록 조회 API 응답 상태 코드가 200 OK가 아닙니다.")
-        .isEqualTo(HttpStatus.OK);
-
-    InvitationInfoScrollResponse response = responseEntity.getBody();
+    String responseBody = result.getResponse().getContentAsString();
+    InvitationInfoScrollResponse response = objectMapper.readValue(responseBody, InvitationInfoScrollResponse.class);
     assertThat(response).as("초대 목록 조회 API 응답 결과가 NULL 입니다.").isNotNull();
 
     List<InvitationInfo> invitations = response.getInvitations();

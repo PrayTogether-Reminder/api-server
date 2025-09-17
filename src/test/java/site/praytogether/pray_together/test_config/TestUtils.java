@@ -1,9 +1,12 @@
 package site.praytogether.pray_together.test_config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
@@ -20,6 +23,7 @@ public class TestUtils {
   private static int roomUniqueId = 0;
   private static int prayerTitleUniqueId = 0;
   private final JwtService jwtService;
+  private final ObjectMapper objectMapper;
 
   public Member createUniqueMember() {
     return Member.create("test" + (emailUniqueId), "test@test.com" + (emailUniqueId++), "test");
@@ -45,4 +49,14 @@ public class TestUtils {
             PrayTogetherPrincipal.builder().id(member.getId()).email(member.getEmail()).build()));
     return headers;
   }
+
+  // MockMvc용 헬퍼 메서드들
+  public String createBearerToken(Member member) {
+    return "Bearer " + jwtService.issueAccessToken(
+        PrayTogetherPrincipal.builder()
+            .id(member.getId())
+            .email(member.getEmail())
+            .build());
+  }
+
 }

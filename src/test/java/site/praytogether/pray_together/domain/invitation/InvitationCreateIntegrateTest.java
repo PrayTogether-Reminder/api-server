@@ -1,17 +1,16 @@
 package site.praytogether.pray_together.domain.invitation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.invitation.dto.InvitationCreateRequest;
 import site.praytogether.pray_together.domain.invitation.model.Invitation;
 import site.praytogether.pray_together.domain.invitation.model.InvitationStatus;
@@ -25,10 +24,10 @@ public class InvitationCreateIntegrateTest extends IntegrateTest {
   private Member memberInviter;
   private Member memberInvitee;
   private Room room;
-  private HttpHeaders headers;
+  private String token;
 
   @BeforeEach
-  void setup() {
+  void setup() throws Exception {
     memberInviter = testUtils.createUniqueMember();
     memberRepository.save(memberInviter);
     memberInvitee = testUtils.createUniqueMember();
@@ -42,31 +41,25 @@ public class InvitationCreateIntegrateTest extends IntegrateTest {
     memberRoomRepository.save(memberRoom);
   }
 
-  @AfterEach
-  void cleanup() {
-    cleanRepository();
-  }
-
   @Test
   @DisplayName("방 초대시 201 Created 응답")
-  void invite_member_to_room_then_return_201_created() {
+  void invite_member_to_room_then_return_201_created() throws Exception {
     // given
-    headers = testUtils.create_Auth_HttpHeader_With_Member(memberInviter);
+    token = testUtils.createBearerToken(memberInviter);
     InvitationCreateRequest request =
         InvitationCreateRequest.builder()
             .roomId(room.getId())
             .email(memberInvitee.getEmail())
             .build();
-    HttpEntity<InvitationCreateRequest> requestEntity = new HttpEntity<>(request, headers);
 
     // when
-    ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.postForEntity(INVITATIONS_API_URL, requestEntity, MessageResponse.class);
+    mockMvc.perform(post(INVITATIONS_API_URL)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isCreated());
 
     // then
-    assertThat(responseEntity.getStatusCode())
-        .as("방 초대 API 응답 상태 코드가 201 Created가 아닙니다.")
-        .isEqualTo(HttpStatus.CREATED);
 
     List<Invitation> allInvitation = invitationRepository.findAll();
     assertThat(allInvitation.size()).as("저장된 초대장의 개수가 예상과 다릅니다.").isOne();

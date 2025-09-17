@@ -1,19 +1,18 @@
 package site.praytogether.pray_together.domain.room;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import site.praytogether.pray_together.domain.base.MessageResponse;
+import org.springframework.test.web.servlet.MvcResult;
+
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.model.MemberIdName;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
@@ -27,23 +26,27 @@ import site.praytogether.pray_together.test_config.IntegrateTest;
 public class RoomMemberFetchIntegrateTest extends IntegrateTest {
 
   private Member member;
-  private HttpHeaders headers;
+  private String token;
   private final String MEMBERS_URL = "/members";
   private Room room;
   private int memberCount = 10;
 
   @BeforeEach
-  void setup() {
+  void setup() throws Exception {
     // 회원 생성 및 JWT 설정
     member = testUtils.createUniqueMember();
     memberRepository.save(member);
-    headers = testUtils.create_Auth_HttpHeader_With_Member(member);
+    token = testUtils.createBearerToken(member);
 
     // 방 생성
     RoomCreateRequest createRequest =
         RoomCreateRequest.builder().name("test-name").description("test-description").build();
-    HttpEntity<RoomCreateRequest> requestEntity = new HttpEntity<>(createRequest, headers);
-    restTemplate.postForEntity(ROOMS_API_URL, requestEntity, MessageResponse.class);
+
+    mockMvc.perform(post(ROOMS_API_URL)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(createRequest)))
+        .andExpect(status().isCreated());
 
     // 방 정보 획득
     List<Room> allRoom = roomRepository.findAll();
@@ -68,32 +71,18 @@ public class RoomMemberFetchIntegrateTest extends IntegrateTest {
     memberRoomRepository.saveAll(memberRoomList);
   }
 
-  @AfterEach
-  void cleanup() {
-    cleanRepository();
-  }
-
   @Test
   @DisplayName("Room 참가자 조회 시 200 OK 응답")
-  void fetch_room_members_then_return_200_ok() {
+  void fetch_room_members_then_return_200_ok() throws Exception {
+    // when & then
+    MvcResult result = mockMvc.perform(get(ROOMS_API_URL + "/" + room.getId() + MEMBERS_URL)
+            .header(HttpHeaders.AUTHORIZATION, token))
+        .andExpect(status().isOk())
+        .andReturn();
 
-    // when
-    // API 요청
-    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-    ResponseEntity<RoomMemberResponse> responseEntity =
-        restTemplate.exchange(
-            ROOMS_API_URL + "/" + room.getId() + MEMBERS_URL,
-            HttpMethod.GET,
-            requestEntity,
-            RoomMemberResponse.class);
-
-    // when
-    // 응답 상태 코드 검증
-    assertThat(responseEntity.getStatusCode())
-        .as("방 참가자 조회 API 응답 상태 코드가 200 OK가 아닙니다.")
-        .isEqualTo(HttpStatus.OK);
-
-    RoomMemberResponse response = responseEntity.getBody();
+    // 응답 결과 파싱
+    String responseBody = result.getResponse().getContentAsString();
+    RoomMemberResponse response = objectMapper.readValue(responseBody, RoomMemberResponse.class);
 
     // 응답 결과 검증
     List<MemberIdName> members = response.getMembers();
