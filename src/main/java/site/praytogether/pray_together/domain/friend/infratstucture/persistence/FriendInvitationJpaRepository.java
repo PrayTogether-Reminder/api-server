@@ -1,6 +1,7 @@
 package site.praytogether.pray_together.domain.friend.infratstucture.persistence;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitation;
 import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitationStatus;
@@ -8,4 +9,6 @@ import site.praytogether.pray_together.domain.friend.domain.friend_invitation.Fr
 public interface FriendInvitationJpaRepository extends JpaRepository<FriendInvitation, Long> {
 
   List<FriendInvitation> findAllByReceiver_IdAndStatus(Long senderId, FriendInvitationStatus status);
+  Optional<FriendInvitation> findByReceiver_IdAndId(Long receiverId, Long id);
+  Optional<FriendInvitation> findBySender_IdAndReceiver_IdAndStatus(Long senderId, Long id, FriendInvitationStatus status);
 }

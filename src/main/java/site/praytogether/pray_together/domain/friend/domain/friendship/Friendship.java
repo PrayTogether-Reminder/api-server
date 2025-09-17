@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,11 @@ import site.praytogether.pray_together.domain.member.model.Member;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Builder
-@Table(name = "friendship")
+@Table(name = "friendship",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"member_id_1", "member_id_2"})
+    }
+)
 @SequenceGenerator(
     name = "FRIENDSHIP_SEQ_GENERATOR",
     sequenceName = "FRIENDSHIP_SEQ",
@@ -45,4 +50,21 @@ public class Friendship extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id_2",nullable = false,updatable = false)
   private Member member2;
+
+  public static Friendship create(Member sender, Member receiver) {
+    Member member1;
+    Member member2;
+    if(sender.getId() < receiver.getId()) { // small id -> member1 , big id -> member2
+      member1 = sender;
+      member2 = receiver;
+    } else {
+      member1 = receiver;
+      member2 = sender;
+    }
+
+    return Friendship.builder()
+        .member1(member1)
+        .member2(member2)
+        .build();
+  }
 }

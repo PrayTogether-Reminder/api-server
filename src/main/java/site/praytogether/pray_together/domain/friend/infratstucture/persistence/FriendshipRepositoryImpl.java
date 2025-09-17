@@ -2,6 +2,7 @@ package site.praytogether.pray_together.domain.friend.infratstucture.persistence
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import site.praytogether.pray_together.domain.friend.domain.friendship.Friendship;
 import site.praytogether.pray_together.domain.friend.domain.friendship.FriendshipRepository;
 
 @Repository
@@ -12,5 +13,11 @@ public class FriendshipRepositoryImpl implements FriendshipRepository {
   @Override
   public boolean isExist(Long memberId1, Long memberId2) {
     return jpaRepository.existsByMember1_IdAndMember2_Id(memberId1,memberId2);
+  }
+
+  @Override
+  public void save(Friendship friendship) {
+    jpaRepository.save(friendship);
+    return;
   }
 }

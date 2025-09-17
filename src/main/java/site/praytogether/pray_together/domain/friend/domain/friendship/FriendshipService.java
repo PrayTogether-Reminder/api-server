@@ -3,6 +3,7 @@ package site.praytogether.pray_together.domain.friend.domain.friendship;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import site.praytogether.pray_together.domain.friend.domain.exception.FriendshipAlreadyExistException;
+import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitation;
 import site.praytogether.pray_together.domain.member.model.Member;
 
 @Component
@@ -10,13 +11,28 @@ import site.praytogether.pray_together.domain.member.model.Member;
 public class FriendshipService {
   private final FriendshipRepository friendshipRepository;
 
-  public void ensureAlreadyNotFriends(Member inviter, Member invitee) {
-    Long memberId1 = Math.min(inviter.getId(), invitee.getId());
-    Long memberId2 = Math.max(inviter.getId(), invitee.getId());
+  private boolean isFriendshipExists(Long memberId1, Long memberId2) {
+    Long smallerId = Math.min(memberId1, memberId2);
+    Long biggerId = Math.max(memberId1, memberId2);
+    return friendshipRepository.isExist(smallerId, biggerId);
+  }
 
-    boolean exist = friendshipRepository.isExist(memberId1,memberId2);
-    if (exist) {
+  public void ensureAlreadyNotFriends(Member inviter, Member invitee) {
+    if (isFriendshipExists(inviter.getId(), invitee.getId())) {
       throw new FriendshipAlreadyExistException(inviter.getId(), invitee.getId());
+    }
+  }
+
+  public void createFriendship(Member sender, Member receiver) {
+    Friendship friendship = Friendship.create(sender, receiver);
+    friendshipRepository.save(friendship);
+  }
+
+  // 멱등성 보장: 이미 친구면 조용히 무시
+  public void createFriendshipIfNotExists(Member sender, Member receiver) {
+    if (!isFriendshipExists(sender.getId(), receiver.getId())) {
+      Friendship friendship = Friendship.create(sender, receiver);
+      friendshipRepository.save(friendship);
     }
   }
 }

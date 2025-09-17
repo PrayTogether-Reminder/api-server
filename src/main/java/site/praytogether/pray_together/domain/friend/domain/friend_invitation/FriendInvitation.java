@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import site.praytogether.pray_together.domain.base.BaseEntity;
+import site.praytogether.pray_together.domain.friend.domain.exception.InvitationAlreadyRespondedException;
 import site.praytogether.pray_together.domain.member.model.Member;
 
 @Entity
@@ -64,5 +65,13 @@ public class FriendInvitation extends BaseEntity {
         .status(FriendInvitationStatus.PENDING)
         .responseTime(Instant.now())
         .build();
+  }
+
+  public void updateStatus(FriendInvitationStatus status) {
+    if(this.status != FriendInvitationStatus.PENDING) {
+      throw new InvitationAlreadyRespondedException(this.id, this.status);
+    }
+    this.status = status;
+    this.responseTime = Instant.now();
   }
 }
