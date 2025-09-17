@@ -59,4 +59,8 @@ public class PrayerContent extends BaseEntity {
   public void updateContent(String content) {
     this.content = content;
   }
+
+  public void detachFromTitle() {
+    this.prayerTitle = null;
+  }
 }
