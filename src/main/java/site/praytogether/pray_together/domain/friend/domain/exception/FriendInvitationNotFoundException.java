@@ -1,8 +1,6 @@
 package site.praytogether.pray_together.domain.friend.domain.exception;
 
-import site.praytogether.pray_together.domain.friend.infratstucture.persistence.FriendInvitationJpaRepository;
 import site.praytogether.pray_together.exception.ExceptionField;
-import site.praytogether.pray_together.exception.spec.ExceptionSpec;
 
 public class FriendInvitationNotFoundException extends FriendException{
 

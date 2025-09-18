@@ -26,11 +26,18 @@ public class FriendApplicationService {
   private final MemberService memberService;
 
   public MessageResponse inviteFriend(Long inviterId,Long inviteeId) {
+    // 자기 자신 초대 검증
+    friendInvitationService.ensureNotSelfInvitation(inviterId, inviteeId);
+
     Member invitee = memberService.fetchById(inviteeId);
     Member inviter = memberService.fetchById(inviterId);
+
+    // 이미 친구인지 검증
     friendshipService.ensureAlreadyNotFriends(inviter, invitee);
-    // todo : 중복 초대 검증 로직 추가 - 단방향
-    // todo : 자기 자신 초대 검증 로직 추가
+
+    // 중복 초대 검증
+    friendInvitationService.ensureNoDuplicateInvitation(inviter, invitee);
+
     friendInvitationService.invite(inviter, invitee);
     return MessageResponse.of("친구 초대를 완료했습니다.");
   }

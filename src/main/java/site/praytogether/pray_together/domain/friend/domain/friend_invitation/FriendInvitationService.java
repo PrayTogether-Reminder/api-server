@@ -4,13 +4,30 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import site.praytogether.pray_together.domain.friend.domain.exception.DuplicateInvitationException;
 import site.praytogether.pray_together.domain.friend.domain.exception.FriendInvitationNotFoundException;
+import site.praytogether.pray_together.domain.friend.domain.exception.SelfInvitationException;
 import site.praytogether.pray_together.domain.member.model.Member;
 
 @Component
 @RequiredArgsConstructor
 public class FriendInvitationService {
   private final FriendInvitationRepository friendInvitationRepository;
+
+  public void ensureNotSelfInvitation(Long inviterId, Long inviteeId) {
+    if (inviterId.equals(inviteeId)) {
+      throw new SelfInvitationException(inviterId);
+    }
+  }
+
+  public void ensureNoDuplicateInvitation(Member inviter, Member invitee) {
+    Optional<FriendInvitation> existingInvitation = friendInvitationRepository
+        .findBySender_IdAndReceiver_IdAndStatus(inviter.getId(), invitee.getId(), FriendInvitationStatus.PENDING);
+
+    if (existingInvitation.isPresent()) {
+      throw new DuplicateInvitationException(inviter.getId(), invitee.getId());
+    }
+  }
 
   public void invite(Member inviter, Member invitee) {
     FriendInvitation friendInvitation = FriendInvitation.create(inviter, invitee);
