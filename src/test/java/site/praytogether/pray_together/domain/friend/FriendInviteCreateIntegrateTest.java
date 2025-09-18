@@ -3,6 +3,8 @@ package site.praytogether.pray_together.domain.friend;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static site.praytogether.pray_together.domain.friend.domain.exception.FriendExceptionSpec.*;
+import static site.praytogether.pray_together.exception.spec.MemberExceptionSpec.MEMBER_NOT_FOUND;
 
 import org.springframework.http.HttpHeaders;
 
@@ -17,7 +19,7 @@ import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 
 @DisplayName("친구 초대 통합 테스트")
-public class FriendInviteIntegrateTest extends IntegrateTest {
+public class FriendInviteCreateIntegrateTest extends IntegrateTest {
   private Member sender;
   private Member receiver;
   private String senderToken;
@@ -73,7 +75,7 @@ public class FriendInviteIntegrateTest extends IntegrateTest {
     mockMvc.perform(post(FRIEND_API_URL + "/{inviteeId}/requests", nonExistentMemerId)
             .header(HttpHeaders.AUTHORIZATION, senderToken))
         .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.code").value("MEMBER-001"));
+        .andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND.getCode()));
 
     // then
     Optional<FriendInvitation> invitation = friendInvitationRepository
@@ -98,7 +100,7 @@ public class FriendInviteIntegrateTest extends IntegrateTest {
     mockMvc.perform(post(FRIEND_API_URL + "/{inviteeId}/requests", receiver.getId())
             .header(HttpHeaders.AUTHORIZATION, senderToken))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("FRIEND-001"));
+        .andExpect(jsonPath("$.code").value(FRIENDSHIP_ALREADY_EXIST.getCode()));
 
     // then
     Optional<FriendInvitation> invitation = friendInvitationRepository
@@ -113,18 +115,14 @@ public class FriendInviteIntegrateTest extends IntegrateTest {
   @DisplayName("이미 보낸 초대가 있을 때 재초대시 409 응답")
   void invite_with_pending_invitation_then_return_409() throws Exception {
     // given
-    FriendInvitation existingInvitation = FriendInvitation.builder()
-        .sender(sender)
-        .receiver(receiver)
-        .status(FriendInvitationStatus.PENDING)
-        .build();
+    FriendInvitation existingInvitation = FriendInvitation.create(sender, receiver);
     friendInvitationRepository.save(existingInvitation);
 
     // when & then
     mockMvc.perform(post(FRIEND_API_URL + "/{inviteeId}/requests", receiver.getId())
             .header(HttpHeaders.AUTHORIZATION, senderToken))
         .andExpect(status().isConflict())
-        .andExpect(jsonPath("$.code").value("FRIEND-005"));
+        .andExpect(jsonPath("$.code").value(DUPLICATE_INVITATION.getCode()));
 
     // then - 여전히 하나의 초대만 존재해야 함
     Optional<FriendInvitation> invitation = friendInvitationRepository
@@ -146,7 +144,7 @@ public class FriendInviteIntegrateTest extends IntegrateTest {
     mockMvc.perform(post(FRIEND_API_URL + "/{inviteeId}/requests", sender.getId())
             .header(HttpHeaders.AUTHORIZATION, senderToken))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("FRIEND-004"));
+        .andExpect(jsonPath("$.code").value(SELF_INVITATION_NOT_ALLOWED.getCode()));
 
     // then
     Optional<FriendInvitation> invitation = friendInvitationRepository
@@ -161,11 +159,7 @@ public class FriendInviteIntegrateTest extends IntegrateTest {
   @DisplayName("상대방이 나를 이미 초대한 경우에도 내가 초대 가능")
   void invite_when_invitee_already_invited_me_then_return_200() throws Exception {
     // given
-    FriendInvitation reverseInvitation = FriendInvitation.builder()
-        .sender(receiver)
-        .receiver(sender)
-        .status(FriendInvitationStatus.PENDING)
-        .build();
+    FriendInvitation reverseInvitation = FriendInvitation.create(receiver, sender);
     friendInvitationRepository.save(reverseInvitation);
 
     // when & then

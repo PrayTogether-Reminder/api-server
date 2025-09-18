@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 
 @DisplayName("받은 친구 초대 목록 조회 통합 테스트")
-public class FriendReceivedInvitationsFetchIntegrateTest extends IntegrateTest {
+public class FriendInvitationsFetchIntegrateTest extends IntegrateTest {
   private Member receiver;
   private Member sender1;
   private Member sender2;
@@ -64,18 +63,10 @@ public class FriendReceivedInvitationsFetchIntegrateTest extends IntegrateTest {
   @DisplayName("PENDING 상태의 받은 초대 목록 조회 성공")
   void fetch_pending_received_invitations_then_return_list() throws Exception {
     // given
-    FriendInvitation invitation1 = FriendInvitation.builder()
-        .sender(sender1)
-        .receiver(receiver)
-        .status(FriendInvitationStatus.PENDING)
-        .build();
+    FriendInvitation invitation1 = FriendInvitation.create(sender1, receiver);
     friendInvitationRepository.save(invitation1);
 
-    FriendInvitation invitation2 = FriendInvitation.builder()
-        .sender(sender2)
-        .receiver(receiver)
-        .status(FriendInvitationStatus.PENDING)
-        .build();
+    FriendInvitation invitation2 = FriendInvitation.create(sender2, receiver);
     friendInvitationRepository.save(invitation2);
 
     // when
@@ -108,11 +99,7 @@ public class FriendReceivedInvitationsFetchIntegrateTest extends IntegrateTest {
   void fetch_invitations_excludes_non_pending_status() throws Exception {
     // given
     // PENDING 초대
-    FriendInvitation pendingInvitation = FriendInvitation.builder()
-        .sender(sender1)
-        .receiver(receiver)
-        .status(FriendInvitationStatus.PENDING)
-        .build();
+    FriendInvitation pendingInvitation = FriendInvitation.create(sender1, receiver);
     friendInvitationRepository.save(pendingInvitation);
 
     // ACCEPTED 초대 (조회되면 안됨)
@@ -159,19 +146,11 @@ public class FriendReceivedInvitationsFetchIntegrateTest extends IntegrateTest {
   void fetch_invitations_excludes_sent_invitations() throws Exception {
     // given
     // 내가 받은 초대
-    FriendInvitation receivedInvitation = FriendInvitation.builder()
-        .sender(sender1)
-        .receiver(receiver)
-        .status(FriendInvitationStatus.PENDING)
-        .build();
+    FriendInvitation receivedInvitation = FriendInvitation.create(sender1, receiver);
     friendInvitationRepository.save(receivedInvitation);
 
     // 내가 보낸 초대 (조회되면 안됨)
-    FriendInvitation sentInvitation = FriendInvitation.builder()
-        .sender(receiver)
-        .receiver(sender2)
-        .status(FriendInvitationStatus.PENDING)
-        .build();
+    FriendInvitation sentInvitation = FriendInvitation.create(receiver, sender2);
     friendInvitationRepository.save(sentInvitation);
 
     // when
@@ -201,25 +180,13 @@ public class FriendReceivedInvitationsFetchIntegrateTest extends IntegrateTest {
   @DisplayName("여러 명으로부터 받은 초대 목록 조회")
   void fetch_multiple_received_invitations() throws Exception {
     // given - 3명으로부터 초대 받음
-    FriendInvitation invitation1 = FriendInvitation.builder()
-        .sender(sender1)
-        .receiver(receiver)
-        .status(FriendInvitationStatus.PENDING)
-        .build();
+    FriendInvitation invitation1 = FriendInvitation.create(sender1, receiver);
     friendInvitationRepository.save(invitation1);
 
-    FriendInvitation invitation2 = FriendInvitation.builder()
-        .sender(sender2)
-        .receiver(receiver)
-        .status(FriendInvitationStatus.PENDING)
-        .build();
+    FriendInvitation invitation2 = FriendInvitation.create(sender2, receiver);
     friendInvitationRepository.save(invitation2);
 
-    FriendInvitation invitation3 = FriendInvitation.builder()
-        .sender(sender3)
-        .receiver(receiver)
-        .status(FriendInvitationStatus.PENDING)
-        .build();
+    FriendInvitation invitation3 = FriendInvitation.create(sender3, receiver);
     friendInvitationRepository.save(invitation3);
 
     // when
