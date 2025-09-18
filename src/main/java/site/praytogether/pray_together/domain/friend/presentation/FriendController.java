@@ -16,7 +16,7 @@ import site.praytogether.pray_together.domain.friend.presentation.dto.FetchRecei
 import site.praytogether.pray_together.domain.friend.presentation.dto.UpdateReceivedInvitationRequest;
 
 @RestController
-@RequestMapping("/friends")
+@RequestMapping("/api/v1/friends")
 @RequiredArgsConstructor
 public class FriendController {
   private final FriendApplicationService friendApplication;
