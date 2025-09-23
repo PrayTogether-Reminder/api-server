@@ -42,10 +42,10 @@ public class PrayerContentService {
   }
 
   @Transactional
-  public PrayerContent update(Long contentId, String content) {
+  public PrayerContent update(Long contentId, String content, Member writer) {
     PrayerContent prayerContent = contentRepository.findById(contentId)
         .orElseThrow(() -> new PrayerContentNotFoundException(contentId));
-    prayerContent.updateContent(content);
+    prayerContent.updateContentAndWriter(content, writer);
     return prayerContent;
   }
 

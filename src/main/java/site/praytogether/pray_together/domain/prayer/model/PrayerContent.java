@@ -65,7 +65,9 @@ public class PrayerContent extends BaseEntity {
         .build();
   }
 
-  public void updateContent(String content) {
+  public void updateContentAndWriter(String content, Member writer) {
     this.content = content;
+    this.writerId = writer.getId();
+    this.writerName = writer.getName();
   }
 }

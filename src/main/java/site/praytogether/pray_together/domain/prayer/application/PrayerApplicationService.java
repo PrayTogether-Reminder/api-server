@@ -101,7 +101,8 @@ public class PrayerApplicationService {
     if (!contentService.existsByIdAndTitleId(contentId, titleId)) {
       throw new PrayerContentNotFoundException(contentId, titleId);
     }
-    contentService.update(contentId, request.getChangedContent());
+    Member writer = memberService.fetchById(memberId);
+    contentService.update(contentId, request.getChangedContent(), writer);
     return MessageResponse.of("기도 내용을 변경했습니다.");
   }
 
