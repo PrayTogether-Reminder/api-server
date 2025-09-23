@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -70,7 +71,8 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
                   .memberId(member.getId())
                   .memberName(member.getName() + "-" + i)  // 각각 다른 이름 사용
                   .content("original-prayer-content-" + i)
-                  .build());
+                  .build(),
+              member);
       prayerTitle.addContent(content);
       prayerContentRepository.save(content);
       prayerContents.add(content);
@@ -126,6 +128,57 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
 
     // 변경된 기도 내용 확인
     PrayerContent updatedContent = prayerContentRepository.findById(contentId).orElseThrow();
+    assertThat(updatedContent.getContent())
+        .as("기도 내용이 업데이트되지 않았습니다.")
+        .isEqualTo(newContent);
+  }
+
+  @Test
+  @DisplayName("다른 회원이 기도 내용 수정 시 writer 정보가 변경됨")
+  void when_different_member_updates_content_then_writer_info_changes() throws Exception {
+    // given - 다른 회원 생성 및 방에 추가
+    Member anotherMember = testUtils.createUniqueMember();
+    memberRepository.save(anotherMember);
+    MemberRoom anotherMemberRoom = testUtils.createUniqueMemberRoom_With_Member_AND_Room(anotherMember, room);
+    memberRoomRepository.save(anotherMemberRoom);
+
+    // 다른 회원의 인증 헤더 생성
+    String anotherToken = testUtils.createBearerToken(anotherMember);
+
+    String newContent = "content-updated-by-another-member";
+    PrayerContentUpdateRequest contentRequest = PrayerContentUpdateRequest.builder()
+        .changedContent(newContent)
+        .build();
+
+    Long contentId = prayerContents.get(0).getId();
+
+    // 원래 writer 정보 확인
+    PrayerContent originalContent = prayerContentRepository.findById(contentId).orElseThrow();
+    assertThat(originalContent.getWriterId()).isEqualTo(member.getId());
+    assertThat(originalContent.getWriterName()).isEqualTo(member.getName());
+
+    PrayerContentUpdateRequest  contentUpdateRequest = PrayerContentUpdateRequest.builder()
+        .changedContent(newContent).build();
+
+    String url = PRAYERS_API_URL + "/" + prayerTitle.getId() + "/contents/" + contentId;
+
+    // when - 다른 회원이 기도 내용 수정
+    mockMvc.perform(put(url)
+            .header(HttpHeaders.AUTHORIZATION, anotherToken)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(contentUpdateRequest)))
+        .andExpect(status().isOk());
+
+    // then
+
+    // writer 정보가 수정한 회원으로 변경되었는지 확인
+    PrayerContent updatedContent = prayerContentRepository.findById(contentId).orElseThrow();
+    assertThat(updatedContent.getWriterId())
+        .as("다른 회원이 수정 시 writerId가 변경되지 않았습니다.")
+        .isEqualTo(anotherMember.getId());
+    assertThat(updatedContent.getWriterName())
+        .as("다른 회원이 수정 시 writerName이 변경되지 않았습니다.")
+        .isEqualTo(anotherMember.getName());
     assertThat(updatedContent.getContent())
         .as("기도 내용이 업데이트되지 않았습니다.")
         .isEqualTo(newContent);

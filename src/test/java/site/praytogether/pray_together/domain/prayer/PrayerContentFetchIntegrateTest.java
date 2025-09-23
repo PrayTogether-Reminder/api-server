@@ -55,6 +55,8 @@ public class PrayerContentFetchIntegrateTest extends IntegrateTest {
     PrayerContent prayerContent =
         PrayerContent.builder()
             .prayerTitle(prayerTitle)
+            .writerId(member.getId())
+            .writerName(member.getName())
             .content("test-prayer-content")
             .memberId(member.getId())
             .memberName(member.getName())
@@ -75,6 +77,8 @@ public class PrayerContentFetchIntegrateTest extends IntegrateTest {
       PrayerContent prayerContent =
           PrayerContent.builder()
               .prayerTitle(prayerTitle)
+              .writerId(newMember.getId())
+              .writerName(newMember.getName())
               .content("test-prayer-content" + (i + 'ㄱ'))
               .memberId(newMember.getId())
               .memberName(newMember.getName())

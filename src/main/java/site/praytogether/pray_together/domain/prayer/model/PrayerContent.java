@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.praytogether.pray_together.domain.base.BaseEntity;
+import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
 
 @Entity
@@ -38,6 +39,12 @@ public class PrayerContent extends BaseEntity {
   @JoinColumn(name = "prayer_title_id", nullable = false)
   private PrayerTitle prayerTitle;
 
+  @Column(name = "writer_id",nullable = false)
+  private Long writerId;
+
+  @Column(name = "writer_name",nullable = false, length = 30)
+  private String writerName;
+
   @Column(name = "member_id")
   private Long memberId;
 
@@ -47,17 +54,21 @@ public class PrayerContent extends BaseEntity {
   @Column(nullable = false, columnDefinition = "CLOB")
   private String content;
 
-  public static PrayerContent create(PrayerTitle title, PrayerContentCreateRequest reqContent) {
+  public static PrayerContent create(PrayerTitle title, PrayerContentCreateRequest reqContent, Member writer) {
     return PrayerContent.builder()
         .prayerTitle(title)
+        .writerId(writer.getId())
+        .writerName(writer.getName())
         .memberId(reqContent.getMemberId())
         .memberName(reqContent.getMemberName())
         .content(reqContent.getContent())
         .build();
   }
 
-  public void updateContent(String content) {
+  public void updateContentAndWriter(String content, Member writer) {
     this.content = content;
+    this.writerId = writer.getId();
+    this.writerName = writer.getName();
   }
 
   public void detachFromTitle() {

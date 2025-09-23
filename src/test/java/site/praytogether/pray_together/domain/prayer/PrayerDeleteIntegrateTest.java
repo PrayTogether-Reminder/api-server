@@ -71,7 +71,8 @@ public class PrayerDeleteIntegrateTest extends IntegrateTest {
                   .memberId(newMember.getId())
                   .memberName(newMember.getName())
                   .content("test-prayer-content" + i)
-                  .build());
+                  .build(),
+              newMember);
 
       prayerTitle.addContent(prayerContent);
       prayerContentRepository.save(prayerContent);

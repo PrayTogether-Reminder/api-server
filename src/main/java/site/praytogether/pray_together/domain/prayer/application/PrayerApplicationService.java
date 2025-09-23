@@ -88,10 +88,11 @@ public class PrayerApplicationService {
   }
 
   @Transactional
-  public MessageResponse createPrayerContent(Long memberId, Long titleId, PrayerContentCreateRequest request) {
-    validateMemberExistInRoomByTitleId(memberId, titleId);
+  public MessageResponse createPrayerContent(Long writerId, Long titleId, PrayerContentCreateRequest request) {
+    validateMemberExistInRoomByTitleId(writerId, titleId);
     PrayerTitle title = titleService.fetchById(titleId);
-    contentService.save(title, request);
+    Member writer = memberService.fetchById(writerId);
+    contentService.save(title, request,writer);
     return MessageResponse.of("기도 내용을 생성했습니다.");
   }
 
@@ -101,7 +102,8 @@ public class PrayerApplicationService {
     if (!contentService.existsByIdAndTitleId(contentId, titleId)) {
       throw new PrayerContentNotFoundException(contentId, titleId);
     }
-    contentService.update(contentId, request.getChangedContent());
+    Member writer = memberService.fetchById(memberId);
+    contentService.update(contentId, request.getChangedContent(), writer);
     return MessageResponse.of("기도 내용을 변경했습니다.");
   }
 
