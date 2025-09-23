@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
 import site.praytogether.pray_together.domain.prayer.exception.PrayerContentNotFoundException;
 import site.praytogether.pray_together.domain.prayer.exception.PrayerContentDuplicateMemberException;
@@ -29,13 +30,13 @@ public class PrayerContentService {
   }
 
   @Transactional
-  public PrayerContent save(PrayerTitle title, PrayerContentCreateRequest content) {
+  public PrayerContent save(PrayerTitle title, PrayerContentCreateRequest content, Member writer) {
     // 중복 체크: 이미 해당 기도 제목에 같은 이름으로 기도 내용을 작성했는지 확인
     if (contentRepository.existsByPrayerTitleIdAndMemberName(title.getId(), content.getMemberName())) {
       throw new PrayerContentDuplicateMemberException(title.getId(), content.getMemberName());
     }
     
-    PrayerContent newContent = PrayerContent.create(title, content);
+    PrayerContent newContent = PrayerContent.create(title, content,writer);
     title.addContent(newContent);
     return contentRepository.save(newContent);
   }

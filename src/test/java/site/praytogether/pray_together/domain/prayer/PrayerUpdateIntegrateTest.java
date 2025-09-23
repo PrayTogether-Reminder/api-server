@@ -72,7 +72,8 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
                   .memberId(member.getId())
                   .memberName(member.getName() + "-" + i)  // 각각 다른 이름 사용
                   .content("original-prayer-content-" + i)
-                  .build());
+                  .build(),
+              member);
       prayerTitle.addContent(content);
       prayerContentRepository.save(content);
       prayerContents.add(content);
