@@ -142,6 +142,55 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
   }
 
   @Test
+  @DisplayName("다른 회원이 기도 내용 수정 시 writer 정보가 변경됨")
+  void when_different_member_updates_content_then_writer_info_changes() {
+    // given - 다른 회원 생성 및 방에 추가
+    Member anotherMember = testUtils.createUniqueMember();
+    memberRepository.save(anotherMember);
+    MemberRoom anotherMemberRoom = testUtils.createUniqueMemberRoom_With_Member_AND_Room(anotherMember, room);
+    memberRoomRepository.save(anotherMemberRoom);
+
+    // 다른 회원의 인증 헤더 생성
+    HttpHeaders anotherHeaders = testUtils.create_Auth_HttpHeader_With_Member(anotherMember);
+
+    String newContent = "content-updated-by-another-member";
+    PrayerContentUpdateRequest contentRequest = PrayerContentUpdateRequest.builder()
+        .changedContent(newContent)
+        .build();
+
+    Long contentId = prayerContents.get(0).getId();
+
+    // 원래 writer 정보 확인
+    PrayerContent originalContent = prayerContentRepository.findById(contentId).orElseThrow();
+    assertThat(originalContent.getWriterId()).isEqualTo(member.getId());
+    assertThat(originalContent.getWriterName()).isEqualTo(member.getName());
+
+    HttpEntity<PrayerContentUpdateRequest> requestEntity = new HttpEntity<>(contentRequest, anotherHeaders);
+    String url = PRAYERS_API_URL + "/" + prayerTitle.getId() + "/contents/" + contentId;
+
+    // when - 다른 회원이 기도 내용 수정
+    ResponseEntity<MessageResponse> responseEntity =
+        restTemplate.exchange(url, HttpMethod.PUT, requestEntity, MessageResponse.class);
+
+    // then
+    assertThat(responseEntity.getStatusCode())
+        .as("다른 회원의 기도 내용 변경 API 응답 상태 코드가 200 OK가 아닙니다.")
+        .isEqualTo(HttpStatus.OK);
+
+    // writer 정보가 수정한 회원으로 변경되었는지 확인
+    PrayerContent updatedContent = prayerContentRepository.findById(contentId).orElseThrow();
+    assertThat(updatedContent.getWriterId())
+        .as("다른 회원이 수정 시 writerId가 변경되지 않았습니다.")
+        .isEqualTo(anotherMember.getId());
+    assertThat(updatedContent.getWriterName())
+        .as("다른 회원이 수정 시 writerName이 변경되지 않았습니다.")
+        .isEqualTo(anotherMember.getName());
+    assertThat(updatedContent.getContent())
+        .as("기도 내용이 업데이트되지 않았습니다.")
+        .isEqualTo(newContent);
+  }
+
+  @Test
   @DisplayName("기도 내용 생성 시 201 CREATED 응답")
   void create_prayer_content_then_return_201_created() {
     // given
