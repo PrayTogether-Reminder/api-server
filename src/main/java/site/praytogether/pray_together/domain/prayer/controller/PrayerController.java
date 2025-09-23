@@ -80,12 +80,12 @@ public class PrayerController {
   
   @PostMapping("/{titleId}/contents")
   public ResponseEntity<MessageResponse> createPrayerContent(
-      @PrincipalId Long memberId,
+      @PrincipalId Long writerId,
       @NotNull(message = "잘 못된 기도 제목을 선택하셨습니다.") 
       @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") 
       @PathVariable Long titleId,
       @Valid @RequestBody PrayerContentCreateRequest request) {
-    MessageResponse response = prayerApplication.createPrayerContent(memberId, titleId, request);
+    MessageResponse response = prayerApplication.createPrayerContent(writerId, titleId, request);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 

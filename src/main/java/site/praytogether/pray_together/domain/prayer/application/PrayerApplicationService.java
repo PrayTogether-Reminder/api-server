@@ -87,10 +87,11 @@ public class PrayerApplicationService {
   }
 
   @Transactional
-  public MessageResponse createPrayerContent(Long memberId, Long titleId, PrayerContentCreateRequest request) {
-    validateMemberExistInRoomByTitleId(memberId, titleId);
+  public MessageResponse createPrayerContent(Long writerId, Long titleId, PrayerContentCreateRequest request) {
+    validateMemberExistInRoomByTitleId(writerId, titleId);
     PrayerTitle title = titleService.fetchById(titleId);
-    contentService.save(title, request);
+    Member writer = memberService.fetchById(writerId);
+    contentService.save(title, request,writer);
     return MessageResponse.of("기도 내용을 생성했습니다.");
   }
 
