@@ -11,7 +11,7 @@ public interface PrayerContentRepository extends JpaRepository<PrayerContent, Lo
   @Query(
       """
     SELECT new site.praytogether.pray_together.domain.prayer.model.PrayerContentInfo(
-       pc.id,pc.memberId,pc.memberName,pc.content
+       pc.id,pc.writerId,pc.writerName,pc.memberId,pc.memberName,pc.content
         )
     FROM PrayerContent pc
     WHERE pc.prayerTitle.id = :titleId
