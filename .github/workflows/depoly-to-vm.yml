@@ -71,6 +71,9 @@ jobs:
                 -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
                 -e ACCESS_EXPIRE_TIME="${{ secrets.ACCESS_EXPIRE_TIME }}" \
                 -e REFRESH_EXPIRE_TIME="${{ secrets.REFRESH_EXPIRE_TIME }}" \
+                -e APP_VERSION_MINIMUM="${{ secrets.APP_VERSION_MINIMUM }}" \
+                -e APP_VERSION_UPDATE_FORCE="${{ secrets.APP_VERSION_UPDATE_FORCE }}" \
+                -e APP_MAINTENANCE_MODE="${{ secrets.APP_MAINTENANCE_MODE }}" \
                 $IMAGE_URL
             
               echo "⏳ [SUB VM] Waiting for container to start..."
@@ -187,6 +190,9 @@ jobs:
                 -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
                 -e ACCESS_EXPIRE_TIME="${{ secrets.ACCESS_EXPIRE_TIME }}" \
                 -e REFRESH_EXPIRE_TIME="${{ secrets.REFRESH_EXPIRE_TIME }}" \
+                -e APP_VERSION_MINIMUM="${{ secrets.APP_VERSION_MINIMUM }}" \
+                -e APP_VERSION_UPDATE_FORCE="${{ secrets.APP_VERSION_UPDATE_FORCE }}" \
+                -e APP_MAINTENANCE_MODE="${{ secrets.APP_MAINTENANCE_MODE }}" \
                 $IMAGE_URL
             
               echo "⏳ [MAIN VM] Waiting for container to start..."
