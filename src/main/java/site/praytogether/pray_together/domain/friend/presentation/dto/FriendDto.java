@@ -5,7 +5,8 @@ import lombok.Value;
 
 @Value
 @Builder
-public class FriendshipDto {
-  String friendName;
+public class FriendDto {
   long friendId;
+  String friendName;
+  String friendEmail;
 }

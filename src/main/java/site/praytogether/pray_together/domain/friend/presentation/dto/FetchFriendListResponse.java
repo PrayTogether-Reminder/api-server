@@ -5,5 +5,5 @@ import lombok.Value;
 
 @Value
 public class FetchFriendListResponse {
-  List<FriendshipDto> friends;
+  List<FriendDto> friends;
 }

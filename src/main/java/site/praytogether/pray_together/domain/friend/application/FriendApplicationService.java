@@ -15,7 +15,7 @@ import site.praytogether.pray_together.domain.friend.domain.friendship.Friendshi
 import site.praytogether.pray_together.domain.friend.presentation.dto.FetchFriendListResponse;
 import site.praytogether.pray_together.domain.friend.presentation.dto.FetchReceivedInvitationResponse;
 import site.praytogether.pray_together.domain.friend.application.mapper.FriendInvitationMapper;
-import site.praytogether.pray_together.domain.friend.presentation.dto.FriendshipDto;
+import site.praytogether.pray_together.domain.friend.presentation.dto.FriendDto;
 import site.praytogether.pray_together.domain.friend.presentation.dto.UpdateReceivedInvitationRequest;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
@@ -71,7 +71,7 @@ public class FriendApplicationService {
   public FetchFriendListResponse getFriendList(Long memberId) {
     Member member = memberService.fetchById(memberId);
     List<Friendship> friendships = friendshipService.fetchListBy(member);
-    List<FriendshipDto> dtos = FriendshipMapper.toDtos(friendships, member);
+    List<FriendDto> dtos = FriendshipMapper.toDtos(friendships, member);
     return new FetchFriendListResponse(dtos);
   }
 
