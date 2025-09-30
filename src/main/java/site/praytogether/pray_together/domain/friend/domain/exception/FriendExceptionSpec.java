@@ -14,7 +14,9 @@ public enum FriendExceptionSpec implements ExceptionSpec {
   FRIEND_INVITATION_NOF_FOUND(HttpStatus.NOT_FOUND, "FRIEND-002", "친구 초대장을 찾을 수 없습니다."),
   INVITATION_ALREADY_RESPONDED(HttpStatus.CONFLICT, "FRIEND-003", "이미 응답된 친구 초대입니다."),
   SELF_INVITATION_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FRIEND-004", "자기 자신에게 친구 요청을 보낼 수 없습니다."),
-  DUPLICATE_INVITATION(HttpStatus.CONFLICT, "FRIEND-005", "이미 친구 요청을 보낸 상태입니다.");
+  DUPLICATE_INVITATION(HttpStatus.CONFLICT, "FRIEND-005", "이미 친구 요청을 보낸 상태입니다."),
+  FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "FRIEND-006", "존재하지 않는 친구 관계입니다."),
+  SELF_FRIEND_OPERATION_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FRIEND-007", "자기 자신에게는 친구 작업을 수행할 수 없습니다.");
 
   private final HttpStatus status;
   private final String code;

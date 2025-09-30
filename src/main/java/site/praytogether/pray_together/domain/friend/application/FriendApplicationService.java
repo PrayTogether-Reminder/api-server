@@ -74,4 +74,16 @@ public class FriendApplicationService {
     List<FriendshipDto> dtos = FriendshipMapper.toDtos(friendships, member);
     return new FetchFriendListResponse(dtos);
   }
+
+  public MessageResponse deleteFriend(Long memberId, Long friendId) {
+    // 자기 자신 삭제 검증
+    friendshipService.ensureNotSameMember(memberId, friendId);
+
+    Member member = memberService.fetchById(memberId);
+    Member friend = memberService.fetchById(friendId);
+
+    friendshipService.delete(member, friend);
+
+    return MessageResponse.of("친구 관계를 삭제했습니다.");
+  }
 }

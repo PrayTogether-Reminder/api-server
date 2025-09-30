@@ -4,6 +4,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import site.praytogether.pray_together.domain.friend.domain.exception.FriendshipAlreadyExistException;
+import site.praytogether.pray_together.domain.friend.domain.exception.FriendshipNotFoundException;
+import site.praytogether.pray_together.domain.friend.domain.exception.SelfFriendOperationException;
 import site.praytogether.pray_together.domain.member.model.Member;
 
 @Component
@@ -15,6 +17,12 @@ public class FriendshipService {
     Long smallerId = Math.min(memberId1, memberId2);
     Long biggerId = Math.max(memberId1, memberId2);
     return friendshipRepository.isExist(smallerId, biggerId);
+  }
+
+  public void ensureNotSameMember(Long memberId1, Long memberId2) {
+    if (memberId1.equals(memberId2)) {
+      throw new SelfFriendOperationException(memberId1);
+    }
   }
 
   public void ensureAlreadyNotFriends(Member inviter, Member invitee) {
@@ -38,5 +46,15 @@ public class FriendshipService {
 
   public List<Friendship> fetchListBy(Member member) {
     return friendshipRepository.getFriendshipList(member.getId());
+  }
+
+  public void delete(Member member1, Member member2) {
+    Long smallerId = Math.min(member1.getId(), member2.getId());
+    Long biggerId = Math.max(member1.getId(), member2.getId());
+
+    Friendship friendship = friendshipRepository.findByMemberIds(smallerId, biggerId)
+        .orElseThrow(() -> new FriendshipNotFoundException(smallerId, biggerId));
+
+    friendshipRepository.delete(friendship);
   }
 }

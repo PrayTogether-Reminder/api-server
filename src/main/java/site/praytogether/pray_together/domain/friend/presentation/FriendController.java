@@ -2,6 +2,7 @@ package site.praytogether.pray_together.domain.friend.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,6 +44,12 @@ public class FriendController {
   @GetMapping
   public ResponseEntity<FetchFriendListResponse> getFriendList(@PrincipalId Long memberId) {
     FetchFriendListResponse response = friendApplication.getFriendList(memberId);
+    return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/{friendId}")
+  public ResponseEntity<MessageResponse> deleteFriend(@PrincipalId Long memberId, @PathVariable Long friendId) {
+    MessageResponse response = friendApplication.deleteFriend(memberId, friendId);
     return ResponseEntity.ok(response);
   }
 }
