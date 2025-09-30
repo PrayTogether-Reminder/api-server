@@ -1,9 +1,9 @@
 package site.praytogether.pray_together.domain.friend.domain.friendship;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import site.praytogether.pray_together.domain.friend.domain.exception.FriendshipAlreadyExistException;
-import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitation;
 import site.praytogether.pray_together.domain.member.model.Member;
 
 @Component
@@ -34,5 +34,9 @@ public class FriendshipService {
       Friendship friendship = Friendship.create(sender, receiver);
       friendshipRepository.save(friendship);
     }
+  }
+
+  public List<Friendship> fetchListBy(Member member) {
+    return friendshipRepository.getFriendshipList(member.getId());
   }
 }

@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -66,5 +67,12 @@ public class Friendship extends BaseEntity {
         .member1(member1)
         .member2(member2)
         .build();
+  }
+
+  public Member getFriendBy(Member me) {
+    if(Objects.equals(me.getId(),member1.getId()) ) {
+      return member2;
+    }
+    return member1;
   }
 }

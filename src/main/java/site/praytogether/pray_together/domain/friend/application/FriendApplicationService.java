@@ -6,13 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
+import site.praytogether.pray_together.domain.friend.application.mapper.FriendshipMapper;
 import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitation;
 import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitationService;
 import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitationStatus;
+import site.praytogether.pray_together.domain.friend.domain.friendship.Friendship;
 import site.praytogether.pray_together.domain.friend.domain.friendship.FriendshipService;
 import site.praytogether.pray_together.domain.friend.presentation.dto.FetchFriendListResponse;
 import site.praytogether.pray_together.domain.friend.presentation.dto.FetchReceivedInvitationResponse;
 import site.praytogether.pray_together.domain.friend.application.mapper.FriendInvitationMapper;
+import site.praytogether.pray_together.domain.friend.presentation.dto.FriendshipDto;
 import site.praytogether.pray_together.domain.friend.presentation.dto.UpdateReceivedInvitationRequest;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
@@ -66,6 +69,9 @@ public class FriendApplicationService {
   }
 
   public FetchFriendListResponse getFriendList(Long memberId) {
-    return null;
+    Member member = memberService.fetchById(memberId);
+    List<Friendship> friendships = friendshipService.fetchListBy(member);
+    List<FriendshipDto> dtos = FriendshipMapper.toDtos(friendships, member);
+    return new FetchFriendListResponse(dtos);
   }
 }

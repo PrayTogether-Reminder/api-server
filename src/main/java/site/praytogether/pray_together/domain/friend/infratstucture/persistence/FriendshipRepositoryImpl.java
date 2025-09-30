@@ -1,5 +1,6 @@
 package site.praytogether.pray_together.domain.friend.infratstucture.persistence;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import site.praytogether.pray_together.domain.friend.domain.friendship.Friendship;
@@ -19,5 +20,10 @@ public class FriendshipRepositoryImpl implements FriendshipRepository {
   public void save(Friendship friendship) {
     jpaRepository.save(friendship);
     return;
+  }
+
+  @Override
+  public List<Friendship> getFriendshipList(Long memberId) {
+    return jpaRepository.findFriendshipBy(memberId);
   }
 }
