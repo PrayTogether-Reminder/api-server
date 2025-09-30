@@ -10,6 +10,7 @@ import site.praytogether.pray_together.domain.friend.domain.friend_invitation.Fr
 import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitationService;
 import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitationStatus;
 import site.praytogether.pray_together.domain.friend.domain.friendship.FriendshipService;
+import site.praytogether.pray_together.domain.friend.presentation.dto.FetchFriendListResponse;
 import site.praytogether.pray_together.domain.friend.presentation.dto.FetchReceivedInvitationResponse;
 import site.praytogether.pray_together.domain.friend.application.mapper.FriendInvitationMapper;
 import site.praytogether.pray_together.domain.friend.presentation.dto.UpdateReceivedInvitationRequest;
@@ -62,5 +63,9 @@ public class FriendApplicationService {
     };
 
     return MessageResponse.of(message);
+  }
+
+  public FetchFriendListResponse getFriendList(Long memberId) {
+    return null;
   }
 }

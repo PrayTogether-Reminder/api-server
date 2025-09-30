@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.friend.application.FriendApplicationService;
+import site.praytogether.pray_together.domain.friend.presentation.dto.FetchFriendListResponse;
 import site.praytogether.pray_together.domain.friend.presentation.dto.FetchReceivedInvitationResponse;
 import site.praytogether.pray_together.domain.friend.presentation.dto.UpdateReceivedInvitationRequest;
 
@@ -36,6 +37,12 @@ public class FriendController {
   @PatchMapping("/requests/{invitationId}")
   public ResponseEntity<MessageResponse> updateReceivedInvitation(@PrincipalId Long inviteeId, @PathVariable Long  invitationId, @RequestBody UpdateReceivedInvitationRequest request) {
     MessageResponse response = friendApplication.updateReceivedInvitation(inviteeId,invitationId, request);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping
+  public ResponseEntity<FetchFriendListResponse> getFriendList(@PrincipalId Long memberId) {
+    FetchFriendListResponse response = friendApplication.getFriendList(memberId);
     return ResponseEntity.ok(response);
   }
 }
