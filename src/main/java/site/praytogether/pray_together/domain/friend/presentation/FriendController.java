@@ -1,5 +1,6 @@
 package site.praytogether.pray_together.domain.friend.presentation;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +16,7 @@ import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.friend.application.FriendApplicationService;
 import site.praytogether.pray_together.domain.friend.presentation.dto.FetchFriendListResponse;
 import site.praytogether.pray_together.domain.friend.presentation.dto.FetchReceivedInvitationResponse;
+import site.praytogether.pray_together.domain.friend.presentation.dto.InviteFriendRequest;
 import site.praytogether.pray_together.domain.friend.presentation.dto.UpdateReceivedInvitationRequest;
 
 @RestController
@@ -23,9 +25,9 @@ import site.praytogether.pray_together.domain.friend.presentation.dto.UpdateRece
 public class FriendController {
   private final FriendApplicationService friendApplication;
 
-  @PostMapping("/{inviteeId}/requests")
-  public ResponseEntity<MessageResponse> inviteFriend(@PrincipalId Long inviterId, @PathVariable Long inviteeId) {
-    MessageResponse response = friendApplication.inviteFriend(inviterId, inviteeId);
+  @PostMapping("/requests")
+  public ResponseEntity<MessageResponse> inviteFriend(@PrincipalId Long inviterId, @Valid @RequestBody InviteFriendRequest request) {
+    MessageResponse response = friendApplication.inviteFriend(inviterId, request.inviteeEmail());
     return ResponseEntity.ok(response);
   }
 

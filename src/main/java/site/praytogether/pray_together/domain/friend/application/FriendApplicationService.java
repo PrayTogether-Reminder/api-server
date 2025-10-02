@@ -29,12 +29,12 @@ public class FriendApplicationService {
   private final FriendInvitationService friendInvitationService;
   private final MemberService memberService;
 
-  public MessageResponse inviteFriend(Long inviterId,Long inviteeId) {
-    // 자기 자신 초대 검증
-    friendInvitationService.ensureNotSelfInvitation(inviterId, inviteeId);
-
-    Member invitee = memberService.fetchById(inviteeId);
+  public MessageResponse inviteFriend(Long inviterId, String inviteeEmail) {
     Member inviter = memberService.fetchById(inviterId);
+    Member invitee = memberService.getByEmail(inviteeEmail);
+
+    // 자기 자신 초대 검증
+    friendInvitationService.ensureNotSelfInvitation(inviterId, invitee.getId());
 
     // 이미 친구인지 검증
     friendshipService.ensureAlreadyNotFriends(inviter, invitee);
