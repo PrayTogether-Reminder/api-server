@@ -1,8 +1,8 @@
-package site.praytogether.pray_together.domain.invitation.exception;
+package site.praytogether.pray_together.domain.invitation.domain.exception;
 
 import static site.praytogether.pray_together.exception.spec.InvitationExceptionSpec.ALREADY_RESPONDED_INVITATION;
 
-import site.praytogether.pray_together.domain.invitation.model.InvitationStatus;
+import site.praytogether.pray_together.domain.invitation.domain.InvitationStatus;
 import site.praytogether.pray_together.exception.ExceptionField;
 
 public class AlreadyRespondedInvitationException extends InvitationException {

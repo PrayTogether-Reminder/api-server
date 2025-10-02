@@ -1,11 +1,11 @@
-package site.praytogether.pray_together.domain.invitation.dto;
+package site.praytogether.pray_together.domain.invitation.presentation.dto;
 
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
+import site.praytogether.pray_together.domain.invitation.domain.InvitationInfo;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

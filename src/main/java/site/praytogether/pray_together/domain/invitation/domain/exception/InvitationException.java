@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.invitation.exception;
+package site.praytogether.pray_together.domain.invitation.domain.exception;
 
 import site.praytogether.pray_together.exception.BaseException;
 import site.praytogether.pray_together.exception.ExceptionField;

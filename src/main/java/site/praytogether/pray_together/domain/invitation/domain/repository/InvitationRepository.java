@@ -1,12 +1,12 @@
-package site.praytogether.pray_together.domain.invitation.repository;
+package site.praytogether.pray_together.domain.invitation.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import site.praytogether.pray_together.domain.invitation.model.Invitation;
-import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
-import site.praytogether.pray_together.domain.invitation.model.InvitationStatus;
+import site.praytogether.pray_together.domain.invitation.domain.Invitation;
+import site.praytogether.pray_together.domain.invitation.domain.InvitationInfo;
+import site.praytogether.pray_together.domain.invitation.domain.InvitationStatus;
 
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
 

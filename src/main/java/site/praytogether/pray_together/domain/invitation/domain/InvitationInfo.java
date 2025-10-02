@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.invitation.model;
+package site.praytogether.pray_together.domain.invitation.domain;
 
 import java.time.Instant;
 import lombok.AccessLevel;

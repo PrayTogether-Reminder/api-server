@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.invitation.exception;
+package site.praytogether.pray_together.domain.invitation.domain.exception;
 
 import static site.praytogether.pray_together.exception.spec.InvitationExceptionSpec.INVITATION_NOT_FOUND;
 

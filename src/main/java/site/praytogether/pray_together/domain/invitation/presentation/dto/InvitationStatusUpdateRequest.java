@@ -1,10 +1,10 @@
-package site.praytogether.pray_together.domain.invitation.dto;
+package site.praytogether.pray_together.domain.invitation.presentation.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import site.praytogether.pray_together.domain.invitation.model.InvitationStatus;
+import site.praytogether.pray_together.domain.invitation.domain.InvitationStatus;
 
 @Getter
 @Builder

@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,14 +16,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import site.praytogether.pray_together.domain.base.MessageResponse;
-import site.praytogether.pray_together.domain.invitation.dto.InvitationStatusUpdateRequest;
-import site.praytogether.pray_together.domain.invitation.model.Invitation;
-import site.praytogether.pray_together.domain.invitation.model.InvitationStatus;
+import site.praytogether.pray_together.domain.invitation.presentation.dto.InvitationStatusUpdateRequest;
+import site.praytogether.pray_together.domain.invitation.domain.Invitation;
+import site.praytogether.pray_together.domain.invitation.domain.InvitationStatus;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.room.model.Room;
-import site.praytogether.pray_together.exception.ExceptionResponse;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 
 @DisplayName("방 초대 상태 변경 통합 테스트")

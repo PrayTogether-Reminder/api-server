@@ -1,14 +1,14 @@
-package site.praytogether.pray_together.domain.invitation.service;
+package site.praytogether.pray_together.domain.invitation.domain.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.praytogether.pray_together.domain.invitation.exception.InvitationNotFoundException;
-import site.praytogether.pray_together.domain.invitation.model.Invitation;
-import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
-import site.praytogether.pray_together.domain.invitation.model.InvitationStatus;
-import site.praytogether.pray_together.domain.invitation.repository.InvitationRepository;
+import site.praytogether.pray_together.domain.invitation.domain.exception.InvitationNotFoundException;
+import site.praytogether.pray_together.domain.invitation.domain.Invitation;
+import site.praytogether.pray_together.domain.invitation.domain.InvitationInfo;
+import site.praytogether.pray_together.domain.invitation.domain.InvitationStatus;
+import site.praytogether.pray_together.domain.invitation.domain.repository.InvitationRepository;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.room.model.Room;
 

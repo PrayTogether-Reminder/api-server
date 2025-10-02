@@ -8,14 +8,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import site.praytogether.pray_together.domain.invitation.dto.InvitationInfoScrollResponse;
-import site.praytogether.pray_together.domain.invitation.model.Invitation;
-import site.praytogether.pray_together.domain.invitation.model.InvitationInfo;
+import site.praytogether.pray_together.domain.invitation.presentation.dto.InvitationInfoScrollResponse;
+import site.praytogether.pray_together.domain.invitation.domain.Invitation;
+import site.praytogether.pray_together.domain.invitation.domain.InvitationInfo;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.test_config.IntegrateTest;

@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.invitation.model;
+package site.praytogether.pray_together.domain.invitation.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

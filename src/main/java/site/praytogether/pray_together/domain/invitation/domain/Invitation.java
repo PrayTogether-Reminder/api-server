@@ -1,6 +1,6 @@
-package site.praytogether.pray_together.domain.invitation.model;
+package site.praytogether.pray_together.domain.invitation.domain;
 
-import static site.praytogether.pray_together.domain.invitation.model.InvitationStatus.PENDING;
+import static site.praytogether.pray_together.domain.invitation.domain.InvitationStatus.PENDING;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import site.praytogether.pray_together.domain.base.BaseEntity;
-import site.praytogether.pray_together.domain.invitation.exception.AlreadyRespondedInvitationException;
+import site.praytogether.pray_together.domain.invitation.domain.exception.AlreadyRespondedInvitationException;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.room.model.Room;
 
