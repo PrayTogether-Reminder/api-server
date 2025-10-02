@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.invitation.presentation.controller;
+package site.praytogether.pray_together.domain.invitation.presentation.v1.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.invitation.application.InvitationApplicationService;
-import site.praytogether.pray_together.domain.invitation.presentation.dto.InvitationCreateRequest;
-import site.praytogether.pray_together.domain.invitation.presentation.dto.InvitationInfoScrollResponse;
-import site.praytogether.pray_together.domain.invitation.presentation.dto.InvitationStatusUpdateRequest;
+import site.praytogether.pray_together.domain.invitation.presentation.v1.dto.InvitationCreateRequest;
+import site.praytogether.pray_together.domain.invitation.presentation.v1.dto.InvitationInfoScrollResponse;
+import site.praytogether.pray_together.domain.invitation.presentation.v1.dto.InvitationStatusUpdateRequest;
 
 @RestController
 @RequiredArgsConstructor

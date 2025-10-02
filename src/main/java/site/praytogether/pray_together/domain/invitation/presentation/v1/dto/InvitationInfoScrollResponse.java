@@ -1,4 +1,4 @@
-package site.praytogether.pray_together.domain.invitation.presentation.dto;
+package site.praytogether.pray_together.domain.invitation.presentation.v1.dto;
 
 import java.util.List;
 import lombok.AccessLevel;

@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import site.praytogether.pray_together.domain.invitation.presentation.dto.InvitationInfoScrollResponse;
+import site.praytogether.pray_together.domain.invitation.presentation.v1.dto.InvitationInfoScrollResponse;
 import site.praytogether.pray_together.domain.invitation.domain.Invitation;
 import site.praytogether.pray_together.domain.invitation.domain.InvitationInfo;
 import site.praytogether.pray_together.domain.member.model.Member;
