@@ -1,17 +1,17 @@
 package site.praytogether.pray_together.domain.prayer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
@@ -28,7 +28,7 @@ import site.praytogether.pray_together.test_config.IntegrateTest;
 public class PrayerCompletionIntegrateTest extends IntegrateTest {
 
   private Member member;
-  private HttpHeaders headers;
+  private String token;
   private Room room;
   private PrayerTitle prayerTitle;
   private final String COMPLETION_URL_FORMAT = "/{prayerTitleId}/completion";
@@ -38,7 +38,7 @@ public class PrayerCompletionIntegrateTest extends IntegrateTest {
   private Member[] additionalMembers;
 
   @BeforeEach
-  void setup() {
+  void setup() throws Exception {
     // 회원 생성
     member = testUtils.createUniqueMember();
     memberRepository.save(member);
@@ -67,17 +67,13 @@ public class PrayerCompletionIntegrateTest extends IntegrateTest {
     }
 
     // 인증 헤더 생성
-    headers = testUtils.create_Auth_HttpHeader_With_Member(member);
+    token = testUtils.createBearerToken(member);
   }
 
-  @AfterEach
-  void cleanup() {
-    cleanRepository();
-  }
 
   @Test
   @DisplayName("기도 완료 처리 시 200 OK 응답 및 알림 생성 확인")
-  void complete_prayer_then_create_notifications_and_return_200_ok() {
+  void complete_prayer_then_create_notifications_and_return_200_ok() throws Exception {
 
     // given
     String uri =
@@ -89,21 +85,15 @@ public class PrayerCompletionIntegrateTest extends IntegrateTest {
     PrayerCompletionCreateRequest request =
         PrayerCompletionCreateRequest.builder().roomId(room.getId()).build();
 
-    HttpEntity<PrayerCompletionCreateRequest> requestEntity = new HttpEntity<>(request, headers);
 
     // when
-    ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.exchange(uri, HttpMethod.POST, requestEntity, MessageResponse.class);
+    mockMvc.perform(post(uri)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk());
 
     // then
-    // 응답 검증
-    assertThat(responseEntity.getStatusCode())
-        .as("기도 완료 처리 API 응답 상태 코드가 200 OK이 아닙니다.")
-        .isEqualTo(HttpStatus.OK);
-
-    MessageResponse response = responseEntity.getBody();
-    assertThat(response).as("기도 완료 처리 API 응답 결과가 NULL 입니다.").isNotNull();
-
     // 기도 완료 엔티티 생성 검증
     List<PrayerCompletion> completions = prayerCompletionRepository.findAll();
     assertThat(completions).as("기도 완료 정보가 저장되지 않았습니다.").isNotEmpty();

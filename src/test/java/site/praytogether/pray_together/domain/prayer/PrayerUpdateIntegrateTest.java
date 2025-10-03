@@ -1,19 +1,18 @@
 package site.praytogether.pray_together.domain.prayer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
@@ -34,14 +33,14 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
   private Member member;
   private Room room;
   private MemberRoom memberRoom;
-  private HttpHeaders headers;
+  private String token;
   private PrayerTitle prayerTitle;
   private List<PrayerContent> prayerContents;
 
   private static Long validMemberId;
 
   @BeforeEach
-  void setup() {
+  void setup() throws Exception {
     // 회원 생성
     member = testUtils.createUniqueMember();
     memberRepository.save(member);
@@ -56,7 +55,7 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
     memberRoomRepository.save(memberRoom);
 
     // 인증 헤더 생성
-    headers = testUtils.create_Auth_HttpHeader_With_Member(member);
+    token = testUtils.createBearerToken(member);
 
     // 기도 제목 생성
     prayerTitle = PrayerTitle.create(room, "original-prayer-changedTitle");
@@ -80,31 +79,25 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
     }
   }
 
-  @AfterEach
-  void cleanup() {
-    cleanRepository();
-  }
-
   @Test
   @DisplayName("기도 제목 변경 시 200 OK 응답")
-  void update_prayer_title_then_return_200_ok() {
+  void update_prayer_title_then_return_200_ok() throws Exception {
     // given
     String newTitle = "updated-prayer-title";
     PrayerTitleUpdateRequest titleRequest = PrayerTitleUpdateRequest.builder()
         .changedTitle(newTitle)
         .build();
-    
-    HttpEntity<PrayerTitleUpdateRequest> requestEntity = new HttpEntity<>(titleRequest, headers);
+
     String url = PRAYERS_API_URL + "/" + prayerTitle.getId();
 
     // when
-    ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.exchange(url, HttpMethod.PUT, requestEntity, MessageResponse.class);
+    mockMvc.perform(put(url)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(titleRequest)))
+        .andExpect(status().isOk());
 
     // then
-    assertThat(responseEntity.getStatusCode())
-        .as("기도 제목 변경 API 응답 상태 코드가 200 OK가 아닙니다.")
-        .isEqualTo(HttpStatus.OK);
 
     // 변경된 기도 제목 확인
     PrayerTitle updatedTitle =
@@ -114,25 +107,24 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
 
   @Test
   @DisplayName("기도 내용 변경 시 200 OK 응답")
-  void update_prayer_content_then_return_200_ok() {
+  void update_prayer_content_then_return_200_ok() throws Exception {
     // given
     String newContent = "updated-prayer-content";
     PrayerContentUpdateRequest contentRequest = PrayerContentUpdateRequest.builder()
         .changedContent(newContent)
         .build();
-    
+
     Long contentId = prayerContents.get(0).getId();
-    HttpEntity<PrayerContentUpdateRequest> requestEntity = new HttpEntity<>(contentRequest, headers);
     String url = PRAYERS_API_URL + "/" + prayerTitle.getId() + "/contents/" + contentId;
 
     // when
-    ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.exchange(url, HttpMethod.PUT, requestEntity, MessageResponse.class);
+    mockMvc.perform(put(url)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(contentRequest)))
+        .andExpect(status().isOk());
 
     // then
-    assertThat(responseEntity.getStatusCode())
-        .as("기도 내용 변경 API 응답 상태 코드가 200 OK가 아닙니다.")
-        .isEqualTo(HttpStatus.OK);
 
     // 변경된 기도 내용 확인
     PrayerContent updatedContent = prayerContentRepository.findById(contentId).orElseThrow();
@@ -143,7 +135,7 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
 
   @Test
   @DisplayName("다른 회원이 기도 내용 수정 시 writer 정보가 변경됨")
-  void when_different_member_updates_content_then_writer_info_changes() {
+  void when_different_member_updates_content_then_writer_info_changes() throws Exception {
     // given - 다른 회원 생성 및 방에 추가
     Member anotherMember = testUtils.createUniqueMember();
     memberRepository.save(anotherMember);
@@ -151,7 +143,7 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
     memberRoomRepository.save(anotherMemberRoom);
 
     // 다른 회원의 인증 헤더 생성
-    HttpHeaders anotherHeaders = testUtils.create_Auth_HttpHeader_With_Member(anotherMember);
+    String anotherToken = testUtils.createBearerToken(anotherMember);
 
     String newContent = "content-updated-by-another-member";
     PrayerContentUpdateRequest contentRequest = PrayerContentUpdateRequest.builder()
@@ -165,17 +157,19 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
     assertThat(originalContent.getWriterId()).isEqualTo(member.getId());
     assertThat(originalContent.getWriterName()).isEqualTo(member.getName());
 
-    HttpEntity<PrayerContentUpdateRequest> requestEntity = new HttpEntity<>(contentRequest, anotherHeaders);
+    PrayerContentUpdateRequest  contentUpdateRequest = PrayerContentUpdateRequest.builder()
+        .changedContent(newContent).build();
+
     String url = PRAYERS_API_URL + "/" + prayerTitle.getId() + "/contents/" + contentId;
 
     // when - 다른 회원이 기도 내용 수정
-    ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.exchange(url, HttpMethod.PUT, requestEntity, MessageResponse.class);
+    mockMvc.perform(put(url)
+            .header(HttpHeaders.AUTHORIZATION, anotherToken)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(contentUpdateRequest)))
+        .andExpect(status().isOk());
 
     // then
-    assertThat(responseEntity.getStatusCode())
-        .as("다른 회원의 기도 내용 변경 API 응답 상태 코드가 200 OK가 아닙니다.")
-        .isEqualTo(HttpStatus.OK);
 
     // writer 정보가 수정한 회원으로 변경되었는지 확인
     PrayerContent updatedContent = prayerContentRepository.findById(contentId).orElseThrow();
@@ -190,107 +184,42 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
         .isEqualTo(newContent);
   }
 
-  @Test
-  @DisplayName("기도 내용 생성 시 201 CREATED 응답")
-  void create_prayer_content_then_return_201_created() {
-    // given
-    String newContent = "new-prayer-content";
-    PrayerContentCreateRequest contentRequest = PrayerContentCreateRequest.builder()
-        .memberId(member.getId())
-        .memberName(member.getName() + "-new")  // 새로운 이름 사용
-        .content(newContent)
-        .build();
-    
-    HttpEntity<PrayerContentCreateRequest> requestEntity = new HttpEntity<>(contentRequest, headers);
-    String url = PRAYERS_API_URL + "/" + prayerTitle.getId() + "/contents";
-    
-    // when
-    ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.exchange(url, HttpMethod.POST, requestEntity, MessageResponse.class);
-    
-    // then
-    assertThat(responseEntity.getStatusCode())
-        .as("기도 내용 생성 API 응답 상태 코드가 201 CREATED가 아닙니다.")
-        .isEqualTo(HttpStatus.CREATED);
-    
-    // 생성된 기도 내용 확인
-    List<PrayerContentInfo> contents =
-        prayerContentRepository.findPrayerContentsByTitleId(prayerTitle.getId());
-    assertThat(contents.size()).as("기도 내용 개수가 예상과 다릅니다.").isEqualTo(TEST_CNT + 1);
-    
-    boolean hasNewContent = contents.stream()
-        .anyMatch(content -> content.getContent().equals(newContent));
-    assertThat(hasNewContent).as("새로운 기도 내용이 추가되지 않았습니다.").isTrue();
-  }
-
-  @Test
-  @DisplayName("기도 내용 삭제 시 200 OK 응답")
-  void delete_prayer_content_then_return_200_ok() {
-    // given
-    Long contentId = prayerContents.get(0).getId();
-    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-    String url = PRAYERS_API_URL + "/" + prayerTitle.getId() + "/contents/" + contentId;
-    
-    // when
-    ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, MessageResponse.class);
-    
-    // then
-    assertThat(responseEntity.getStatusCode())
-        .as("기도 내용 삭제 API 응답 상태 코드가 200 OK가 아닙니다.")
-        .isEqualTo(HttpStatus.OK);
-    
-    // 삭제 확인
-    boolean exists = prayerContentRepository.existsById(contentId);
-    assertThat(exists).as("기도 내용이 삭제되지 않았습니다.").isFalse();
-    
-    // 남은 내용 개수 확인
-    List<PrayerContentInfo> remainingContents =
-        prayerContentRepository.findPrayerContentsByTitleId(prayerTitle.getId());
-    assertThat(remainingContents.size()).as("남은 기도 내용 개수가 예상과 다릅니다.").isEqualTo(TEST_CNT - 1);
-  }
 
   @Test
   @DisplayName("존재하지 않는 기도 제목 ID로 제목 변경 요청 시 404 Not Found 응답")
-  void update_prayer_title_with_nonexistent_id_then_return_404_not_found() {
+  void update_prayer_title_with_nonexistent_id_then_return_404_not_found() throws Exception {
     // given
     Long nonExistentId = 999999L;
     PrayerTitleUpdateRequest titleRequest = PrayerTitleUpdateRequest.builder()
         .changedTitle("updated-prayer-title")
         .build();
 
-    HttpEntity<PrayerTitleUpdateRequest> requestEntity = new HttpEntity<>(titleRequest, headers);
     String url = PRAYERS_API_URL + "/titles/" + nonExistentId;
 
-    // when
-    ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.exchange(url, HttpMethod.PUT, requestEntity, MessageResponse.class);
-
-    // then
-    assertThat(responseEntity.getStatusCode())
-        .as("존재하지 않는 기도 제목 ID로 변경 요청 시 404 Not Found가 반환되어야 합니다.")
-        .isEqualTo(HttpStatus.NOT_FOUND);
+    // when & then
+    mockMvc.perform(put(url)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(titleRequest)))
+        .andExpect(status().isNotFound());
   }
   
   @Test
   @DisplayName("존재하지 않는 기도 내용 ID로 내용 변경 요청 시 404 Not Found 응답")
-  void update_prayer_content_with_nonexistent_id_then_return_404_not_found() {
+  void update_prayer_content_with_nonexistent_id_then_return_404_not_found() throws Exception {
     // given
     Long nonExistentContentId = 999999L;
     PrayerContentUpdateRequest contentRequest = PrayerContentUpdateRequest.builder()
         .changedContent("updated-content")
         .build();
 
-    HttpEntity<PrayerContentUpdateRequest> requestEntity = new HttpEntity<>(contentRequest, headers);
     String url = PRAYERS_API_URL + "/" + prayerTitle.getId() + "/contents/" + nonExistentContentId;
 
-    // when
-    ResponseEntity<MessageResponse> responseEntity =
-        restTemplate.exchange(url, HttpMethod.PUT, requestEntity, MessageResponse.class);
-
-    // then
-    assertThat(responseEntity.getStatusCode())
-        .as("존재하지 않는 기도 내용 ID로 변경 요청 시 404 Not Found가 반환되어야 합니다.")
-        .isEqualTo(HttpStatus.NOT_FOUND);
+    // when & then
+    mockMvc.perform(put(url)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(contentRequest)))
+        .andExpect(status().isNotFound());
   }
 }

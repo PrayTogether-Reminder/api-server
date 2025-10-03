@@ -24,6 +24,7 @@ import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleResponse;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerContentUpdateRequest;
 import site.praytogether.pray_together.domain.prayer.exception.PrayerContentNotFoundException;
+import site.praytogether.pray_together.domain.prayer.model.PrayerContent;
 import site.praytogether.pray_together.domain.prayer.model.PrayerContentInfo;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitleInfo;
@@ -115,7 +116,9 @@ public class PrayerApplicationService {
   @Transactional
   public MessageResponse deletePrayerContent(Long memberId, Long titleId, Long contentId) {
     validateMemberExistInRoomByTitleId(memberId, titleId);
-    contentService.deleteById(titleId, contentId);
+    PrayerTitle prayerTitle = titleService.fetchById(titleId);
+    PrayerContent prayerContent  = contentService.fetchById(contentId);
+    prayerTitle.removeContent(prayerContent);
     return MessageResponse.of("기도 내용을 삭제했습니다.");
   }
 

@@ -70,4 +70,9 @@ public class PrayerTitle extends BaseEntity {
   public void updateContents(List<PrayerContent> updated) {
     this.prayerContents = updated;
   }
+
+  public void removeContent(PrayerContent content) {
+    prayerContents.removeIf( pc -> content.getId().equals(pc.getId()));
+    content.detachFromTitle();
+  }
 }

@@ -49,6 +49,10 @@ public class PrayerContentService {
     return prayerContent;
   }
 
+  public PrayerContent fetchById(Long contentId) {
+    return contentRepository.findById(contentId).orElseThrow(() -> new PrayerContentNotFoundException(contentId));
+  }
+
   @Transactional
   public void deleteById(Long titleId, Long contentId) {
     if (!contentRepository.existsByIdAndPrayerTitleId(contentId, titleId)) {

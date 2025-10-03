@@ -1,6 +1,11 @@
 package site.praytogether.pray_together.domain.prayer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import static site.praytogether.pray_together.constant.CoreConstant.PrayerTitleConstant.PRAYER_TITLES_INFINITE_SCROLL_SIZE;
 
 import java.time.Instant;
@@ -13,11 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.util.UriComponentsBuilder;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
@@ -30,7 +31,7 @@ import site.praytogether.pray_together.test_config.IntegrateTest;
 @DisplayName("기도 제목 무한 스크롤 테스트")
 public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
 
-  private HttpHeaders headers;
+  private String token;
   private Member member;
   private Room room;
   private PrayerTitle prayerTitle;
@@ -40,7 +41,7 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
   private final String ROOM_ID = "roomId";
 
   @BeforeEach
-  void setup() {
+  void setup() throws Exception {
     member = testUtils.createUniqueMember();
     memberRepository.save(member);
 
@@ -57,19 +58,14 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
       PrayerTitle prayerTitle = PrayerTitle.create(room, "test-title" + i);
       prayerTitleRepository.save(prayerTitle);
     }
-    headers = testUtils.create_Auth_HttpHeader_With_Member(member);
-  }
-
-  @AfterEach
-  void cleanup() {
-    cleanRepository();
+    token = testUtils.createBearerToken(member);
   }
 
   @ParameterizedTest(name = "[{index}] {0}")
   @MethodSource("providePrayerInfiniteScrollParameters")
   @DisplayName("다양한 파라미터 조합 요청시 기본값으로 정상 처리되어 200 OK 응답")
   void fetch_prayer_contents_list_with_default_values_for_different_params_then_return_200_ok(
-      String test, String after) {
+      String test, String after) throws Exception {
 
     // given
     String uri =
@@ -77,18 +73,16 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
             .queryParam(ROOM_ID, room.getId())
             .queryParam(AFTER, after)
             .toUriString();
-    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
     // when
-    ResponseEntity<PrayerTitleInfiniteScrollResponse> responseEntity =
-        restTemplate.exchange(
-            uri, HttpMethod.GET, requestEntity, PrayerTitleInfiniteScrollResponse.class);
+    MvcResult result = mockMvc.perform(get(uri)
+            .header(HttpHeaders.AUTHORIZATION, token))
+        .andExpect(status().isOk())
+        .andReturn();
 
     // then
-    assertThat(responseEntity.getStatusCode())
-        .as(test + ": 기도 내용 목록 무한 스크롤 API 응답 상태 코드가 200 OK가 아닙니다.")
-        .isEqualTo(HttpStatus.OK);
-    PrayerTitleInfiniteScrollResponse response = responseEntity.getBody();
+    String responseBody = result.getResponse().getContentAsString();
+    PrayerTitleInfiniteScrollResponse response = objectMapper.readValue(responseBody, PrayerTitleInfiniteScrollResponse.class);
     assertThat(response).as(test + ": 기도 내용 목록 무한 스크롤 API 응답 결과가 NULL 입니다.").isNotNull();
 
     List<PrayerTitleInfo> titles = response.getPrayerTitles();
@@ -115,16 +109,14 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
               .toUriString();
 
       // next when
-      responseEntity =
-          restTemplate.exchange(
-              uri, HttpMethod.GET, requestEntity, PrayerTitleInfiniteScrollResponse.class);
+      result = mockMvc.perform(get(uri)
+              .header(HttpHeaders.AUTHORIZATION, token))
+          .andExpect(status().isOk())
+          .andReturn();
 
       // next then
-      assertThat(responseEntity.getStatusCode())
-          .as(test + ": %d 번째 요청 응답 코드가 200 OK 아닙니다.", repeatCount)
-          .isEqualTo(HttpStatus.OK);
-
-      response = responseEntity.getBody();
+      responseBody = result.getResponse().getContentAsString();
+      response = objectMapper.readValue(responseBody, PrayerTitleInfiniteScrollResponse.class);
       assertThat(response).as(test + ": %d 번째 요청 응답 body가 null입니다.", repeatCount).isNotNull();
       titles = response.getPrayerTitles();
     }

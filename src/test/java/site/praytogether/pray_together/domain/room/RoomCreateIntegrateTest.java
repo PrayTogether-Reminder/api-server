@@ -1,21 +1,20 @@
 package site.praytogether.pray_together.domain.room;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import site.praytogether.pray_together.domain.base.MessageResponse;
+import org.springframework.http.MediaType;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
@@ -24,39 +23,32 @@ import site.praytogether.pray_together.test_config.IntegrateTest;
 
 @DisplayName("Room 생성 통합 테스트")
 public class RoomCreateIntegrateTest extends IntegrateTest {
-  private final String ROOMS_API_URL = "/api/v1/rooms";
   private Member member;
-  private HttpHeaders headers;
+  private String token;
 
   @BeforeEach
   void setup() {
     member = testUtils.createUniqueMember();
     memberRepository.save(member);
-    headers = testUtils.create_Auth_HttpHeader_With_Member(member);
-  }
-
-  @AfterEach
-  void cleanup() {
-    cleanRepository();
+    token = testUtils.createBearerToken(member);
   }
 
   @Test
   @DisplayName("Room 생성 시 201 Created 응답")
-  public void create_room_with_valid_input_then_return_201_created() {
+  public void create_room_with_valid_input_then_return_201_created() throws Exception {
     // given - Request Body 준비
     RoomCreateRequest requestDto =
         RoomCreateRequest.builder().name("테스트 방").description("테스트를 위한 방입니다.").build();
-    HttpEntity<RoomCreateRequest> requestEntity = new HttpEntity<>(requestDto, headers);
 
-    // when - API 요청
-    ResponseEntity<MessageResponse> response =
-        restTemplate.postForEntity(ROOMS_API_URL, requestEntity, MessageResponse.class);
+    // when & then
+    mockMvc.perform(post(ROOMS_API_URL)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDto)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.message").exists());
 
-    // then
-    // API 응답 검증
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-
-    // 생성된 Room 확인
+    // DB 검증
     List<Room> allRooms = roomRepository.findAll();
     assertThat(allRooms).isNotEmpty();
 
@@ -74,24 +66,20 @@ public class RoomCreateIntegrateTest extends IntegrateTest {
   @MethodSource("provideInvalidRoomCreateParameters")
   @DisplayName("Room 생성 시 유효하지 않은 파라미터인 경우 400 Bad Request 응답")
   void create_room_with_invalid_input_then_return_400_bad_request(
-      String test, String name, String description) {
+      String test, String name, String description) throws Exception {
 
     // given
     RoomCreateRequest requestDto =
         RoomCreateRequest.builder().name(name).description(description).build();
 
-    HttpEntity<RoomCreateRequest> requestEntity = new HttpEntity<>(requestDto, headers);
+    // when & then
+    mockMvc.perform(post(ROOMS_API_URL)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDto)))
+        .andExpect(status().isBadRequest());
 
-    // when
-    ResponseEntity<MessageResponse> response =
-        restTemplate.postForEntity(ROOMS_API_URL, requestEntity, MessageResponse.class);
-
-    // then
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    MessageResponse errorResponse = response.getBody();
-    assertThat(errorResponse).isNotNull();
-
-    // 방이 생성되지 않았는지 확인
+    // DB 검증 - 방이 생성되지 않았는지 확인
     assertThat(roomRepository.findAll()).isEmpty();
   }
 

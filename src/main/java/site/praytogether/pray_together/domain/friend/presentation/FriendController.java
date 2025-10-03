@@ -1,0 +1,57 @@
+package site.praytogether.pray_together.domain.friend.presentation;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
+import site.praytogether.pray_together.domain.base.MessageResponse;
+import site.praytogether.pray_together.domain.friend.application.FriendApplicationService;
+import site.praytogether.pray_together.domain.friend.presentation.dto.FetchFriendListResponse;
+import site.praytogether.pray_together.domain.friend.presentation.dto.FetchReceivedInvitationResponse;
+import site.praytogether.pray_together.domain.friend.presentation.dto.InviteFriendRequest;
+import site.praytogether.pray_together.domain.friend.presentation.dto.UpdateReceivedInvitationRequest;
+
+@RestController
+@RequestMapping("/api/v1/friends")
+@RequiredArgsConstructor
+public class FriendController {
+  private final FriendApplicationService friendApplication;
+
+  @PostMapping("/requests")
+  public ResponseEntity<MessageResponse> inviteFriend(@PrincipalId Long inviterId, @Valid @RequestBody InviteFriendRequest request) {
+    MessageResponse response = friendApplication.inviteFriend(inviterId, request.inviteeEmail());
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/requests")
+  public ResponseEntity<FetchReceivedInvitationResponse> getReceivedInvitations(@PrincipalId Long receiverId) {
+    FetchReceivedInvitationResponse response = friendApplication.getReceivedPendingInvitations(receiverId);
+    return ResponseEntity.ok(response);
+  }
+
+  @PatchMapping("/requests/{invitationId}")
+  public ResponseEntity<MessageResponse> updateReceivedInvitation(@PrincipalId Long inviteeId, @PathVariable Long  invitationId, @RequestBody UpdateReceivedInvitationRequest request) {
+    MessageResponse response = friendApplication.updateReceivedInvitation(inviteeId,invitationId, request);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping
+  public ResponseEntity<FetchFriendListResponse> getFriendList(@PrincipalId Long memberId) {
+    FetchFriendListResponse response = friendApplication.getFriendList(memberId);
+    return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/{friendId}")
+  public ResponseEntity<MessageResponse> deleteFriend(@PrincipalId Long memberId, @PathVariable Long friendId) {
+    MessageResponse response = friendApplication.deleteFriend(memberId, friendId);
+    return ResponseEntity.ok(response);
+  }
+}

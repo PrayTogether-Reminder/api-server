@@ -70,4 +70,8 @@ public class PrayerContent extends BaseEntity {
     this.writerId = writer.getId();
     this.writerName = writer.getName();
   }
+
+  public void detachFromTitle() {
+    this.prayerTitle = null;
+  }
 }
