@@ -10,8 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class InvitationCreateRequestV2 {
 
   @NotNull(message = "잘 못된 방을 선택하셨습니다.")

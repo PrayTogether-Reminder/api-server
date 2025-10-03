@@ -42,7 +42,8 @@ public class IntegrateTest {
 
   @Autowired protected TestUtils testUtils;
 
-  private final String API_VERSION_1 = "/api/v1";
+  protected final String API_VERSION_1 = "/api/v1";
+  protected String API_VERSION_2 = "/api/v2";
   protected final String ROOMS_API_URL = API_VERSION_1 + "/rooms";
   protected final String PRAYERS_API_URL = API_VERSION_1 + "/prayers";
   protected final String MEMBERS_API_URL = API_VERSION_1 + "/members";
