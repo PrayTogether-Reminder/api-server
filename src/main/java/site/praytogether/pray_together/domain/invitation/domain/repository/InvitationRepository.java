@@ -14,7 +14,7 @@ public interface InvitationRepository extends JpaRepository<Invitation, Long> {
 
   @Query(
       """
-        SELECT new site.praytogether.pray_together.domain.invitation.model.InvitationInfo(
+        SELECT new site.praytogether.pray_together.domain.invitation.domain.InvitationInfo(
         i.id,i.inviterName,r.name,r.description,i.createdTime
         )
         FROM Invitation i

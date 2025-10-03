@@ -5,9 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
-import site.praytogether.pray_together.domain.invitation.presentation.dto.InvitationCreateRequest;
-import site.praytogether.pray_together.domain.invitation.presentation.dto.InvitationInfoScrollResponse;
-import site.praytogether.pray_together.domain.invitation.presentation.dto.InvitationStatusUpdateRequest;
+import site.praytogether.pray_together.domain.invitation.presentation.v1.dto.InvitationCreateRequest;
+import site.praytogether.pray_together.domain.invitation.presentation.v1.dto.InvitationInfoScrollResponse;
+import site.praytogether.pray_together.domain.invitation.presentation.v1.dto.InvitationStatusUpdateRequest;
+import site.praytogether.pray_together.domain.invitation.presentation.v2.dto.InvitationCreateRequestV2;
 import site.praytogether.pray_together.domain.invitation.domain.Invitation;
 import site.praytogether.pray_together.domain.invitation.domain.InvitationInfo;
 import site.praytogether.pray_together.domain.invitation.domain.service.InvitationService;
@@ -56,6 +57,17 @@ public class InvitationApplicationService {
     memberRoomService.validateMemberExistInRoom(inviterMemberId, request.getRoomId());
     Member inviter = memberService.fetchById(inviterMemberId);
     Member invitee = memberService.getByEmail(request.getEmail());
+    memberRoomService.validateMemberNotExistInRoom(invitee.getId(), request.getRoomId());
+    Room roomRef = roomService.getRefOrThrow(request.getRoomId());
+    invitationService.create(inviter, invitee, roomRef);
+    return MessageResponse.of("초대를 완료했습니다.");
+  }
+
+  @Transactional
+  public MessageResponse inviteMemberToRoom(Long inviterMemberId, InvitationCreateRequestV2 request) {
+    memberRoomService.validateMemberExistInRoom(inviterMemberId, request.getRoomId());
+    Member inviter = memberService.fetchById(inviterMemberId);
+    Member invitee = memberService.fetchById(request.getFriendId());
     memberRoomService.validateMemberNotExistInRoom(invitee.getId(), request.getRoomId());
     Room roomRef = roomService.getRefOrThrow(request.getRoomId());
     invitationService.create(inviter, invitee, roomRef);
