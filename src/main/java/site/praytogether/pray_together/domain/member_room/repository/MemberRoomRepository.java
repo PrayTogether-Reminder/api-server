@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import site.praytogether.pray_together.domain.member.model.MemberIdName;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCount;
@@ -75,4 +76,15 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
 """)
   List<RoomIdMemberCount> findMemberCountByIds(List<Long> roomIds);
+
+
+  @Query(
+      """
+      SELECT CASE WHEN COUNT(DISTINCT mr.member.id) > 0 THEN true ELSE false END 
+      FROM MemberRoom mr
+      WHERE mr.member.id IN :memberIds
+      AND mr.room.id = :roomId
+"""
+  )
+  boolean isExistingMembersInRoom(@Param("memberIds") List<Long> memberIds,@Param("roomId") Long roomId);
 }

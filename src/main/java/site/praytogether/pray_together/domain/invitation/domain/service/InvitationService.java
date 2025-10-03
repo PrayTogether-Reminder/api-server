@@ -28,11 +28,19 @@ public class InvitationService {
         .orElseThrow(() -> new InvitationNotFoundException(inviteeId, invitationId));
   }
 
-  @Transactional
   public Invitation create(Member inviter, Member invitee, Room room) {
     Invitation invitation = Invitation.create(inviter, invitee, room);
 
     return invitationRepository.save(invitation);
+  }
+
+  public List<Invitation> create(Member inviter, List<Member> invitees, Room room) {
+
+    List<Invitation> invitations = invitees.stream()
+        .map(i -> Invitation.create(inviter, i, room))
+        .toList();
+
+    return invitationRepository.saveAll(invitations);
   }
 
   @Transactional

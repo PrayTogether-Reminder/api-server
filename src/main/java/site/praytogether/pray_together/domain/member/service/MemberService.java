@@ -1,5 +1,6 @@
 package site.praytogether.pray_together.domain.member.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,10 @@ public class MemberService {
 
   public Member fetchById(Long id) {
     return memberRepository.findById(id).orElseThrow(() -> new MemberNotFoundException(id));
+  }
+
+  public List<Member> fetchByIds(List<Long> ids) {
+    return memberRepository.findAllById(ids);
   }
 
   public void validateMemberExists(Long memberId) {
