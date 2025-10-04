@@ -165,4 +165,43 @@ public class InvitationCreateIntegrateTestV2 extends IntegrateTest {
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isBadRequest());
   }
+
+  @Test
+  @DisplayName("이미 PENDING 초대장이 있는 친구는 제외하고 나머지만 초대")
+  void invite_friends_excluding_already_pending_invitations() throws Exception {
+    // given
+    Invitation existingInvitation = Invitation.create(memberInviter, friend1, room);
+    invitationRepository.save(existingInvitation);
+
+    InvitationCreateRequestV2 request = new InvitationCreateRequestV2(
+        room.getId(),
+        List.of(friend1.getId(), friend2.getId(), friend3.getId())
+    );
+
+    // when
+    mockMvc.perform(post(API_VERSION_2 + ROOM_INVITATION_URL)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isCreated());
+
+    // then
+    List<Invitation> allInvitations = invitationRepository.findAll();
+    assertThat(allInvitations).as("총 초대장 개수: 기존 1개 + 새로 생성된 2개").hasSize(3);
+
+    List<Invitation> newInvitations = allInvitations.stream()
+        .filter(inv -> !inv.getId().equals(existingInvitation.getId()))
+        .toList();
+
+    assertThat(newInvitations).as("새로 생성된 초대장은 2개여야 합니다.").hasSize(2);
+
+    assertThat(newInvitations)
+        .as("friend1은 제외되고 friend2, friend3만 초대장이 생성되어야 합니다.")
+        .extracting(invitation -> invitation.getInvitee().getId())
+        .containsExactlyInAnyOrder(friend2.getId(), friend3.getId());
+
+    assertThat(newInvitations)
+        .as("새로운 초대장의 상태가 PENDING이어야 합니다.")
+        .allMatch(invitation -> invitation.getStatus() == InvitationStatus.PENDING);
+  }
 }
