@@ -15,6 +15,7 @@ import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.model.MemberIdName;
 import site.praytogether.pray_together.domain.member_room.exception.MemberRoomAlreadyExistException;
 import site.praytogether.pray_together.domain.member_room.exception.MemberRoomNotFoundException;
+import site.praytogether.pray_together.domain.member_room.exception.SomoneAlreadyExistException;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCount;
 import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
@@ -98,6 +99,13 @@ public class MemberRoomService {
   public void validateMemberNotExistInRoom(Long memberId, Long roomId) {
     if (memberRoomRepository.existsByMember_IdAndRoom_Id(memberId, roomId) == true) {
       throw new MemberRoomAlreadyExistException(memberId, roomId);
+    }
+  }
+
+  public void validateMembersNotExistInRoom(List<Long> memberIds, Long roomId) {
+    boolean exist = memberRoomRepository.isExistingMembersInRoom(memberIds, roomId);
+    if (exist) {
+      throw new SomoneAlreadyExistException(memberIds, roomId);
     }
   }
 }

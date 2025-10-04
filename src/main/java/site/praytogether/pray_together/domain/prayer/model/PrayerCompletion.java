@@ -15,6 +15,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import site.praytogether.pray_together.domain.base.BaseEntity;
 
 @Entity
@@ -33,8 +35,9 @@ public class PrayerCompletion extends BaseEntity {
       allocationSize = 50)
   private Long id;
 
+  @OnDelete(action = OnDeleteAction.SET_NULL)
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "prayer_title_id")
+  @JoinColumn(name = "prayer_title_id", nullable = true)
   private PrayerTitle prayerTitle;
 
   @Column(name = "prayer_id", updatable = false, nullable = false)

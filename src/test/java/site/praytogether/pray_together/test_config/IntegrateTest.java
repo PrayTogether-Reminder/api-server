@@ -42,10 +42,11 @@ public class IntegrateTest {
 
   @Autowired protected TestUtils testUtils;
 
-  private final String API_VERSION = "/api/v1";
-  protected final String ROOMS_API_URL = API_VERSION + "/rooms";
-  protected final String PRAYERS_API_URL = API_VERSION + "/prayers";
-  protected final String MEMBERS_API_URL = API_VERSION + "/members";
-  protected final String INVITATIONS_API_URL = API_VERSION + "/invitations";
-  protected final String FRIEND_API_URL = API_VERSION + "/friends";
+  protected final String API_VERSION_1 = "/api/v1";
+  protected String API_VERSION_2 = "/api/v2";
+  protected final String ROOMS_API_URL = API_VERSION_1 + "/rooms";
+  protected final String PRAYERS_API_URL = API_VERSION_1 + "/prayers";
+  protected final String MEMBERS_API_URL = API_VERSION_1 + "/members";
+  protected final String INVITATIONS_API_URL = API_VERSION_1 + "/invitations";
+  protected final String FRIEND_API_URL = API_VERSION_1 + "/friends";
 }
