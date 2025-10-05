@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
 import site.praytogether.pray_together.domain.member.model.Member;
+import site.praytogether.pray_together.domain.member.model.PhoneNumber;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
@@ -26,7 +27,7 @@ public class TestUtils {
   private final ObjectMapper objectMapper;
 
   public Member createUniqueMember() {
-    return Member.create("test" + (emailUniqueId), "test@test.com" + (emailUniqueId++), "test","010-1234-5678");
+    return Member.create("test" + (emailUniqueId), "test@test.com" + (emailUniqueId++), "test", PhoneNumber.of("010-1234-5678"));
   }
 
   public PrayerTitle createUniquePrayerTitle_With_Room(Room room) {

@@ -45,7 +45,7 @@ public class SignupCreateIntegrateTest extends IntegrateTest {
     Member savedMember = allMembers.get(0);
     assertThat(savedMember.getName()).isEqualTo(name);
     assertThat(savedMember.getEmail()).isEqualTo(email);
-    assertThat(savedMember.getPhoneNumber()).isEqualTo(expectedPhone);
+    assertThat(savedMember.getPhoneNumber().getValue()).isEqualTo(expectedPhone);
   }
 
   private static Stream<Arguments> provideValidSignupArguments() {

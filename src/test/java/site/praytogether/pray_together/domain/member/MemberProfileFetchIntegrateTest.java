@@ -55,6 +55,6 @@ public class MemberProfileFetchIntegrateTest extends IntegrateTest {
 
     assertThat(response.getPhoneNumber())
         .as("응답된 회원 전화번호가 요청한 회원의 전화번호와 일치하지 않습니다.")
-        .isEqualTo(member.getPhoneNumber());
+        .isEqualTo(member.getPhoneNumber().getValue());
   }
 }
