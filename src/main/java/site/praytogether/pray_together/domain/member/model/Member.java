@@ -43,7 +43,12 @@ public class Member extends BaseEntity {
   @Column(name = "phone_number",nullable = true, length = MemberConstant.PHONE_NUMBER_MAX_LEN)
   private String phoneNumber;
 
-  public static Member create(String name, String email, String password) {
-    return Member.builder().name(name).email(email).password(password).build();
+  public static Member create(String name, String email, String password,String phoneNumber) {
+    return Member.builder()
+        .name(name)
+        .email(email)
+        .password(password)
+        .phoneNumber(phoneNumber)
+        .build();
   }
 }

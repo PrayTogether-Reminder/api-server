@@ -10,6 +10,7 @@ import site.praytogether.pray_together.domain.auth.dto.OtpVerifyRequest;
 import site.praytogether.pray_together.domain.auth.dto.SignupRequest;
 import site.praytogether.pray_together.domain.auth.exception.RefreshTokenNotValidException;
 import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.model.SignupCommand;
 import site.praytogether.pray_together.domain.auth.service.OtpService;
 import site.praytogether.pray_together.domain.auth.service.RefreshTokenService;
 import site.praytogether.pray_together.domain.member.model.Member;
@@ -26,8 +27,9 @@ public class AuthApplicationService {
   private final RefreshTokenService refreshTokenService;
 
   public void signup(SignupRequest request) {
-    memberService.validateMemberNotExists(request.getEmail());
-    memberService.createMember(request.getName(), request.getEmail(), request.getPassword());
+    SignupCommand command = SignupCommand.from(request);
+    memberService.validateMemberNotExists(command.getEmail());
+    memberService.create(command);
   }
 
   public void withdraw(Long memberId) {
