@@ -52,4 +52,12 @@ public class Member extends BaseEntity {
         .phoneNumber(phoneNumber)
         .build();
   }
+
+  public void updateName(String name) {
+    this.name = name;
+  }
+
+  public void updatePhoneNumber(PhoneNumber phoneNumber) {
+    this.phoneNumber = phoneNumber;
+  }
 }

@@ -62,7 +62,4 @@ public class PhoneNumber {
     return phoneNumber;
   }
 
-  public String getValue() {
-    return value;
-  }
 }
