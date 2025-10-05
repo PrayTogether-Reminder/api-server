@@ -15,12 +15,14 @@ public class MemberProfileResponse {
   private Long id;
   private String name;
   private String email;
+  private String phoneNumber;
 
   public static MemberProfileResponse from(MemberProfile profile) {
     return MemberProfileResponse.builder()
         .id(profile.getId())
         .email(profile.getEmail())
         .name(profile.getName())
+        .phoneNumber(profile.getPhoneNumber())
         .build();
   }
 }

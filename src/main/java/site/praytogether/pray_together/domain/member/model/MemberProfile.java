@@ -7,4 +7,6 @@ public interface MemberProfile {
   String getName();
 
   String getEmail();
+
+  String getPhoneNumber();
 }
