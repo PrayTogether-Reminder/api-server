@@ -1,6 +1,7 @@
 package site.praytogether.pray_together.domain.member.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,10 +41,10 @@ public class Member extends BaseEntity {
   @Column(nullable = false, length = MemberConstant.PASSWORD_MAX_LEN)
   private String password;
 
-  @Column(name = "phone_number",nullable = true, length = MemberConstant.PHONE_NUMBER_MAX_LEN)
-  private String phoneNumber;
+  @Embedded
+  private PhoneNumber phoneNumber;
 
-  public static Member create(String name, String email, String password,String phoneNumber) {
+  public static Member create(String name, String email, String password, PhoneNumber phoneNumber) {
     return Member.builder()
         .name(name)
         .email(email)
