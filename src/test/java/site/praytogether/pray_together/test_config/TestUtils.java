@@ -26,7 +26,7 @@ public class TestUtils {
   private final ObjectMapper objectMapper;
 
   public Member createUniqueMember() {
-    return Member.create("test" + (emailUniqueId), "test@test.com" + (emailUniqueId++), "test");
+    return Member.create("test" + (emailUniqueId), "test@test.com" + (emailUniqueId++), "test","010-1234-5678");
   }
 
   public PrayerTitle createUniquePrayerTitle_With_Room(Room room) {
