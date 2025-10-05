@@ -27,8 +27,6 @@ public class SignupRequest {
   private final String phoneNumber;
 
   @NotBlank(message = "비밀번호를 입력해 주세요.")
-  @Size(min = 6, max = 15, message = "비밀번호는 6자 이상 15자 이하로 입력해 주세요.")
-  //  @Pattern(regexp = "^.*[!@#$%^&*(),.?\":{}|<>].*$", message = "비밀번호는 최소 1개 이상의 특수 문자를 포함해야
-  // 합니다.")
+  @Size(min = 8, max = 15, message = "비밀번호는 8자 이상 15자 이하로 입력해 주세요.")
   private final String password;
 }
