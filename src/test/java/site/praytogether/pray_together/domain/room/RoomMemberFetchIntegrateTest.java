@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 
 import site.praytogether.pray_together.domain.member.model.Member;
-import site.praytogether.pray_together.domain.member.model.MemberIdName;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
+import site.praytogether.pray_together.domain.room.dto.RoomMemberDto;
 import site.praytogether.pray_together.domain.room.dto.RoomMemberResponse;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.domain.room.model.RoomRole;
@@ -85,11 +85,11 @@ public class RoomMemberFetchIntegrateTest extends IntegrateTest {
     RoomMemberResponse response = objectMapper.readValue(responseBody, RoomMemberResponse.class);
 
     // 응답 결과 검증
-    List<MemberIdName> members = response.getMembers();
+    List<RoomMemberDto> members = response.getMembers();
     assertThat(members).as("방 참가자 조회 API 응답 결과가 NULL 입니다.").isNotNull();
     assertThat(members.size()).as("방 참가자 조회 API 응답 결과, 방 참가자 수가 예상과 다릅니다.").isEqualTo(memberCount);
-    MemberIdName ownerMember =
-        MemberIdName.builder().id(member.getId()).name(member.getName()).build();
+    RoomMemberDto ownerMember =
+        RoomMemberDto.builder().id(member.getId()).name(member.getName()).phoneNumberSuffix(member.getPhoneNumber().getSuffix()).build();
     assertThat(members.contains(ownerMember)).as("방을 생성한 Member가 요청 방에 포함되지 않고 있습니다.").isTrue();
   }
 }
