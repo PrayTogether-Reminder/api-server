@@ -4,6 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
+import site.praytogether.pray_together.domain.member.application.mapper.SearchMemberMapper;
+import site.praytogether.pray_together.domain.member.model.SearchQueryMember;
+import site.praytogether.pray_together.domain.member.model.SearchResultMembers;
+import site.praytogether.pray_together.domain.member.dto.SearchMemberResponse;
 import site.praytogether.pray_together.domain.member.dto.MemberProfileResponse;
 import site.praytogether.pray_together.domain.member.dto.UpdateProfileRequest;
 import site.praytogether.pray_together.domain.member.model.Member;
@@ -36,5 +40,12 @@ public class MemberApplicationService {
     }
 
     return MessageResponse.of("프로필을 변경했습니다.");
+  }
+
+
+  public SearchMemberResponse searchMembers(String searchName) {
+    SearchQueryMember queryMember = SearchQueryMember.from(searchName);
+    SearchResultMembers resultMembers = memberService.searchByName(queryMember);
+    return SearchMemberMapper.toResponse(resultMembers);
   }
 }

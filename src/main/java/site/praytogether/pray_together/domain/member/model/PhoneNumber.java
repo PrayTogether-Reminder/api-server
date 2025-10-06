@@ -62,4 +62,7 @@ public class PhoneNumber {
     return phoneNumber;
   }
 
+  public String getLast() {
+    return value.split("-")[2];
+  }
 }
