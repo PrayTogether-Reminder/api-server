@@ -17,22 +17,16 @@ public class PhoneNumber {
   @Column(name = "phone_number", nullable = true, length = MemberConstant.PHONE_NUMBER_MAX_LEN)
   private String value;
 
-  private PhoneNumber(String value) {
-    this.value = value;
-  }
-
-  public static PhoneNumber of(String phoneNumber) {
+  private PhoneNumber(String phoneNumber) {
     if (phoneNumber == null || phoneNumber.isBlank()) {
       throw new IllegalArgumentException("전화번호를 입력해 주세요");
     }
-
-    // 검증
     validate(phoneNumber);
+    this.value = normalize(phoneNumber);
+  }
 
-    // 정규화
-    String normalized = normalize(phoneNumber);
-
-    return new PhoneNumber(normalized);
+  public static PhoneNumber of(String phoneNumber) {
+    return new PhoneNumber(phoneNumber);
   }
 
   private static void validate(String phoneNumber) {
@@ -63,6 +57,9 @@ public class PhoneNumber {
   }
 
   public String getLast() {
-    return value.split("-")[2];
+    if (value == null || value.length() < 4) {
+      throw new IllegalStateException("전화번호 형식이 올바르지 않습니다.");
+    }
+    return value.substring(value.length() - 4);
   }
 }
