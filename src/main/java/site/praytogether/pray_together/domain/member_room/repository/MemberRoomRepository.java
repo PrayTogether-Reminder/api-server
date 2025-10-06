@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import site.praytogether.pray_together.domain.member.model.MemberIdName;
+import site.praytogether.pray_together.domain.member.model.RoomMember;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCount;
 import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
@@ -22,14 +22,15 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
   @Query(
       """
-      SELECT new site.praytogether.pray_together.domain.member.model.MemberIdName(
-        m.id, m.name
+      SELECT new site.praytogether.pray_together.domain.member.model.RoomMember(
+        m.id, m.name,m.phoneNumber
       )
       FROM MemberRoom mr
       JOIN Member m ON m.id = mr.member.id
       WHERE mr.room.id = :roomId
+      ORDER BY m.name ASC
 """)
-  List<MemberIdName> findMember_IdAndNameByRoom_Id(Long roomId);
+  List<RoomMember> findRoomMembers(Long roomId);
 
   @Query(
       """

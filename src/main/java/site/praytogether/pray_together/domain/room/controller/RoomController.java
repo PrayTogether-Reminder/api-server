@@ -63,11 +63,11 @@ public class RoomController {
     return ResponseEntity.status(HttpStatus.OK).body(roomApplication.deleteRoom(memberId, roomId));
   }
 
-  @GetMapping("/{roomId}/members") // todo : email 도 응답하기
-  public ResponseEntity<RoomMemberResponse> getRoomParticipants(
+  @GetMapping("/{roomId}/members")
+  public ResponseEntity<RoomMemberResponse> getRoomMembers(
       @PrincipalId Long memberId,
       @Min(value = 1, message = "잘 못된 방을 선택하셨습니다.") @PathVariable Long roomId) {
     return ResponseEntity.status(HttpStatus.OK)
-        .body(roomApplication.listRoomParticipants(memberId, roomId));
+        .body(roomApplication.listRoomMembers(memberId, roomId));
   }
 }

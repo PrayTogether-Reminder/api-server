@@ -8,12 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
-import site.praytogether.pray_together.domain.member.model.MemberIdName;
+import site.praytogether.pray_together.domain.member.model.RoomMember;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.domain.member_room.exception.MemberRoomNotFoundException;
 import site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCount;
 import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 import site.praytogether.pray_together.domain.member_room.service.MemberRoomService;
+import site.praytogether.pray_together.domain.room.applicatoin.mapper.RoomMemberMapper;
 import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
 import site.praytogether.pray_together.domain.room.dto.RoomInfiniteScrollRequest;
 import site.praytogether.pray_together.domain.room.dto.RoomInfiniteScrollResponse;
@@ -68,9 +69,9 @@ public class RoomApplicationService {
     return MessageResponse.of("방을 나갔습니다.");
   }
 
-  public RoomMemberResponse listRoomParticipants(Long memberId, Long roomId) {
+  public RoomMemberResponse listRoomMembers(Long memberId, Long roomId) {
     memberRoomService.validateMemberExistInRoom(memberId, roomId);
-    List<MemberIdName> memberIdNames = memberRoomService.fetchMembersInRoom(roomId);
-    return RoomMemberResponse.from(memberIdNames);
+    List<RoomMember> roomMembers = memberRoomService.fetchMembersInRoom(roomId);
+    return RoomMemberMapper.toResponse(roomMembers);
   }
 }
