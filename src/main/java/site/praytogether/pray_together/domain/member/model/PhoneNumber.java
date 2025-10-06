@@ -57,7 +57,10 @@ public class PhoneNumber {
   }
 
   public String getSuffix() {
-    if (value == null || value.length() < 4) {
+    if(value == null) {
+      return null;
+    }
+    if (value.length() < 4) {
       throw new IllegalStateException("전화번호 형식이 올바르지 않습니다.");
     }
     return value.substring(value.length() - 4);

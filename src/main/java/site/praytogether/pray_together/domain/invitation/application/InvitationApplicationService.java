@@ -66,9 +66,9 @@ public class InvitationApplicationService {
   @Transactional
   public MessageResponse inviteMemberToRoom(Long inviterMemberId, InvitationCreateRequestV2 request) {
     memberRoomService.validateMemberExistInRoom(inviterMemberId, request.getRoomId());
-    memberRoomService.validateMembersNotExistInRoom(request.getFriendIds(), request.getRoomId());
+    memberRoomService.validateMembersNotExistInRoom(request.getMemberIds(), request.getRoomId());
     Member inviter = memberService.fetchById(inviterMemberId);
-    List<Member> invitees = memberService.fetchByIds(request.getFriendIds());
+    List<Member> invitees = memberService.fetchByIds(request.getMemberIds());
     Room roomRef = roomService.getRefOrThrow(request.getRoomId());
     invitationService.create(inviter, invitees, roomRef);
     return MessageResponse.of("초대를 완료했습니다.");

@@ -11,6 +11,9 @@ public class SearchResultMember {
   PhoneNumber phoneNumber;
 
   public String getPhoneNumberSuffix() {
+    if(phoneNumber == null) {
+      return null;
+    }
     return phoneNumber.getSuffix();
   }
 }
