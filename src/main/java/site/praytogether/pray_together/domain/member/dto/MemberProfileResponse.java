@@ -18,11 +18,15 @@ public class MemberProfileResponse {
   private String phoneNumber;
 
   public static MemberProfileResponse from(MemberProfile profile) {
+    String phoneNumber = null;
+    if(profile.getPhoneNumber() != null) {
+      phoneNumber = profile.getPhoneNumber().getValue();
+    }
     return MemberProfileResponse.builder()
         .id(profile.getId())
         .email(profile.getEmail())
         .name(profile.getName())
-        .phoneNumber(profile.getPhoneNumber())
+        .phoneNumber(phoneNumber)
         .build();
   }
 }

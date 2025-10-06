@@ -9,6 +9,5 @@ public interface MemberProfile {
 
   String getEmail();
 
-  @Value("#{target.phoneNumber.value}") // 전체 Entity를 load 함.
-  String getPhoneNumber();
+  PhoneNumber getPhoneNumber();
 }
