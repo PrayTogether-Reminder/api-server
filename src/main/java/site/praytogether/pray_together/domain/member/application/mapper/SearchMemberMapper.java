@@ -2,7 +2,6 @@ package site.praytogether.pray_together.domain.member.application.mapper;
 
 import java.util.List;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import site.praytogether.pray_together.domain.member.model.SearchResultMember;
 import site.praytogether.pray_together.domain.member.model.SearchResultMembers;
@@ -16,7 +15,7 @@ public class SearchMemberMapper {
     return SearchMemberDto.builder()
         .id(member.getId())
         .name(member.getName())
-        .lastPhoneNumber(member.getLastPhoneNumber())
+        .phoneNumberSuffix(member.getPhoneNumberSuffix())
         .build();
   }
 

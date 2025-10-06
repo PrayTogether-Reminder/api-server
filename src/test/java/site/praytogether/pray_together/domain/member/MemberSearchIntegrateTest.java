@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import site.praytogether.pray_together.domain.member.dto.SearchMemberResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
-import site.praytogether.pray_together.domain.member.model.PhoneNumber;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 
 import java.util.ArrayList;
@@ -153,19 +152,19 @@ public class MemberSearchIntegrateTest extends IntegrateTest {
 
     // 검색된 회원들의 전화번호 뒷자리 검증
     response.getMembers().forEach(memberDto -> {
-      assertThat(memberDto.getLastPhoneNumber()).as("전화번호 뒷자리가 NULL 입니다.").isNotNull();
-      assertThat(memberDto.getLastPhoneNumber()).as("전화번호 뒷자리가 비어있습니다.").isNotBlank();
-      assertThat(memberDto.getLastPhoneNumber().length()).as("전화번호 뒷자리는 정확히 4자리여야 합니다.").isEqualTo(4);
-      assertThat(memberDto.getLastPhoneNumber()).as("전화번호 뒷자리는 숫자로만 구성되어야 합니다.").matches("\\d{4}");
+      assertThat(memberDto.getPhoneNumberSuffix()).as("전화번호 뒷자리가 NULL 입니다.").isNotNull();
+      assertThat(memberDto.getPhoneNumberSuffix()).as("전화번호 뒷자리가 비어있습니다.").isNotBlank();
+      assertThat(memberDto.getPhoneNumberSuffix().length()).as("전화번호 뒷자리는 정확히 4자리여야 합니다.").isEqualTo(4);
+      assertThat(memberDto.getPhoneNumberSuffix()).as("전화번호 뒷자리는 숫자로만 구성되어야 합니다.").matches("\\d{4}");
     });
 
     // 실제 생성한 회원의 전화번호 뒷자리와 일치하는지 검증
     assertThat(response.getMembers())
         .as("검색 결과에 '5678' 뒷자리를 가진 회원이 포함되어야 합니다.")
-        .anyMatch(memberDto -> memberDto.getLastPhoneNumber().equals("5678"));
+        .anyMatch(memberDto -> memberDto.getPhoneNumberSuffix().equals("5678"));
 
     assertThat(response.getMembers())
         .as("검색 결과에 '6789' 뒷자리를 가진 회원이 포함되어야 합니다.")
-        .anyMatch(memberDto -> memberDto.getLastPhoneNumber().equals("6789"));
+        .anyMatch(memberDto -> memberDto.getPhoneNumberSuffix().equals("6789"));
   }
 }

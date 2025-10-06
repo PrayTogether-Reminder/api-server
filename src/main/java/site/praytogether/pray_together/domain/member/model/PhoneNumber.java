@@ -56,7 +56,7 @@ public class PhoneNumber {
     return phoneNumber;
   }
 
-  public String getLast() {
+  public String getSuffix() {
     if (value == null || value.length() < 4) {
       throw new IllegalStateException("전화번호 형식이 올바르지 않습니다.");
     }

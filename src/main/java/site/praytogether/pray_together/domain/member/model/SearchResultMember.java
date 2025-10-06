@@ -10,7 +10,7 @@ public class SearchResultMember {
   String name;
   PhoneNumber phoneNumber;
 
-  public String getLastPhoneNumber() {
-    return phoneNumber.getLast();
+  public String getPhoneNumberSuffix() {
+    return phoneNumber.getSuffix();
   }
 }

@@ -8,5 +8,5 @@ import lombok.Value;
 public class SearchMemberDto {
   Long id;
   String name;
-  String lastPhoneNumber;
+  String phoneNumberSuffix;
 }
