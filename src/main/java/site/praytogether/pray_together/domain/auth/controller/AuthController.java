@@ -28,9 +28,9 @@ public class AuthController {
 
   @PostMapping("/signup")
   public ResponseEntity<MessageResponse> signup(@Valid @RequestBody SignupRequest request) {
-    log.info("[API] 회원 가입 요청 시작 email={}", request.getEmail());
+    log.info("[API] 회원 가입 요청 시작");
     authApplication.signup(request);
-    log.info("[API] 회원 가입 요청 종료 email={}", request.getEmail());
+    log.info("[API] 회원 가입 요청 종료");
     return ResponseEntity.status(HttpStatus.CREATED).body(MessageResponse.of("회원 가입을 완료했습니다."));
   }
 
@@ -45,9 +45,9 @@ public class AuthController {
 
   @PostMapping("/otp/email")
   public ResponseEntity<MessageResponse> getEmailOtp(@Valid @RequestBody EmailOtpRequest request) {
-    log.info("[API] OTP 요청 시작 email={}", request.getEmail());
+    log.info("[API] OTP 요청 시작");
     authApplication.sendOtp(request.getEmail());
-    log.info("[API] OTP 요청 종료 email={}", request.getEmail());
+    log.info("[API] OTP 요청 종료");
     return ResponseEntity.status(HttpStatus.OK).body(MessageResponse.of("인증 번호를 요청했습니다."));
   }
 

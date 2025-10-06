@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.member.model.Member;
-import site.praytogether.pray_together.domain.member.model.MemberIdName;
+import site.praytogether.pray_together.domain.member.model.RoomMember;
 import site.praytogether.pray_together.domain.member_room.exception.MemberRoomAlreadyExistException;
 import site.praytogether.pray_together.domain.member_room.exception.MemberRoomNotFoundException;
 import site.praytogether.pray_together.domain.member_room.exception.SomoneAlreadyExistException;
@@ -82,8 +82,8 @@ public class MemberRoomService {
     return 1 == memberRoomRepository.deleteByMember_IdAndRoom_Id(memberId, roomId);
   }
 
-  public List<MemberIdName> fetchMembersInRoom(Long roomId) {
-    return memberRoomRepository.findMember_IdAndNameByRoom_Id(roomId);
+  public List<RoomMember> fetchMembersInRoom(Long roomId) {
+    return memberRoomRepository.findRoomMembers(roomId);
   }
 
   public List<Long> fetchMemberIdsInRoom(Long roomId) {

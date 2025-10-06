@@ -5,6 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.praytogether.pray_together.domain.auth.model.SignupCommand;
+import site.praytogether.pray_together.domain.member.model.SearchQueryMember;
+import site.praytogether.pray_together.domain.member.model.SearchResultMember;
+import site.praytogether.pray_together.domain.member.model.SearchResultMembers;
 import site.praytogether.pray_together.domain.member.expcetion.MemberAlreadyExistException;
 import site.praytogether.pray_together.domain.member.expcetion.MemberNotFoundException;
 import site.praytogether.pray_together.domain.member.model.Member;
@@ -19,8 +23,8 @@ public class MemberService {
   private final PasswordEncoder passwordEncoder;
 
   @Transactional
-  public void createMember(String name, String email, String password) {
-    Member createdMember = Member.create(name, email, passwordEncoder.encode(password));
+  public void create(SignupCommand command) {
+    Member createdMember = Member.create(command.getName(), command.getEmail(), passwordEncoder.encode(command.getPassword()),command.getPhoneNumber());
     memberRepository.save(createdMember);
   }
 
@@ -68,5 +72,10 @@ public class MemberService {
     return memberRepository
         .findMemberProfileById(memberId)
         .orElseThrow(() -> new MemberNotFoundException(memberId));
+  }
+
+  public SearchResultMembers searchByName(SearchQueryMember queryMember) {
+    List<SearchResultMember> resultMembers = memberRepository.findByNameContaining(queryMember.getName());
+    return new SearchResultMembers(resultMembers);
   }
 }
