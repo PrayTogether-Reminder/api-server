@@ -30,6 +30,10 @@ public class TestUtils {
     return Member.create("test" + (emailUniqueId), "test@test.com" + (emailUniqueId++), "test", PhoneNumber.of("010-1234-5678"));
   }
 
+  public Member createUniqueMember_With_NameAndPhoneNumber(String name, String phoneNumber) {
+    return Member.create(name, "test@test.com" + (emailUniqueId++), "test", PhoneNumber.of(phoneNumber));
+  }
+
   public PrayerTitle createUniquePrayerTitle_With_Room(Room room) {
     return PrayerTitle.create(room, "test-prayer-changedTitle" + prayerTitleUniqueId++);
   }
