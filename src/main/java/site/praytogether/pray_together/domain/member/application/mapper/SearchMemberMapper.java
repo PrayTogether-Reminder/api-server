@@ -10,7 +10,6 @@ import site.praytogether.pray_together.domain.member.dto.SearchMemberDto;
 import site.praytogether.pray_together.domain.member.dto.SearchMemberResponse;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SearchMemberMapper {
 
   public static SearchMemberDto toDto(SearchResultMember member) {
