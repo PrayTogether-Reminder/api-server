@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import site.praytogether.pray_together.domain.fcm_token.model.FcmToken;
+import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 
 @Slf4j
 @Component
@@ -17,17 +18,25 @@ import site.praytogether.pray_together.domain.fcm_token.model.FcmToken;
 public class NotificationGateway {
   private final FirebaseMessaging firebaseMessaging;
 
-  public void notifyCompletePrayer(List<FcmToken> fcmTokens, String message, Consumer<String> onInvalidToken) {
-    fcmTokens.forEach(token -> sendCompletePrayerMessage(token, message,onInvalidToken));
+  public void notifyCompletePrayer(List<FcmToken> fcmTokens,Long roomId, PrayerTitle prayerTitle, String message, Consumer<String> onInvalidToken) {
+    fcmTokens.forEach(token -> sendCompletePrayerMessage(token, roomId, prayerTitle ,message,onInvalidToken));
   }
 
-  private void sendCompletePrayerMessage(FcmToken token, String message, Consumer<String> onInvalidToken) {
-      sendMessage(token.getToken(), "기도 완료 알림", message,onInvalidToken);
+  private void sendCompletePrayerMessage(FcmToken token,Long roomId, PrayerTitle prayerTitle, String message, Consumer<String> onInvalidToken) {
+      sendMessage(token.getToken(), roomId, prayerTitle,"기도 완료 알림",message,onInvalidToken);
   }
 
-  public void sendMessage(String token, String title, String body, Consumer<String> onInvalidToken) {
+  public void sendMessage(String token, Long roomId, PrayerTitle prayerTitle, String title, String body, Consumer<String> onInvalidToken) {
     Notification fcmNotification = Notification.builder().setTitle(title).setBody(body).build();
-    Message fcmMessage = Message.builder().setToken(token).setNotification(fcmNotification).build();
+    Message fcmMessage = Message.builder()
+        .setToken(token)
+        .setNotification(fcmNotification)
+        .putData("Title",title)
+        .putData("Body",body)
+        .putData("roomId",String.valueOf(roomId))
+        .putData("prayerTitle",prayerTitle.getTitle())
+        .putData("prayerTitleId",String.valueOf(prayerTitle.getId()))
+        .build();
     try {
       String send = firebaseMessaging.send(fcmMessage);
       log.info("FCM 전송 성공 : {}", send);
