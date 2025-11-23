@@ -87,7 +87,8 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
     PrayTogetherPrincipal principal = (PrayTogetherPrincipal) authentication.getPrincipal();
     String accessToken = jwtService.issueAccessToken(principal);
     String refreshToken = jwtService.issueRefreshToken(principal);
-    refreshTokenService.save(String.valueOf(principal.getId()), refreshToken);
+    refreshTokenService.save(
+        principal.getId(), refreshToken, jwtService.extractExpiration(refreshToken));
 
     LoginResponse loginResponse =
         LoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();

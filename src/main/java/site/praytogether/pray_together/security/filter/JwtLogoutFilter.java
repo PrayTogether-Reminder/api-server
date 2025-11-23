@@ -35,7 +35,7 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
     logger.info("로그아웃 인증 정보 = {}", authentication);
     if (authentication == null) return;
     PrayTogetherPrincipal principal = (PrayTogetherPrincipal) authentication.getPrincipal();
-    refreshTokenService.delete(String.valueOf(principal.getId()));
+    refreshTokenService.delete(principal.getId());
 
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
   }

@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 import javax.crypto.SecretKey;
@@ -73,6 +74,10 @@ public class JwtService {
 
   public Long extractMemberId(String token) {
     return Long.valueOf(extractAllClaims(token).getSubject());
+  }
+
+  public Instant extractExpiration(String token) {
+    return extractAllClaims(token).getExpiration().toInstant();
   }
 
   private Claims extractAllClaims(String token) {
