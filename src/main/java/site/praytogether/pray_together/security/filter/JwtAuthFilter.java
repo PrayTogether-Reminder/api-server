@@ -23,6 +23,7 @@ import site.praytogether.pray_together.domain.auth.dto.LoginRequest;
 import site.praytogether.pray_together.domain.auth.dto.LoginResponse;
 import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
 import site.praytogether.pray_together.domain.auth.service.RefreshTokenService;
+import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.exception.ExceptionResponse;
 import site.praytogether.pray_together.security.service.JwtService;
 
@@ -31,6 +32,7 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
   private final AuthenticationManager authenticationManager;
   private final ObjectMapper objectMapper;
   private final RefreshTokenService refreshTokenService;
+  private final MemberService memberService;
   private final String LOGIN_URL = "/api/v1/auth/login";
   private final JwtService jwtService;
 
@@ -38,10 +40,12 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
       AuthenticationManager authenticationManager,
       ObjectMapper objectMapper,
       RefreshTokenService refreshTokenService,
+      MemberService memberService,
       JwtService jwtService) {
     this.authenticationManager = authenticationManager;
     this.objectMapper = objectMapper;
     this.refreshTokenService = refreshTokenService;
+    this.memberService = memberService;
     this.jwtService = jwtService;
     setFilterProcessesUrl(LOGIN_URL);
   }
@@ -87,7 +91,10 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
     PrayTogetherPrincipal principal = (PrayTogetherPrincipal) authentication.getPrincipal();
     String accessToken = jwtService.issueAccessToken(principal);
     String refreshToken = jwtService.issueRefreshToken(principal);
-    refreshTokenService.save(String.valueOf(principal.getId()), refreshToken);
+    refreshTokenService.save(
+        memberService.getRefOrThrow(principal.getId()),
+        refreshToken,
+        jwtService.extractExpiration(refreshToken));
 
     LoginResponse loginResponse =
         LoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();

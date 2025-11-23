@@ -4,6 +4,7 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.auth.dto.AuthTokenReissueRequest;
 import site.praytogether.pray_together.domain.auth.dto.AuthTokenReissueResponse;
 import site.praytogether.pray_together.domain.auth.dto.OtpVerifyRequest;
@@ -20,6 +21,7 @@ import site.praytogether.pray_together.security.service.JwtService;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class AuthApplicationService {
   private final MemberService memberService;
   private final OtpService otpService;
@@ -50,20 +52,20 @@ public class AuthApplicationService {
     try {
       String refreshToken = request.getRefreshToken();
       memberId = jwtService.extractMemberId(refreshToken);
-      refreshTokenService.validateRefreshTokenExist(String.valueOf(memberId), refreshToken);
+      refreshTokenService.validateRefreshTokenExist(memberId, refreshToken);
 
       jwtService.isValid(request.getRefreshToken());
     } catch (JwtException e) {
       throw new RefreshTokenNotValidException(memberId);
     }
 
-    refreshTokenService.delete(String.valueOf(memberId));
+    refreshTokenService.delete(memberId);
     Member member = memberService.fetchById(memberId);
     PrayTogetherPrincipal principal =
         PrayTogetherPrincipal.builder().id(member.getId()).email(member.getEmail()).build();
     String access = jwtService.issueAccessToken(principal);
     String refresh = jwtService.issueRefreshToken(principal);
-    refreshTokenService.save(String.valueOf(memberId), refresh);
+    refreshTokenService.save(member, refresh, jwtService.extractExpiration(refresh));
 
     return AuthTokenReissueResponse.of(access, refresh);
   }
