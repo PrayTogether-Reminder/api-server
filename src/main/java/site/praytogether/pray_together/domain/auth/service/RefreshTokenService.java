@@ -39,13 +39,19 @@ public class RefreshTokenService {
         .orElseThrow(() -> new RefreshTokenNotFoundException(memberId));
   }
 
-  @Transactional
   public void delete(Long memberId) {
     refreshTokenRepository.deleteByMemberId(memberId);
   }
 
   public void validateRefreshTokenExist(Long memberId, String refresh) {
     RefreshToken storedRefreshToken = get(memberId);
+
+    // 만료된 토큰이면 삭제 후 예외 발생
+    if (storedRefreshToken.getExpiredTime().isBefore(Instant.now())) {
+      delete(memberId);
+      throw new RefreshTokenNotFoundException(memberId);
+    }
+
     if (Objects.equals(refresh, storedRefreshToken.getToken()) == false) {
       throw new RefreshTokenNotFoundException(memberId);
     }
