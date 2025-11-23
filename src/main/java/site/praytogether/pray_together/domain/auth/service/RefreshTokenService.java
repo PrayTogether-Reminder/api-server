@@ -8,22 +8,18 @@ import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.auth.exception.RefreshTokenNotFoundException;
 import site.praytogether.pray_together.domain.auth.model.RefreshToken;
 import site.praytogether.pray_together.domain.auth.repository.RefreshTokenRepository;
-import site.praytogether.pray_together.domain.member.service.MemberService;
+import site.praytogether.pray_together.domain.member.model.Member;
 
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
   private final RefreshTokenRepository refreshTokenRepository;
-  private final MemberService memberService;
 
-  public void save(Long memberId, String token, Instant expiredTime) {
+  public void save(Member member, String token, Instant expiredTime) {
     RefreshToken refreshToken =
         refreshTokenRepository
-            .findByMemberId(memberId)
-            .orElseGet(
-                () ->
-                    RefreshToken.create(
-                        memberService.getRefOrThrow(memberId), token, expiredTime));
+            .findByMemberId(member.getId())
+            .orElseGet(() -> RefreshToken.create(member, token, expiredTime));
 
     if (refreshToken.getId() == null) {
       refreshTokenRepository.save(refreshToken);

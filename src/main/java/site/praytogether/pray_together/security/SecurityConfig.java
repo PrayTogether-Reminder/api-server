@@ -16,6 +16,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import site.praytogether.pray_together.domain.auth.service.RefreshTokenService;
+import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.security.filter.JwtAuthFilter;
 import site.praytogether.pray_together.security.filter.JwtLogoutFilter;
 import site.praytogether.pray_together.security.filter.JwtValidationFilter;
@@ -28,6 +29,7 @@ public class SecurityConfig {
 
   private final ObjectMapper objectMapper;
   private final RefreshTokenService refreshTokenService;
+  private final MemberService memberService;
   private final JwtService jwtService;
   private final AuthenticationEntryPoint authenticationEntryPoint;
 
@@ -45,7 +47,8 @@ public class SecurityConfig {
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(new JwtLogoutFilter(refreshTokenService), LogoutFilter.class)
         .addFilterBefore(
-            new JwtAuthFilter(authenticationManager, objectMapper, refreshTokenService, jwtService),
+            new JwtAuthFilter(
+                authenticationManager, objectMapper, refreshTokenService, memberService, jwtService),
             JwtLogoutFilter.class)
         .addFilterBefore(
             new JwtValidationFilter(jwtService, authenticationEntryPoint), JwtAuthFilter.class)
@@ -59,10 +62,5 @@ public class SecurityConfig {
   @Bean
   AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
     return config.getAuthenticationManager();
-  }
-
-  @Bean
-  PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
   }
 }

@@ -65,8 +65,7 @@ public class AuthApplicationService {
         PrayTogetherPrincipal.builder().id(member.getId()).email(member.getEmail()).build();
     String access = jwtService.issueAccessToken(principal);
     String refresh = jwtService.issueRefreshToken(principal);
-    refreshTokenService.save(
-        memberId, refresh, jwtService.extractExpiration(refresh));
+    refreshTokenService.save(member, refresh, jwtService.extractExpiration(refresh));
 
     return AuthTokenReissueResponse.of(access, refresh);
   }
