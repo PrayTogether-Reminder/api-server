@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import site.praytogether.pray_together.domain.fcm_token.model.FcmToken;
 import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
@@ -18,6 +19,7 @@ import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
 public class NotificationGateway {
   private final FirebaseMessaging firebaseMessaging;
 
+  @Async("notificationExecutor")
   public void notifyCompletePrayer(List<FcmToken> fcmTokens,Long roomId, PrayerTitle prayerTitle, String message, Consumer<String> onInvalidToken) {
     fcmTokens.forEach(token -> sendCompletePrayerMessage(token, roomId, prayerTitle ,message,onInvalidToken));
   }
