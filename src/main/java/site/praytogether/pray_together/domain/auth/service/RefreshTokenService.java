@@ -35,6 +35,7 @@ public class RefreshTokenService {
         .orElseThrow(() -> new RefreshTokenNotFoundException(memberId));
   }
 
+  @Transactional
   public void delete(Long memberId) {
     refreshTokenRepository.deleteByMemberId(memberId);
   }
