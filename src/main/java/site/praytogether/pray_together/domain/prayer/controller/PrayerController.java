@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,6 +34,7 @@ import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleUpdateReques
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/prayers")
+@Slf4j
 public class PrayerController {
   private final PrayerApplicationService prayerApplication;
 
@@ -40,9 +42,11 @@ public class PrayerController {
   
   @PostMapping
   public ResponseEntity<PrayerTitleResponse> createPrayerTitle(
-      @PrincipalId Long memberId, 
+      @PrincipalId Long memberId,
       @Valid @RequestBody PrayerTitleCreateRequest request) {
+    log.info("[API] 기도 제목 생성 시작 memberId={}", memberId);
     PrayerTitleResponse response = prayerApplication.createPrayerTitle(memberId, request);
+    log.info("[API] 기도 제목 생성 종료 memberId={} titleId={}", memberId, response.getId());
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
@@ -51,7 +55,9 @@ public class PrayerController {
       @PrincipalId Long memberId,
       @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") @PathVariable Long titleId,
       @Valid @RequestBody PrayerTitleUpdateRequest request) {
+    log.info("[API] 기도 제목 수정 시작 memberId={} titleId={}", memberId, titleId);
     MessageResponse response = prayerApplication.updatePrayerTitle(memberId, titleId, request);
+    log.info("[API] 기도 제목 수정 종료 memberId={} titleId={}", memberId, titleId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
@@ -59,7 +65,9 @@ public class PrayerController {
   public ResponseEntity<MessageResponse> deletePrayerTitle(
       @PrincipalId Long memberId,
       @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") @PathVariable Long titleId) {
+    log.info("[API] 기도 제목 삭제 시작 memberId={} titleId={}", memberId, titleId);
     MessageResponse response = prayerApplication.deletePrayerTitle(memberId, titleId);
+    log.info("[API] 기도 제목 삭제 종료 memberId={} titleId={}", memberId, titleId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
@@ -70,9 +78,11 @@ public class PrayerController {
       @RequestParam Long roomId,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_AFTER) String after,
       @PrincipalId Long memberId) {
+    log.info("[API] 기도 제목 무한스크롤 조회 시작 memberId={} roomId={} after={}", memberId, roomId, after);
     PrayerTitleInfiniteScrollRequest request = PrayerTitleInfiniteScrollRequest.of(roomId, after);
     PrayerTitleInfiniteScrollResponse response =
         prayerApplication.fetchPrayerTitleInfiniteScroll(memberId, request);
+    log.info("[API] 기도 제목 무한스크롤 조회 종료 memberId={} roomId={}", memberId, roomId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
@@ -85,7 +95,9 @@ public class PrayerController {
       @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") 
       @PathVariable Long titleId,
       @Valid @RequestBody PrayerContentCreateRequest request) {
+    log.info("[API] 기도 내용 생성 시작 writerId={} titleId={}", writerId, titleId);
     MessageResponse response = prayerApplication.createPrayerContent(writerId, titleId, request);
+    log.info("[API] 기도 내용 생성 종료 writerId={} titleId={}", writerId, titleId);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
@@ -99,7 +111,14 @@ public class PrayerController {
       @Positive(message = "잘 못된 기도 내용을 선택하셨습니다.") 
       @PathVariable Long contentId,
       @Valid @RequestBody PrayerContentUpdateRequest request) {
-    MessageResponse response = prayerApplication.updatePrayerContent(memberId, titleId, contentId, request);
+    log.info(
+        "[API] 기도 내용 수정 시작 memberId={} titleId={} contentId={}",
+        memberId, titleId, contentId);
+    MessageResponse response =
+        prayerApplication.updatePrayerContent(memberId, titleId, contentId, request);
+    log.info(
+        "[API] 기도 내용 수정 종료 memberId={} titleId={} contentId={}",
+        memberId, titleId, contentId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
@@ -109,7 +128,9 @@ public class PrayerController {
       @NotNull(message = "잘 못된 기도 제목을 선택하셨습니다.") 
       @Positive(message = "잘 못된 기도 제목을 선택하셨습니다.") 
       @PathVariable Long titleId) {
+    log.info("[API] 기도 내용 조회 시작 memberId={} titleId={}", memberId, titleId);
     PrayerContentResponse response = prayerApplication.fetchPrayerContents(memberId, titleId);
+    log.info("[API] 기도 내용 조회 종료 memberId={} titleId={}", memberId, titleId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
@@ -122,7 +143,14 @@ public class PrayerController {
       @NotNull(message = "잘 못된 기도 내용을 선택하셨습니다.") 
       @Positive(message = "잘 못된 기도 내용을 선택하셨습니다.") 
       @PathVariable Long contentId) {
-    MessageResponse response = prayerApplication.deletePrayerContent(memberId, titleId, contentId);
+    log.info(
+        "[API] 기도 내용 삭제 시작 memberId={} titleId={} contentId={}",
+        memberId, titleId, contentId);
+    MessageResponse response =
+        prayerApplication.deletePrayerContent(memberId, titleId, contentId);
+    log.info(
+        "[API] 기도 내용 삭제 종료 memberId={} titleId={} contentId={}",
+        memberId, titleId, contentId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
@@ -134,8 +162,10 @@ public class PrayerController {
       @NotNull(message = "잘 못된 기도제목 입니다.") @Positive(message = "잘 못된 기도제목 입니다.") @PathVariable
           Long titleId,
       @Valid @RequestBody PrayerCompletionCreateRequest request) {
+    log.info("[API] 기도 완료 처리 시작 memberId={} titleId={}", memberId, titleId);
     MessageResponse response =
         prayerApplication.completePrayerAndNotify(memberId, titleId, request);
+    log.info("[API] 기도 완료 처리 종료 memberId={} titleId={}", memberId, titleId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

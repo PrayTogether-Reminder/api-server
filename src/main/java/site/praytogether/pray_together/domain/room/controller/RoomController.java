@@ -43,31 +43,41 @@ public class RoomController {
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_ORDER_BY) String orderBy,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_AFTER) String after,
       @RequestParam(defaultValue = DEFAULT_INFINITE_SCROLL_DIR) String dir) {
+    log.info("[API] 방 목록 조회 시작 memberId={} orderBy={} after={} dir={}", memberId, orderBy, after, dir);
     RoomInfiniteScrollRequest request = RoomInfiniteScrollRequest.of(orderBy, after, dir);
     RoomInfiniteScrollResponse roomInfiniteScrollResponse =
         roomApplication.fetchRoomsInfiniteScroll(memberId, request);
+    log.info("[API] 방 목록 조회 종료 memberId={}", memberId);
     return ResponseEntity.status(HttpStatus.OK).body(roomInfiniteScrollResponse);
   }
 
   @PostMapping
   public ResponseEntity<MessageResponse> createRoom(
       @PrincipalId Long memberId, @Valid @RequestBody RoomCreateRequest request) {
+    log.info("[API] 방 생성 시작 memberId={} roomName={}", memberId, request.getName());
+    MessageResponse response = roomApplication.createRoom(memberId, request);
+    log.info("[API] 방 생성 종료 memberId={} roomName={}", memberId, request.getName());
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(roomApplication.createRoom(memberId, request));
+        .body(response);
   }
 
   @DeleteMapping("/{roomId}")
   public ResponseEntity<MessageResponse> deleteRoom(
       @PrincipalId Long memberId,
       @Positive(message = "잘 못된 방을 선택하셨습니다.") @PathVariable Long roomId) {
-    return ResponseEntity.status(HttpStatus.OK).body(roomApplication.deleteRoom(memberId, roomId));
+    log.info("[API] 방 삭제 시작 memberId={} roomId={}", memberId, roomId);
+    MessageResponse response = roomApplication.deleteRoom(memberId, roomId);
+    log.info("[API] 방 삭제 종료 memberId={} roomId={}", memberId, roomId);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @GetMapping("/{roomId}/members")
   public ResponseEntity<RoomMemberResponse> getRoomMembers(
       @PrincipalId Long memberId,
       @Min(value = 1, message = "잘 못된 방을 선택하셨습니다.") @PathVariable Long roomId) {
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(roomApplication.listRoomMembers(memberId, roomId));
+    log.info("[API] 방 멤버 조회 시작 memberId={} roomId={}", memberId, roomId);
+    RoomMemberResponse response = roomApplication.listRoomMembers(memberId, roomId);
+    log.info("[API] 방 멤버 조회 종료 memberId={} roomId={}", memberId, roomId);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }
