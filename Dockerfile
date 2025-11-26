@@ -32,4 +32,17 @@ RUN --mount=type=secret,id=firebase_base64 \
     cat /run/secrets/firebase_base64 | base64 -d > /app/src/main/resources/pray-together-firebase-adminsdk.json
 
 ENV SPRING_PROFILES_ACTIVE=prod
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
+ENTRYPOINT ["java", \
+"-Xms256m", \
+"-Xmx512m", \
+"-XX:MaxMetaspaceSize=128m", \
+"-XX:+UseG1GC", \
+"-XX:MaxGCPauseMillis=200", \
+"-XX:+UseStringDeduplication", \
+"-XX:+AlwaysPreTouch", \
+"-XX:+ParallelRefProcEnabled", \
+"-Djdk.nio.maxCachedBufferSize=262144", \
+"-jar", \
+"app.jar" \
+]
+
