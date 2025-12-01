@@ -40,12 +40,13 @@ public class NotificationGateway {
         .putData("prayerTitleId",String.valueOf(prayerTitle.getId()))
         .build();
     try {
+      log.info("[FCM] 기도 완료 전송 시작 roomId={} titleId={}",roomId,prayerTitle.getId());
       String send = firebaseMessaging.send(fcmMessage);
-      log.info("FCM 전송 성공 : {}", send);
+      log.info("[FCM] 기도 완료 전송 성공 roomId={} titleId={}",roomId,prayerTitle.getId());
     } catch (FirebaseMessagingException e) {
-      log.error("FCM 전송 실패 message={}", body);
+      log.error("[FCM] 기도 완료 전송 실패 roomId={} titleId={}",roomId,prayerTitle.getId());
       onInvalidToken.accept(token);
-      log.error("FCM 오류 토큰 삭제 성공={}", body);
+      log.error("[FCM] 기도 완료 오류 토큰 삭제 성공 roomId={} titleId={}",roomId,prayerTitle.getId());
     }
   }
 }
