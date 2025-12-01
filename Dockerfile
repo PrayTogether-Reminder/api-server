@@ -32,7 +32,7 @@ RUN --mount=type=secret,id=firebase_base64 \
     cat /run/secrets/firebase_base64 | base64 -d > /app/src/main/resources/pray-together-firebase-adminsdk.json
 
 ENV SPRING_PROFILES_ACTIVE=prod
-ENTRYPOINT [ "java", \
+ENTRYPOINT ["java", \
 "-Xms256m", \
 "-Xmx512m", \
 "-Xss1m", \
@@ -40,27 +40,13 @@ ENTRYPOINT [ "java", \
 "-XX:+UseG1GC", \
 "-XX:+UseStringDeduplication", \
 "-XX:MaxDirectMemorySize=64m", \
-
-# G1GC 튜닝
-"-XX:G1NewSizePercent=10", \
-"-XX:G1MaxNewSizePercent=20", \
 "-XX:MaxGCPauseMillis=200", \
-
-# CodeCache 최적화
 "-XX:InitialCodeCacheSize=32m", \
 "-XX:ReservedCodeCacheSize=64m", \
-
-# JIT 최적화 (작은 서버용)
 "-XX:+TieredCompilation", \
 "-XX:TieredStopAtLevel=1", \
-
-# Class Unloading
-"-XX:+ClassUnloadingWithConcurrentMark", \
-"-XX:+ClassUnloading", \
-
 "-XX:+ExitOnOutOfMemoryError", \
 "-Djava.security.egd=file:/dev/./urandom", \
 "-jar", \
-"app.jar" \
-]
+"app.jar"]
 
