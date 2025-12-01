@@ -32,8 +32,7 @@ RUN --mount=type=secret,id=firebase_base64 \
     cat /run/secrets/firebase_base64 | base64 -d > /app/src/main/resources/pray-together-firebase-adminsdk.json
 
 ENV SPRING_PROFILES_ACTIVE=prod
-ENTRYPOINT [
-"java", \
+ENTRYPOINT [ "java", \
 "-Xms256m", \
 "-Xmx512m", \
 "-Xss1m", \
