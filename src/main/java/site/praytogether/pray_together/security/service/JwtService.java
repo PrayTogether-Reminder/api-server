@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import site.praytogether.pray_together.constant.CoreConstant.JwtConstant;
 import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.domain.exception.RefreshTokenNotValidException;
 
 @Service
 public class JwtService {
@@ -62,6 +63,14 @@ public class JwtService {
 
   public void isValid(String token) throws JwtException {
     Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
+  }
+
+  public void validateRefresh(String token) throws JwtException {
+    Claims claims = extractAllClaims(token);
+    String tokenType = claims.get(TYPE, String.class);
+    if (!JwtConstant.REFRESH_TYPE.equals(tokenType)) {
+      throw new RefreshTokenNotValidException(Long.valueOf(claims.getSubject()));
+    }
   }
 
   public String extractEmail(String token) {

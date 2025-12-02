@@ -5,6 +5,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.praytogether.pray_together.domain.auth.domain.exception.RefreshTokenExpiredException;
 import site.praytogether.pray_together.domain.auth.domain.exception.RefreshTokenNotFoundException;
 import site.praytogether.pray_together.domain.member.model.Member;
 
@@ -44,7 +45,7 @@ public class RefreshTokenService {
     // 만료된 토큰이면 삭제 후 예외 발생
     if (storedRefreshToken.getExpiredTime().isBefore(Instant.now())) {
       delete(memberId);
-      throw new RefreshTokenNotFoundException(memberId);
+      throw new RefreshTokenExpiredException(memberId);
     }
 
     if (Objects.equals(refresh, storedRefreshToken.getToken()) == false) {
