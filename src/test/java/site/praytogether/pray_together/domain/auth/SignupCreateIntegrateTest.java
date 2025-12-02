@@ -12,7 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.MediaType;
-import site.praytogether.pray_together.domain.auth.dto.SignupRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.SignupRequest;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.support.TransactionTemplate;
-import site.praytogether.pray_together.domain.auth.repository.RefreshTokenRepository;
+import site.praytogether.pray_together.domain.auth.domain.RefreshTokenRepository;
 import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitationRepository;
 import site.praytogether.pray_together.domain.friend.domain.friendship.FriendshipRepository;
 import site.praytogether.pray_together.domain.invitation.domain.repository.InvitationRepository;

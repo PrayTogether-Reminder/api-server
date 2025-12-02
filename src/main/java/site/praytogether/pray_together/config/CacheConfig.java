@@ -9,12 +9,12 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import site.praytogether.pray_together.domain.auth.cache.OtpCache;
-import site.praytogether.pray_together.domain.auth.cache.OtpCacheCaffeine;
-import site.praytogether.pray_together.domain.auth.cache.OtpCacheInMemory;
-import site.praytogether.pray_together.domain.auth.cache.RefreshTokenCache;
-import site.praytogether.pray_together.domain.auth.cache.RefreshTokenCaffeine;
-import site.praytogether.pray_together.domain.auth.cache.RefreshTokenInMemory;
+import site.praytogether.pray_together.domain.auth.domain.cache.OtpCache;
+import site.praytogether.pray_together.domain.auth.infrastructure.cache.OtpCacheCaffeine;
+import site.praytogether.pray_together.domain.auth.infrastructure.cache.OtpCacheInMemory;
+import site.praytogether.pray_together.domain.auth.domain.cache.RefreshTokenCache;
+import site.praytogether.pray_together.domain.auth.infrastructure.cache.RefreshTokenCaffeine;
+import site.praytogether.pray_together.domain.auth.infrastructure.cache.RefreshTokenInMemory;
 
 @Configuration
 public class CacheConfig {

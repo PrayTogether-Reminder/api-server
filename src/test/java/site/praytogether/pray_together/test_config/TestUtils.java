@@ -1,13 +1,11 @@
 package site.praytogether.pray_together.test_config;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.model.PhoneNumber;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;

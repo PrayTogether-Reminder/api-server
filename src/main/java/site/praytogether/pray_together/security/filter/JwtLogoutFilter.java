@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
-import site.praytogether.pray_together.domain.auth.service.RefreshTokenService;
+import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.domain.RefreshTokenService;
 
 @RequiredArgsConstructor
 public class JwtLogoutFilter extends OncePerRequestFilter {

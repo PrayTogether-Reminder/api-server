@@ -4,7 +4,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.INCORRECT_EMAIL_PASSWORD;
+import static site.praytogether.pray_together.domain.auth.domain.exception.AuthExceptionSpec.INCORRECT_EMAIL_PASSWORD;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -19,10 +19,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import site.praytogether.pray_together.domain.auth.dto.LoginRequest;
-import site.praytogether.pray_together.domain.auth.dto.LoginResponse;
-import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
-import site.praytogether.pray_together.domain.auth.service.RefreshTokenService;
+import site.praytogether.pray_together.domain.auth.presentation.dto.LoginRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.LoginResponse;
+import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.domain.RefreshTokenService;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.exception.ExceptionResponse;
 import site.praytogether.pray_together.security.service.JwtService;

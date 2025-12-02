@@ -1,9 +1,9 @@
 package site.praytogether.pray_together.security.handler;
 
-import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.ACCESS_TOKEN_EXCEPTION;
-import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.ACCESS_TOKEN_EXPIRED;
-import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.AUTHENTICATION_FAIL;
-import static site.praytogether.pray_together.domain.auth.exception.AuthExceptionSpec.UNKNOWN_AUTHENTICATION_FAILURE;
+import static site.praytogether.pray_together.domain.auth.domain.exception.AuthExceptionSpec.ACCESS_TOKEN_EXCEPTION;
+import static site.praytogether.pray_together.domain.auth.domain.exception.AuthExceptionSpec.ACCESS_TOKEN_EXPIRED;
+import static site.praytogether.pray_together.domain.auth.domain.exception.AuthExceptionSpec.AUTHENTICATION_FAIL;
+import static site.praytogether.pray_together.domain.auth.domain.exception.AuthExceptionSpec.UNKNOWN_AUTHENTICATION_FAILURE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;

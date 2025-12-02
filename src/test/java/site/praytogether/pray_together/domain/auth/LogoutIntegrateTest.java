@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
-import site.praytogether.pray_together.domain.auth.model.RefreshToken;
+import site.praytogether.pray_together.domain.auth.domain.RefreshToken;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 
