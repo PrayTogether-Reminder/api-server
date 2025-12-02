@@ -52,9 +52,9 @@ public class AuthApplicationService {
     try {
       String refreshToken = request.getRefreshToken();
       memberId = jwtService.extractMemberId(refreshToken);
+      jwtService.validateRefresh(request.getRefreshToken());
       refreshTokenService.validateRefreshTokenExist(memberId, refreshToken);
 
-      jwtService.isValid(request.getRefreshToken());
     } catch (JwtException e) {
       throw new RefreshTokenNotValidException(memberId);
     }
