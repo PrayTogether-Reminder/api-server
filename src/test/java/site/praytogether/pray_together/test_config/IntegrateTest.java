@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import site.praytogether.pray_together.domain.auth.repository.RefreshTokenRepository;
 import site.praytogether.pray_together.domain.friend.domain.friend_invitation.FriendInvitationRepository;
 import site.praytogether.pray_together.domain.friend.domain.friendship.FriendshipRepository;
 import site.praytogether.pray_together.domain.invitation.domain.repository.InvitationRepository;
@@ -36,6 +37,7 @@ public class IntegrateTest {
   @Autowired protected PrayerCompletionRepository prayerCompletionRepository;
   @Autowired protected FriendInvitationRepository friendInvitationRepository;
   @Autowired protected FriendshipRepository friendshipRepository;
+  @Autowired protected RefreshTokenRepository refreshTokenRepository;
 
   @Autowired
   protected PrayerCompletionNotificationRepository prayerCompletionNotificationRepository;
