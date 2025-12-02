@@ -15,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import site.praytogether.pray_together.domain.auth.domain.RefreshTokenService;
 import site.praytogether.pray_together.domain.member.service.MemberService;
+import site.praytogether.pray_together.filter.MdcLoggingFilter;
 import site.praytogether.pray_together.security.filter.JwtAuthFilter;
 import site.praytogether.pray_together.security.filter.JwtLogoutFilter;
 import site.praytogether.pray_together.security.filter.JwtValidationFilter;
@@ -30,6 +31,7 @@ public class SecurityConfig {
   private final MemberService memberService;
   private final JwtService jwtService;
   private final AuthenticationEntryPoint authenticationEntryPoint;
+  private final MdcLoggingFilter mdcLoggingFilter;
 
   @Bean
   public SecurityFilterChain securityFilterChain(
@@ -50,6 +52,7 @@ public class SecurityConfig {
             JwtLogoutFilter.class)
         .addFilterBefore(
             new JwtValidationFilter(jwtService, authenticationEntryPoint), JwtAuthFilter.class)
+        .addFilterAfter(mdcLoggingFilter, JwtValidationFilter.class)
         .exceptionHandling(
             exceptions -> exceptions.authenticationEntryPoint(authenticationEntryPoint))
         .csrf(AbstractHttpConfigurer::disable)
