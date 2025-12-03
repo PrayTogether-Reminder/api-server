@@ -1,13 +1,12 @@
 package site.praytogether.pray_together.domain.auth.presentation.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Value;
 
+@Value
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthTokenReissueRequest {
   @NotBlank(message = "다시 로그인해 주세요.")
-  private final String refreshToken;
+  String refreshToken;
 }
