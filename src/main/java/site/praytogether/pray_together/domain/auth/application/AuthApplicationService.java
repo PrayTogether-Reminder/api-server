@@ -1,17 +1,23 @@
 package site.praytogether.pray_together.domain.auth.application;
 
 import io.jsonwebtoken.JwtException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import site.praytogether.pray_together.domain.auth.domain.PasswordReissuer;
 import site.praytogether.pray_together.domain.auth.domain.RefreshTokenRepository;
 import site.praytogether.pray_together.domain.auth.domain.event.PasswordReissuedEvent;
+import site.praytogether.pray_together.domain.auth.infrastructure.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueResponse;
+import site.praytogether.pray_together.domain.auth.presentation.dto.ChangePasswordRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.OtpVerifyRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.ReissuePasswordRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.SignupRequest;
@@ -89,5 +95,13 @@ public class AuthApplicationService {
     eventPublisher.publishEvent(PasswordReissuedEvent.of(member.getEmail(), newPw));
 
     return MessageResponse.of("임시 비밀번호를 이메일로 전송했습니다.");
+  }
+
+  public MessageResponse changePassword(Long memberId, ChangePasswordRequest request) {
+    Member member = memberService.fetchById(memberId);
+    String encodedPassword = passwordEncoder.encode(request.getNewPassword());
+    member.updatePassword(encodedPassword);
+
+    return MessageResponse.of("비밀번호를 변경했습니다.");
   }
 }

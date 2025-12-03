@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import site.praytogether.pray_together.domain.auth.infrastructure.annotation.Pri
 import site.praytogether.pray_together.domain.auth.application.AuthApplicationService;
 import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueResponse;
+import site.praytogether.pray_together.domain.auth.presentation.dto.ChangePasswordRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.EmailOtpRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.OtpVerifyRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.ReissuePasswordRequest;
@@ -79,6 +81,16 @@ public class AuthController {
     log.info("[API] 비밀번호 재발급 요청 시작");
     MessageResponse response = authApplication.reissuePassword(request);
     log.info("[API] 비밀번호 재발급 요청 종료");
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @PatchMapping("/password")
+  public ResponseEntity<MessageResponse> changePassword(
+      @PrincipalId Long memberId,
+      @Valid @RequestBody ChangePasswordRequest request) {
+    log.info("[API] 비밀번호 변경 요청 시작");
+    MessageResponse response = authApplication.changePassword(memberId, request);
+    log.info("[API] 비밀번호 변경 요청 종료");
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }
