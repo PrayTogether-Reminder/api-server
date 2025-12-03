@@ -2,6 +2,7 @@ package site.praytogether.pray_together.domain.auth.presentation;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenRei
 import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueResponse;
 import site.praytogether.pray_together.domain.auth.presentation.dto.EmailOtpRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.OtpVerifyRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.ReissuePasswordRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.SignupRequest;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 
@@ -69,6 +71,14 @@ public class AuthController {
     log.info("[API] JWT 재발급 요청 시작");
     AuthTokenReissueResponse response = authApplication.reissueAuthToken(request);
     log.info("[API] JWT 재발급 요청 종료");
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @PostMapping("/reissue-password")
+  public ResponseEntity<MessageResponse> reissuePassword(@RequestBody @Valid ReissuePasswordRequest request) {
+    log.info("[API] 비밀번호 재발급 요청 시작");
+    MessageResponse response = authApplication.reissuePassword(request);
+    log.info("[API] 비밀번호 재발급 요청 종료");
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

@@ -60,4 +60,8 @@ public class Member extends BaseEntity {
   public void updatePhoneNumber(PhoneNumber phoneNumber) {
     this.phoneNumber = phoneNumber;
   }
+
+  public void updatePassword(String password) {
+    this.password = password;
+  }
 }

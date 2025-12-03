@@ -48,6 +48,10 @@ public class MemberService {
     return memberRepository.findById(id).orElseThrow(() -> new MemberNotFoundException(id));
   }
 
+  public Member fetchByEmail(String email) {
+    return memberRepository.findByEmail(email).orElseThrow(() -> new MemberNotFoundException(email));
+  }
+
   public List<Member> fetchByIds(List<Long> ids) {
     return memberRepository.findAllById(ids);
   }
