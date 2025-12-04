@@ -12,8 +12,8 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import site.praytogether.pray_together.constant.CoreConstant.JwtConstant;
-import site.praytogether.pray_together.domain.auth.exception.RefreshTokenNotValidException;
-import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.domain.exception.RefreshTokenNotValidException;
 
 @Service
 public class JwtService {

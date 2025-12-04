@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.praytogether.pray_together.domain.auth.model.SignupCommand;
+import site.praytogether.pray_together.domain.auth.domain.SignupCommand;
 import site.praytogether.pray_together.domain.member.model.SearchQueryMember;
 import site.praytogether.pray_together.domain.member.model.SearchResultMember;
 import site.praytogether.pray_together.domain.member.model.SearchResultMembers;
@@ -46,6 +46,10 @@ public class MemberService {
 
   public Member fetchById(Long id) {
     return memberRepository.findById(id).orElseThrow(() -> new MemberNotFoundException(id));
+  }
+
+  public Member fetchByEmail(String email) {
+    return memberRepository.findByEmail(email).orElseThrow(() -> new MemberNotFoundException(email));
   }
 
   public List<Member> fetchByIds(List<Long> ids) {

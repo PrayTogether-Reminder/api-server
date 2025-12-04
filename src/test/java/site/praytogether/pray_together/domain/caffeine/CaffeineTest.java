@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import site.praytogether.pray_together.domain.auth.cache.OtpCacheCaffeine;
-import site.praytogether.pray_together.domain.auth.exception.OtpNotFoundException;
+import site.praytogether.pray_together.domain.auth.infrastructure.cache.OtpCacheCaffeine;
+import site.praytogether.pray_together.domain.auth.domain.exception.OtpNotFoundException;
 
 @DisplayName("OTP 캐시 (Caffeine) 단위 테스트")
 class CaffeineTest {

@@ -1,19 +1,32 @@
 package site.praytogether.pray_together.domain.auth.application;
 
 import io.jsonwebtoken.JwtException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.praytogether.pray_together.domain.auth.dto.AuthTokenReissueRequest;
-import site.praytogether.pray_together.domain.auth.dto.AuthTokenReissueResponse;
-import site.praytogether.pray_together.domain.auth.dto.OtpVerifyRequest;
-import site.praytogether.pray_together.domain.auth.dto.SignupRequest;
-import site.praytogether.pray_together.domain.auth.exception.RefreshTokenNotValidException;
-import site.praytogether.pray_together.domain.auth.model.PrayTogetherPrincipal;
-import site.praytogether.pray_together.domain.auth.model.SignupCommand;
-import site.praytogether.pray_together.domain.auth.service.OtpService;
-import site.praytogether.pray_together.domain.auth.service.RefreshTokenService;
+import org.springframework.web.bind.annotation.RequestBody;
+import site.praytogether.pray_together.domain.auth.domain.PasswordReissuer;
+import site.praytogether.pray_together.domain.auth.domain.RefreshTokenRepository;
+import site.praytogether.pray_together.domain.auth.domain.event.PasswordReissuedEvent;
+import site.praytogether.pray_together.domain.auth.infrastructure.annotation.PrincipalId;
+import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueResponse;
+import site.praytogether.pray_together.domain.auth.presentation.dto.ChangePasswordRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.OtpVerifyRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.ReissuePasswordRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.SignupRequest;
+import site.praytogether.pray_together.domain.auth.domain.exception.RefreshTokenNotValidException;
+import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.domain.SignupCommand;
+import site.praytogether.pray_together.domain.auth.domain.OtpService;
+import site.praytogether.pray_together.domain.auth.domain.RefreshTokenService;
+import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.security.service.JwtService;
@@ -27,6 +40,9 @@ public class AuthApplicationService {
   private final OtpService otpService;
   private final JwtService jwtService;
   private final RefreshTokenService refreshTokenService;
+  private final PasswordReissuer passwordReissuer;
+  private final PasswordEncoder passwordEncoder;
+  private final ApplicationEventPublisher eventPublisher;
 
   public void signup(SignupRequest request) {
     SignupCommand command = SignupCommand.from(request);
@@ -68,5 +84,24 @@ public class AuthApplicationService {
     refreshTokenService.save(member, refresh, jwtService.extractExpiration(refresh));
 
     return AuthTokenReissueResponse.of(access, refresh);
+  }
+
+  public MessageResponse reissuePassword(ReissuePasswordRequest request) {
+    Member member = memberService.fetchByEmail(request.getEmail());
+    String newPw = passwordReissuer.generatedByRandom();
+    String encodePw = passwordEncoder.encode(newPw);
+    member.updatePassword(encodePw);
+
+    eventPublisher.publishEvent(PasswordReissuedEvent.of(member.getEmail(), newPw));
+
+    return MessageResponse.of("임시 비밀번호를 이메일로 전송했습니다.");
+  }
+
+  public MessageResponse changePassword(Long memberId, ChangePasswordRequest request) {
+    Member member = memberService.fetchById(memberId);
+    String encodedPassword = passwordEncoder.encode(request.getNewPassword());
+    member.updatePassword(encodedPassword);
+
+    return MessageResponse.of("비밀번호를 변경했습니다.");
   }
 }

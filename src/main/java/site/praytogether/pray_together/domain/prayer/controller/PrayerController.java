@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
+import site.praytogether.pray_together.domain.auth.infrastructure.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.prayer.application.PrayerApplicationService;
 import site.praytogether.pray_together.domain.prayer.dto.PrayerCompletionCreateRequest;

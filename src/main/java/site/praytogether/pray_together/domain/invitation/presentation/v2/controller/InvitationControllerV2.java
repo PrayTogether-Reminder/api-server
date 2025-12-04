@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import site.praytogether.pray_together.domain.auth.annotation.PrincipalId;
+import site.praytogether.pray_together.domain.auth.infrastructure.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.invitation.application.InvitationApplicationService;
 import site.praytogether.pray_together.domain.invitation.presentation.v2.dto.InvitationCreateRequestV2;
