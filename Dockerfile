@@ -31,6 +31,9 @@ RUN --mount=type=secret,id=firebase_base64 \
     # Secret 파일 내용을 /app/src/main/resources/pray-together-firebase-adminsdk.json 파일에 씁니다.
     cat /run/secrets/firebase_base64 | base64 -d > /app/src/main/resources/pray-together-firebase-adminsdk.json
 
+# Heap dump 저장 디렉토리 생성
+RUN mkdir -p /app/logs
+
 ENV SPRING_PROFILES_ACTIVE=prod
 ENTRYPOINT ["java", \
 "-Xms256m", \
@@ -45,6 +48,10 @@ ENTRYPOINT ["java", \
 "-XX:ReservedCodeCacheSize=64m", \
 "-XX:+TieredCompilation", \
 "-XX:TieredStopAtLevel=1", \
+"-Xlog:gc*:file=/app/logs/gc-%t.log:time,level,tags", \
+"-XX:+HeapDumpOnOutOfMemoryError", \
+"-XX:HeapDumpPath=/app/logs/heapdump-%t-%p.hprof", \
+"-XX:ErrorFile=/app/logs/hs_err_pid%p.log", \
 "-XX:+ExitOnOutOfMemoryError", \
 "-Djava.security.egd=file:/dev/./urandom", \
 "-jar", \

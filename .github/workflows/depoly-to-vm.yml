@@ -55,9 +55,10 @@ jobs:
               docker run -d \
                 --name $CONTAINER_NAME \
                 --restart unless-stopped \
-                --memory=600m \
+                --memory=700m \
                 -p 8080:8080 \
                 -v /home/ubuntu/log-pray:/root/log-pray \
+                -v /home/ubuntu/heapdump:/app/logs \
                 --log-driver json-file \
                 --log-opt max-size=50m \
                 --log-opt max-file=10 \
@@ -174,9 +175,10 @@ jobs:
               docker run -d \
                 --name $CONTAINER_NAME \
                 --restart unless-stopped \
-                --memory=600m \
+                --memory=700m \
                 -p 8080:8080 \
                 -v /home/ubuntu/log-pray:/root/log-pray \
+                -v /home/ubuntu/heapdump:/app/logs \
                 --log-driver json-file \
                 --log-opt max-size=50m \
                 --log-opt max-file=10 \
