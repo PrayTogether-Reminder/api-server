@@ -8,19 +8,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
-import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
-import site.praytogether.pray_together.domain.notification.constant.NotificationMessageFormat;
-import site.praytogether.pray_together.domain.notification.model.PrayerCompletionNotification;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerCompletionCreateRequest;
-import site.praytogether.pray_together.domain.prayer.model.PrayerCompletion;
-import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
+import site.praytogether.pray_together.domain.notification.domain.NotificationMessageFormat;
+import site.praytogether.pray_together.domain.notification.domain.PrayerCompletionNotification;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerCompletionCreateRequest;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerCompletion;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 
