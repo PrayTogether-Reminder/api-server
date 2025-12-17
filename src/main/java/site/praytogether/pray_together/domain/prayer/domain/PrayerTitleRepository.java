@@ -20,7 +20,7 @@ public interface PrayerTitleRepository extends JpaRepository<PrayerTitle, Long> 
 
   @Query(
       """
-       SELECT new site.praytogether.pray_together.domain.prayer.model.PrayerTitleInfo(
+       SELECT new site.praytogether.pray_together.domain.prayer.domain.PrayerTitleInfo(
         pt.id, pt.title, pt.createdTime
        )
        FROM PrayerTitle pt
@@ -32,7 +32,7 @@ public interface PrayerTitleRepository extends JpaRepository<PrayerTitle, Long> 
 
   @Query(
       """
-       SELECT new site.praytogether.pray_together.domain.prayer.model.PrayerTitleInfo(
+       SELECT new site.praytogether.pray_together.domain.prayer.domain.PrayerTitleInfo(
         pt.id, pt.title, pt.createdTime
        )
        FROM PrayerTitle pt
