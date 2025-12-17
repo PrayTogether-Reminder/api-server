@@ -2,7 +2,6 @@ package site.praytogether.pray_together.domain.notification.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
@@ -17,16 +16,14 @@ public class PrayerCompletionNotificationService {
     List<PrayerCompletionNotification> notifications = new ArrayList<>();
 
     recipientIds.forEach(
-        recipientId -> {
-          if (Objects.equals(recipientId, senderId)) return;
-          notifications.add(
-              PrayerCompletionNotification.builder()
-                  .prayerTitleId(prayerTitle.getId())
-                  .recipientId(recipientId)
-                  .senderId(senderId)
-                  .message(message)
-                  .build());
-        });
+        recipientId ->
+            notifications.add(
+                PrayerCompletionNotification.builder()
+                    .prayerTitleId(prayerTitle.getId())
+                    .recipientId(recipientId)
+                    .senderId(senderId)
+                    .message(message)
+                    .build()));
     notificationRepository.saveAll(notifications);
   }
 }
