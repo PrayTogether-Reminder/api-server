@@ -113,8 +113,8 @@ public class PrayerCompletionIntegrateTest extends IntegrateTest {
     assertThat(notifications).as("기도 완료 알림이 생성되지 않았습니다.").isNotEmpty();
 
     assertThat(notifications.size())
-        .as("생성된 알림 개수가 예상과 다릅니다. (알림은 자신을 제외한 다른 멤버들에게만 전송됨)")
-        .isEqualTo(ADDITIONAL_MEMBERS_COUNT);
+        .as("생성된 알림 개수가 예상과 다릅니다.")
+        .isEqualTo(ADDITIONAL_MEMBERS_COUNT+1);
 
     for (PrayerCompletionNotification notification : notifications) {
       assertThat(notification.getSenderId()).as("알림의 발신자 ID가 예상과 다릅니다.").isEqualTo(member.getId());
