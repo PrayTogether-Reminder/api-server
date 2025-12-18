@@ -5,11 +5,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 
 import java.util.Comparator;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,10 +15,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.util.UriComponentsBuilder;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerContentResponse;
-import site.praytogether.pray_together.domain.prayer.model.PrayerContent;
-import site.praytogether.pray_together.domain.prayer.model.PrayerContentInfo;
-import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.response.PrayerContentResponse;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerContent;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerContentInfo;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 

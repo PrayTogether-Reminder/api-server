@@ -17,12 +17,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleCreateRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleResponse;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
-import site.praytogether.pray_together.domain.prayer.model.PrayerContent;
-import site.praytogether.pray_together.domain.prayer.model.PrayerContentInfo;
-import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerTitleCreateRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerContentCreateRequest;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerContent;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 

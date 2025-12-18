@@ -1,36 +1,32 @@
 package site.praytogether.pray_together.domain.prayer.application;
 
-import static site.praytogether.pray_together.domain.notification.constant.NotificationMessageFormat.PrayerCompletion;
-
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.base.MessageResponse;
-import site.praytogether.pray_together.domain.fcm_token.model.FcmToken;
-import site.praytogether.pray_together.domain.fcm_token.service.FcmTokenService;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.domain.member_room.service.MemberRoomService;
-import site.praytogether.pray_together.domain.notification.gateway.NotificationGateway;
-import site.praytogether.pray_together.domain.notification.service.PrayerCompletionNotificationService;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerCompletionCreateRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerContentResponse;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleInfiniteScrollRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleInfiniteScrollResponse;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleCreateRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleUpdateRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerTitleResponse;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerContentUpdateRequest;
-import site.praytogether.pray_together.domain.prayer.exception.PrayerContentNotFoundException;
-import site.praytogether.pray_together.domain.prayer.model.PrayerContent;
-import site.praytogether.pray_together.domain.prayer.model.PrayerContentInfo;
-import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
-import site.praytogether.pray_together.domain.prayer.model.PrayerTitleInfo;
-import site.praytogether.pray_together.domain.prayer.service.PrayerCompletionService;
-import site.praytogether.pray_together.domain.prayer.service.PrayerContentService;
-import site.praytogether.pray_together.domain.prayer.service.PrayerTitleService;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerCompletionCreateRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.response.PrayerContentResponse;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerTitleInfiniteScrollRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.response.PrayerTitleInfiniteScrollResponse;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerTitleCreateRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerTitleUpdateRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.response.PrayerTitleResponse;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerContentCreateRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerContentUpdateRequest;
+import site.praytogether.pray_together.domain.prayer.domain.exception.PrayerContentNotFoundException;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerContent;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerContentInfo;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerTitleInfo;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerCompletionService;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerContentService;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerTitleService;
+import site.praytogether.pray_together.domain.prayer.domain.event.PrayerCompletionEvent;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.domain.room.service.RoomService;
 
@@ -45,9 +41,7 @@ public class PrayerApplicationService {
   private final MemberRoomService memberRoomService;
   private final MemberService memberService;
   private final PrayerCompletionService completionService;
-  private final PrayerCompletionNotificationService notificationService;
-  private final FcmTokenService fcmTokenService;
-  private final NotificationGateway notificationGateway;
+  private final ApplicationEventPublisher eventPublisher;
 
 
   public PrayerTitleInfiniteScrollResponse fetchPrayerTitleInfiniteScroll(
@@ -128,13 +122,8 @@ public class PrayerApplicationService {
     validateMemberExistInRoomByTitleId(senderId, prayerTitleId);
     PrayerTitle prayerTitle = titleService.fetchById(prayerTitleId);
     completionService.create(senderId, prayerTitle);
-
-    List<Long> memberIds = memberRoomService.fetchMemberIdsInRoom(request.getRoomId());
-    Member sender = memberService.fetchById(senderId);
-    String message = String.format(PrayerCompletion, sender.getName(), prayerTitle.getTitle());
-    notificationService.create(senderId, memberIds, message, prayerTitle);
-    List<FcmToken> fcmTokens = fcmTokenService.fetchTokensByMemberIds(memberIds);
-    notificationGateway.notifyCompletePrayer(fcmTokens,request.getRoomId(),prayerTitle, message, fcmTokenService::deleteByToken);
+    eventPublisher.publishEvent(
+        PrayerCompletionEvent.of(senderId, request.getRoomId(), prayerTitle.getId()));
     return MessageResponse.of("기도 완료 알림을 전송했습니다.");
   }
 

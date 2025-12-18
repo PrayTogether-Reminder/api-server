@@ -1,26 +1,27 @@
 package site.praytogether.pray_together.domain.prayer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import java.time.Duration;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
-import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
-import site.praytogether.pray_together.domain.notification.constant.NotificationMessageFormat;
-import site.praytogether.pray_together.domain.notification.model.PrayerCompletionNotification;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerCompletionCreateRequest;
-import site.praytogether.pray_together.domain.prayer.model.PrayerCompletion;
-import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
+import site.praytogether.pray_together.domain.notification.domain.NotificationMessageFormat;
+import site.praytogether.pray_together.domain.notification.domain.PrayerCompletionNotification;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerCompletionCreateRequest;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerCompletion;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 
@@ -109,15 +110,20 @@ public class PrayerCompletionIntegrateTest extends IntegrateTest {
         .as("기도 완료 정보의 기도 제목 ID가 예상과 다릅니다.")
         .isEqualTo(prayerTitle.getId());
 
-    // 알림 생성 검증
-    List<PrayerCompletionNotification> notifications =
-        prayerCompletionNotificationRepository.findAll();
-    assertThat(notifications).as("기도 완료 알림이 생성되지 않았습니다.").isNotEmpty();
+    AtomicReference<List<PrayerCompletionNotification>> notificationsRef = new AtomicReference<>();
+    await()
+        .atMost(Duration.ofSeconds(3))
+        .untilAsserted(
+            () -> {
+              List<PrayerCompletionNotification> notifications =
+                  prayerCompletionNotificationRepository.findAll();
+              assertThat(notifications)
+                  .as("기도 완료 알림이 생성되지 않았습니다.")
+                  .hasSize(ADDITIONAL_MEMBERS_COUNT + 1);
+              notificationsRef.set(notifications);
+            });
 
-    assertThat(notifications.size())
-        .as("생성된 알림 개수가 예상과 다릅니다. (알림은 자신을 제외한 다른 멤버들에게만 전송됨)")
-        .isEqualTo(ADDITIONAL_MEMBERS_COUNT);
-
+    List<PrayerCompletionNotification> notifications = notificationsRef.get();
     for (PrayerCompletionNotification notification : notifications) {
       assertThat(notification.getSenderId()).as("알림의 발신자 ID가 예상과 다릅니다.").isEqualTo(member.getId());
 
@@ -134,4 +140,5 @@ public class PrayerCompletionIntegrateTest extends IntegrateTest {
       assertThat(notification.getMessage()).as("알림 메시지가 예상 형식과 다릅니다.").isEqualTo(expectedMessage);
     }
   }
+
 }

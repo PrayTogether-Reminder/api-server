@@ -12,8 +12,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
-import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerContentCreateRequest;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 

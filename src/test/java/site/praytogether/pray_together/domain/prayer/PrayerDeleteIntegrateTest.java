@@ -17,13 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
-import site.praytogether.pray_together.domain.prayer.dto.PrayerContentCreateRequest;
-import site.praytogether.pray_together.domain.prayer.model.PrayerContent;
-import site.praytogether.pray_together.domain.prayer.model.PrayerTitle;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerContentCreateRequest;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerContent;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 

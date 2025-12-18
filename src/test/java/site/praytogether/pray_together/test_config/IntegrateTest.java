@@ -17,10 +17,10 @@ import site.praytogether.pray_together.domain.friend.domain.friendship.Friendshi
 import site.praytogether.pray_together.domain.invitation.domain.repository.InvitationRepository;
 import site.praytogether.pray_together.domain.member.repository.MemberRepository;
 import site.praytogether.pray_together.domain.member_room.repository.MemberRoomRepository;
-import site.praytogether.pray_together.domain.notification.repository.PrayerCompletionNotificationRepository;
-import site.praytogether.pray_together.domain.prayer.respository.PrayerCompletionRepository;
-import site.praytogether.pray_together.domain.prayer.respository.PrayerContentRepository;
-import site.praytogether.pray_together.domain.prayer.respository.PrayerTitleRepository;
+import site.praytogether.pray_together.domain.notification.domain.PrayerCompletionNotificationRepository;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerCompletionRepository;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerContentRepository;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerTitleRepository;
 import site.praytogether.pray_together.domain.room.repository.RoomRepository;
 
 @ActiveProfiles("test")
