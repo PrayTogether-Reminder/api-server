@@ -42,4 +42,15 @@ public class FcmTokenService {
   public void deleteByToken(String token) {
     fcmTokenRepository.deleteFcmTokenByToken(token);
   }
+
+  public void deleteByTokens(List<FcmToken> tokens) {
+    if (tokens == null || tokens.isEmpty()) {
+      return;
+    }
+    List<String> tokenValues = tokens.stream()
+        .map(FcmToken::getToken)
+        .toList();
+    fcmTokenRepository.deleteByTokenIn(tokenValues);
+    log.info("[FCM Token] 배치 삭제 완료: {} 개", tokens.size());
+  }
 }
