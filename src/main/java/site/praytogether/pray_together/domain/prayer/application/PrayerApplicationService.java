@@ -47,9 +47,10 @@ public class PrayerApplicationService {
   public PrayerTitleInfiniteScrollResponse fetchPrayerTitleInfiniteScroll(
       Long memberId, PrayerTitleInfiniteScrollRequest request) {
     memberRoomService.validateMemberExistInRoom(memberId, request.getRoomId());
-    List<PrayerTitleInfo> titleInfos =
+    List<PrayerTitle> titleInfos =
         titleService.fetchTitlesByRoom(request.getRoomId(), request.getAfter());
-    return PrayerTitleInfiniteScrollResponse.from(titleInfos);
+    // prayer completion person
+    return PrayerTitleInfiniteScrollResponse.from(null);
   }
 
 

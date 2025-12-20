@@ -20,25 +20,23 @@ public interface PrayerTitleRepository extends JpaRepository<PrayerTitle, Long> 
 
   @Query(
       """
-       SELECT new site.praytogether.pray_together.domain.prayer.domain.PrayerTitleInfo(
-        pt.id, pt.title, pt.createdTime
-       )
+       SELECT pt
        FROM PrayerTitle pt
+       JOIN FETCH pt.prayerCompletions pc
        WHERE pt.room.id = :roomId
        ORDER BY pt.createdTime DESC
 """)
-  List<PrayerTitleInfo> findFirstPrayerTitleInfosOrderByCreatedTimeDesc(
+  List<PrayerTitle> findFirstPrayerTitleInfosOrderByCreatedTimeDesc(
       Long roomId, Pageable pageable);
 
   @Query(
       """
-       SELECT new site.praytogether.pray_together.domain.prayer.domain.PrayerTitleInfo(
-        pt.id, pt.title, pt.createdTime
-       )
+       SELECT pt
        FROM PrayerTitle pt
+       JOIN FETCH pt.prayerCompletions pc
        WHERE pt.room.id = :roomId AND pt.createdTime < :after
        ORDER BY pt.createdTime DESC
 """)
-  List<PrayerTitleInfo> findPrayerTitleInfosOrderByCreatedTimeDesc(
+  List<PrayerTitle> findPrayerTitleInfosOrderByCreatedTimeDesc(
       Long roomId, Instant after, Pageable pageable);
 }
