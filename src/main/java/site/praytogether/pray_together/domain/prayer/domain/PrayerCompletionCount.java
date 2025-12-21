@@ -17,7 +17,7 @@ public class PrayerCompletionCount {
 
   /**
    * PrayerCompletionWithMemberEntity 리스트를 PrayerCompletionMember 리스트로 변환
-   * 같은 회원이 여러 번 기도한 경우 prayerId별로 그룹핑하여 카운트
+   * 같은 회원이 같은 기도 제목에 여러 번 기도한 경우 (titleId, prayerId) 조합으로 그룹핑하여 카운트
    *
    * @param entities PrayerCompletionWithMemberEntity 리스트
    * @return PrayerCompletionMember 리스트
@@ -25,27 +25,36 @@ public class PrayerCompletionCount {
   public static List<PrayerCompletionCount> fromEntities(
       List<PrayerCompletionWithMemberEntity> entities) {
 
-    // prayerId별로 그룹핑하여 카운트 (같은 사람이 여러 번 기도한 경우)
-    Map<Long, List<PrayerCompletionWithMemberEntity>> completionsByPrayerId =
-        entities.stream().collect(Collectors.groupingBy(PrayerCompletionWithMemberEntity::getPrayerId));
+    // (titleId, prayerId) 조합별로 그룹핑하여 카운트
+    Map<PrayerPairKey, List<PrayerCompletionWithMemberEntity>> completionsByTitleAndPrayer =
+        entities.stream()
+            .collect(
+                Collectors.groupingBy(
+                    entity -> new PrayerPairKey(entity.getTitleId(), entity.getPrayerId())));
 
-    // 각 prayerId에 대해 PrayerCompletionMember 생성
-    return completionsByPrayerId.entrySet().stream()
+    // 각 (titleId, prayerId) 조합에 대해 PrayerCompletionCount 생성
+    return completionsByTitleAndPrayer.entrySet().stream()
         .map(
             entry -> {
-              Long prayerId = entry.getKey();
               List<PrayerCompletionWithMemberEntity> memberCompletions = entry.getValue();
               long count = memberCompletions.size();
 
-              // 첫 번째 항목에서 정보 추출 (같은 prayerId라면 동일한 정보)
+              // 첫 번째 항목에서 정보 추출 (같은 조합이라면 동일한 정보)
               PrayerCompletionWithMemberEntity first = memberCompletions.get(0);
               Long titleId = first.getTitleId();
+              Long prayerId = first.getPrayerId();
               String memberName = first.getPrayerName();
 
               return new PrayerCompletionCount(titleId, prayerId, memberName, count);
             })
         .toList();
   }
+
+  /**
+   * 기도 제목과 기도자의 조합을 나타내는 복합 키
+   * Map의 키로 사용하기 위해 equals/hashCode가 자동 구현됨
+   */
+  private record PrayerPairKey(Long titleId, Long prayerId) {}
 
   /**
    * Member가 탈퇴하거나 삭제된 경우 true 반환
