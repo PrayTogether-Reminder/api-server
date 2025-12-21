@@ -1,17 +1,12 @@
 package site.praytogether.pray_together.domain.prayer.presentation.dto.response;
 
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import site.praytogether.pray_together.domain.prayer.domain.PrayerTitleInfo;
+import lombok.Value;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.PrayerTitleInfoDto;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Value
 public class PrayerTitleInfiniteScrollResponse {
-  private final List<PrayerTitleInfo> prayerTitles;
-
-  public static PrayerTitleInfiniteScrollResponse from(List<PrayerTitleInfo> prayerTitles) {
-    return new PrayerTitleInfiniteScrollResponse(prayerTitles);
-  }
+  List<PrayerTitleInfoDto> prayerTitles;
 }

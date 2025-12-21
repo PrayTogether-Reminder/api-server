@@ -56,14 +56,6 @@ public class PrayerTitle extends BaseEntity {
   @Builder.Default
   private List<PrayerContent> prayerContents = new ArrayList<>();
 
-  @OneToMany(
-      mappedBy = "prayerTitle",
-      fetch = FetchType.LAZY,
-      cascade = CascadeType.ALL,
-      orphanRemoval = true)
-  @Builder.Default
-  private List<PrayerCompletion> prayerCompletions = new ArrayList<>();
-
   public static PrayerTitle create(Room room, String title) {
     return PrayerTitle.builder().title(title).room(room).build();
   }
