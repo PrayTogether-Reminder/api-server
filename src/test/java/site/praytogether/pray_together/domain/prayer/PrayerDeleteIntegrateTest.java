@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
 import java.net.URLEncoder;
@@ -24,6 +25,7 @@ import site.praytogether.pray_together.domain.prayer.domain.PrayerContent;
 import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.test_config.IntegrateTest;
+import site.praytogether.pray_together.test_config.TestPrayerTitleUtils;
 
 @DisplayName("기도 삭제 통합 테스트")
 public class PrayerDeleteIntegrateTest extends IntegrateTest {
@@ -35,32 +37,30 @@ public class PrayerDeleteIntegrateTest extends IntegrateTest {
   private PrayerTitle prayerTitle;
   private PrayerContent prayerContent;
   private final int PRAYER_CONTENT_COUNT = 5;
+  @Autowired
+  private TestPrayerTitleUtils testPrayerTitleUtils;
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     // 회원 생성
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
+    member = testMemberUtils.createSave();
 
     // 방 생성
-    room = testUtils.createUniqueRoom();
-    roomRepository.save(room);
+    room = testRoomUtils.createSave();
 
     // 방 연관관계 생성
-    memberRoom = testUtils.createUniqueMemberRoom_With_Member_AND_Room(member, room);
-    memberRoomRepository.save(memberRoom);
+    memberRoom = testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(member, room);
 
     // 인증 헤더 생성
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
 
     // 기도 제목 생성
-    prayerTitle = PrayerTitle.create(room, "test-prayer-changedTitle");
-    prayerTitleRepository.save(prayerTitle);
+
+    prayerTitle = testPrayerTitleUtils.createSave(room);
 
     // 기도 내용 생성
     for (int i = 0; i < PRAYER_CONTENT_COUNT; i++) {
-      Member newMember = testUtils.createUniqueMember();
-      memberRepository.save(newMember);
+      Member newMember = testMemberUtils.createSave();
 
       prayerContent =
           PrayerContent.create(
@@ -130,11 +130,10 @@ public class PrayerDeleteIntegrateTest extends IntegrateTest {
   void delete_prayer_title_by_member_from_different_room_then_return_404_not_found() throws Exception {
     // given
     // 새로운 회원 생성
-    Member anotherMember = testUtils.createUniqueMember();
-    memberRepository.save(anotherMember);
+    Member anotherMember = testMemberUtils.createSave();
 
     // 새로운 회원의 인증 토큰 생성
-    String anotherToken = testUtils.createBearerToken(anotherMember);
+    String anotherToken = testAuthUtils.createBearerToken(anotherMember);
     String url = PRAYERS_API_URL + "/" + prayerTitle.getId();
 
     // when & then

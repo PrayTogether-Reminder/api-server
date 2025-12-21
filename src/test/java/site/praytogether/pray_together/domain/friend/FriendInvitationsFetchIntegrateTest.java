@@ -25,20 +25,16 @@ public class FriendInvitationsFetchIntegrateTest extends IntegrateTest {
   private String receiverToken;
 
   @BeforeEach
-  void setup() throws Exception {
-    receiver = testUtils.createUniqueMember();
-    memberRepository.save(receiver);
+  void setup() {
+    receiver = testMemberUtils.createSave();
 
-    sender1 = testUtils.createUniqueMember();
-    memberRepository.save(sender1);
+    sender1 = testMemberUtils.createSave();
 
-    sender2 = testUtils.createUniqueMember();
-    memberRepository.save(sender2);
+    sender2 = testMemberUtils.createSave();
 
-    sender3 = testUtils.createUniqueMember();
-    memberRepository.save(sender3);
+    sender3 = testMemberUtils.createSave();
 
-    receiverToken = testUtils.createBearerToken(receiver);
+    receiverToken = testAuthUtils.createBearerToken(receiver);
   }
 
   @Test

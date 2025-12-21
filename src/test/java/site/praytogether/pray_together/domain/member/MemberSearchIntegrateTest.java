@@ -25,33 +25,31 @@ public class MemberSearchIntegrateTest extends IntegrateTest {
   private String SEARCH_MEMBER_API_URL = MEMBERS_API_URL + "/search";
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     // 인증용 회원 생성
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
+    member = testMemberUtils.createSave();
 
     // 인증 토큰 생성
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
 
     // 검색용 테스트 회원 생성
     testMembers = new ArrayList<>();
 
     // "홍길동" 이름을 가진 회원들
-    Member hong1 = testUtils.createUniqueMember_With_NameAndPhoneNumber("홍길동", "010-1234-5678");
-    Member hong2 = testUtils.createUniqueMember_With_NameAndPhoneNumber("홍길동", "010-2345-6789");
+    Member hong1 = testMemberUtils.createSave_With_Name_And_PhoneNumber("홍길동", "010-1234-5678");
+    Member hong2 = testMemberUtils.createSave_With_Name_And_PhoneNumber("홍길동", "010-2345-6789");
 
     // "김철수" 이름을 가진 회원
-    Member kim = testUtils.createUniqueMember_With_NameAndPhoneNumber("김철수", "010-3456-7890");
+    Member kim = testMemberUtils.createSave_With_Name_And_PhoneNumber("김철수", "010-3456-7890");
 
     // "이영희" 이름을 가진 회원
-    Member lee = testUtils.createUniqueMember_With_NameAndPhoneNumber("이영희", "010-4567-8901");
+    Member lee = testMemberUtils.createSave_With_Name_And_PhoneNumber("이영희", "010-4567-8901");
 
     testMembers.add(hong1);
     testMembers.add(hong2);
     testMembers.add(kim);
     testMembers.add(lee);
 
-    memberRepository.saveAll(testMembers);
   }
 
   @Test

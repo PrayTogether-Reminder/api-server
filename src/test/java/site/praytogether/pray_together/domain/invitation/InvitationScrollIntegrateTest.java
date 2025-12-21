@@ -26,25 +26,21 @@ public class InvitationScrollIntegrateTest extends IntegrateTest {
   private final int INVITATION_COUNT = 5;
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     // 초대 받을 회원 생성
-    inviteeMember = testUtils.createUniqueMember();
-    memberRepository.save(inviteeMember);
-    token = testUtils.createBearerToken(inviteeMember);
+    inviteeMember = testMemberUtils.createSave();
+    token = testAuthUtils.createBearerToken(inviteeMember);
 
     // 초대한 회원들 생성 및 초대장 생성
     for (int i = 0; i < INVITATION_COUNT; i++) {
       // 초대자 생성
-      Member inviterMember = testUtils.createUniqueMember();
-      memberRepository.save(inviterMember);
+      Member inviterMember = testMemberUtils.createSave();
 
       // 방 생성
-      Room room = testUtils.createUniqueRoom();
-      roomRepository.save(room);
+      Room room = testRoomUtils.createSave();
 
       // 초대장 생성
-      Invitation invitation = Invitation.create(inviterMember, inviteeMember, room);
-      invitationRepository.save(invitation);
+      testInvitationUtils.createSave(inviterMember, inviteeMember, room);
     }
   }
 

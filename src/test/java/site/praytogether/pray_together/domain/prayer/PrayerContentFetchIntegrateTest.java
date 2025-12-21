@@ -32,22 +32,18 @@ public class PrayerContentFetchIntegrateTest extends IntegrateTest {
   private final int TEST_CNT = 5;
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     // 회원 생성
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
+    member = testMemberUtils.createSave();
 
     // 방 생성
-    room = testUtils.createUniqueRoom();
-    roomRepository.save(room);
+    room = testRoomUtils.createSave();
 
     // 회원-방 연관관계 생성
-    MemberRoom memberRoom = testUtils.createUniqueMemberRoom_With_Member_AND_Room(member, room);
-    memberRoomRepository.save(memberRoom);
+    testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(member, room);
 
     // 기도 제목 생성
-    prayerTitle = testUtils.createUniquePrayerTitle_With_Room(room);
-    prayerTitleRepository.save(prayerTitle);
+    prayerTitle = testPrayerTitleUtils.createSave(room);
 
     // 기도 내용 추가
     PrayerContent prayerContent =
@@ -60,7 +56,7 @@ public class PrayerContentFetchIntegrateTest extends IntegrateTest {
             .memberName(member.getName())
             .build();
     prayerContentRepository.save(prayerContent);
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
   }
 
   @Test
@@ -69,8 +65,7 @@ public class PrayerContentFetchIntegrateTest extends IntegrateTest {
     // given
     // 회원 및 기도 내용 추가
     for (int i = 1; i < TEST_CNT; i++) {
-      Member newMember = testUtils.createUniqueMember();
-      memberRepository.save(newMember);
+      Member newMember = testMemberUtils.createSave();
 
       PrayerContent prayerContent =
           PrayerContent.builder()

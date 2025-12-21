@@ -9,7 +9,6 @@ import static site.praytogether.pray_together.exception.spec.MemberExceptionSpec
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,14 +27,12 @@ public class FriendInviteCreateIntegrateTest extends IntegrateTest {
   private String senderToken;
 
   @BeforeEach
-  void setup() throws Exception {
-    sender = testUtils.createUniqueMember();
-    memberRepository.save(sender);
+  void setup() {
+    sender = testMemberUtils.createSave();
 
-    receiver = testUtils.createUniqueMember();
-    memberRepository.save(receiver);
+    receiver = testMemberUtils.createSave();
 
-    senderToken = testUtils.createBearerToken(sender);
+    senderToken = testAuthUtils.createBearerToken(sender);
   }
 
   @Test

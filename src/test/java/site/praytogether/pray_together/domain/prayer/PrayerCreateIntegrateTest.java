@@ -38,21 +38,18 @@ public class PrayerCreateIntegrateTest extends IntegrateTest {
   @BeforeEach
   void setup() {
     // 회원 생성
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
+    member = testMemberUtils.createSave();
     validMemberId = member.getId();
 
     // 방 생성
-    room = testUtils.createUniqueRoom();
-    roomRepository.save(room);
+    room = testRoomUtils.createSave();
     validRoomId = room.getId();
 
     // 방 연관관계 생성
-    memberRoom = testUtils.createUniqueMemberRoom_With_Member_AND_Room(member, room);
-    memberRoomRepository.save(memberRoom);
+    memberRoom = testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(member, room);
 
     // 인증 토큰 생성
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
   }
 
   @Test

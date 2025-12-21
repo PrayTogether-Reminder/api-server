@@ -20,13 +20,12 @@ public class MemberProfileFetchIntegrateTest extends IntegrateTest {
   private Member member;
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     // 회원 생성
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
+    member = testMemberUtils.createSave();
 
     // 인증 토큰 생성
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
   }
 
   @Test
@@ -70,7 +69,7 @@ public class MemberProfileFetchIntegrateTest extends IntegrateTest {
         .build();
     memberRepository.save(memberWithoutPhone);
 
-    String tokenWithoutPhone = testUtils.createBearerToken(memberWithoutPhone);
+    String tokenWithoutPhone = testAuthUtils.createBearerToken(memberWithoutPhone);
 
     // when
     MvcResult result = mockMvc.perform(get(MEMBERS_API_URL + "/me")

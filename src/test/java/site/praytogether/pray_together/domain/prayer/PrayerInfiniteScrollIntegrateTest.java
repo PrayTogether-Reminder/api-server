@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
 import static site.praytogether.pray_together.constant.CoreConstant.PrayerTitleConstant.PRAYER_TITLES_INFINITE_SCROLL_SIZE;
@@ -21,7 +22,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.util.UriComponentsBuilder;
 import site.praytogether.pray_together.domain.member.model.Member;
-import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.prayer.presentation.dto.response.PrayerTitleInfiniteScrollResponse;
 import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
 import site.praytogether.pray_together.domain.prayer.presentation.dto.PrayerTitleInfoDto;
@@ -35,31 +35,25 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
   private String token;
   private Member member;
   private Room room;
-  private PrayerTitle prayerTitle;
   private final int TEST_CNT = PRAYER_TITLES_INFINITE_SCROLL_SIZE * 3;
 
   private final String AFTER = "after";
   private final String ROOM_ID = "roomId";
 
   @BeforeEach
-  void setup() throws Exception {
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
+  void setup() {
+    member = testMemberUtils.createSave();
 
-    room = testUtils.createUniqueRoom();
-    roomRepository.save(room);
+    room = testRoomUtils.createSave();
 
-    MemberRoom memberRoom = testUtils.createUniqueMemberRoom_With_MemberOwner_AND_Room(member, room);
-    memberRoomRepository.save(memberRoom);
+    testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(member, room);
 
-    prayerTitle = PrayerTitle.create(room, "test-title");
-    prayerTitleRepository.save(prayerTitle);
+    testPrayerTitleUtils.createSave(room);
 
     for (int i = 0; i < TEST_CNT; i++) {
-      PrayerTitle prayerTitle = PrayerTitle.create(room, "test-title" + i);
-      prayerTitleRepository.save(prayerTitle);
+      testPrayerTitleUtils.createSave(room);
     }
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
   }
 
   @ParameterizedTest(name = "[{index}] {0}")
@@ -143,9 +137,9 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
     Member member2 = members[1];
     Long deletedMemberId = member2.getId();
 
-    PrayerTitle prayerTitle = testPrayerTitleUtils.create(room);
-    testPrayerCompletionUtils.create(member1.getId(), prayerTitle, 3);
-    testPrayerCompletionUtils.create(member2.getId(), prayerTitle, 2);
+    PrayerTitle prayerTitle = testPrayerTitleUtils.createSave(room);
+    testPrayerCompletionUtils.createSave(member1.getId(), prayerTitle, 3);
+    testPrayerCompletionUtils.createSave(member2.getId(), prayerTitle, 2);
 
     memberRepository.delete(member2);
     // when
@@ -197,17 +191,17 @@ public class PrayerInfiniteScrollIntegrateTest extends IntegrateTest {
     Member member2 = members[1];
     Member member3 = members[2];
 
-    PrayerTitle prayerTitle1 = testPrayerTitleUtils.create(room);
-    PrayerTitle prayerTitle2 = testPrayerTitleUtils.create(room);
+    PrayerTitle prayerTitle1 = testPrayerTitleUtils.createSave(room);
+    PrayerTitle prayerTitle2 = testPrayerTitleUtils.createSave(room);
 
     // prayerTitle1: member1(3번), member2(2번), member3(1번)
-    testPrayerCompletionUtils.create(member1.getId(), prayerTitle1, 3);
-    testPrayerCompletionUtils.create(member2.getId(), prayerTitle1, 2);
-    testPrayerCompletionUtils.create(member3.getId(), prayerTitle1, 1);
+    testPrayerCompletionUtils.createSave(member1.getId(), prayerTitle1, 3);
+    testPrayerCompletionUtils.createSave(member2.getId(), prayerTitle1, 2);
+    testPrayerCompletionUtils.createSave(member3.getId(), prayerTitle1, 1);
 
     // prayerTitle2: member1(1번), member2(1번)
-    testPrayerCompletionUtils.create(member1.getId(), prayerTitle2, 1);
-    testPrayerCompletionUtils.create(member2.getId(), prayerTitle2, 1);
+    testPrayerCompletionUtils.createSave(member1.getId(), prayerTitle2, 1);
+    testPrayerCompletionUtils.createSave(member2.getId(), prayerTitle2, 1);
 
     // when
     String uri =

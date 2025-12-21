@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -16,36 +17,34 @@ import site.praytogether.pray_together.domain.prayer.presentation.dto.request.Pr
 import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.test_config.IntegrateTest;
+import site.praytogether.pray_together.test_config.TestPrayerTitleUtils;
 
 @DisplayName("기도 내용 중복 검증 통합 테스트")
 public class PrayerContentDuplicateIntegrateTest extends IntegrateTest {
 
   private Member member;
   private Room room;
-  private MemberRoom memberRoom;
   private String token;
   private PrayerTitle prayerTitle;
+  @Autowired
+  private TestPrayerTitleUtils testPrayerTitleUtils;
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     // 회원 생성
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
+    member = testMemberUtils.createSave();
 
     // 방 생성
-    room = testUtils.createUniqueRoom();
-    roomRepository.save(room);
+    room = testRoomUtils.createSave();
 
     // 방 연관관계 생성
-    memberRoom = testUtils.createUniqueMemberRoom_With_Member_AND_Room(member, room);
-    memberRoomRepository.save(memberRoom);
+    testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(member, room);
 
     // 인증 토큰 생성
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
 
     // 기도 제목 생성
-    prayerTitle = PrayerTitle.create(room, "test-prayer-title");
-    prayerTitleRepository.save(prayerTitle);
+    prayerTitle = testPrayerTitleUtils.createSave(room);
   }
 
   @Test

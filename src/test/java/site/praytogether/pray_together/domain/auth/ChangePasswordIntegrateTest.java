@@ -27,9 +27,8 @@ public class ChangePasswordIntegrateTest extends IntegrateTest {
 
   @BeforeEach
   void setUp() {
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
-    token = testUtils.createBearerToken(member);
+    member = testMemberUtils.createSave();
+    token = testAuthUtils.createBearerToken(member);
   }
 
   @Test

@@ -39,36 +39,30 @@ public class PrayerCompletionIntegrateTest extends IntegrateTest {
   private Member[] additionalMembers;
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     // 회원 생성
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
+    member = testMemberUtils.createSave();
 
     // 방 생성
-    room = testUtils.createUniqueRoom();
-    roomRepository.save(room);
+    room = testRoomUtils.createSave();
 
     // 회원-방 연관관계 생성
-    MemberRoom memberRoom = testUtils.createUniqueMemberRoom_With_Member_AND_Room(member, room);
+    MemberRoom memberRoom = testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(member, room);
     memberRoomRepository.save(memberRoom);
 
     // 기도 제목 생성
-    prayerTitle = testUtils.createUniquePrayerTitle_With_Room(room);
-    prayerTitleRepository.save(prayerTitle);
+    prayerTitle = testPrayerTitleUtils.createSave(room);
 
     // 추가 회원 생성 및 방에 참여시키기
     additionalMembers = new Member[ADDITIONAL_MEMBERS_COUNT];
     for (int i = 0; i < ADDITIONAL_MEMBERS_COUNT; i++) {
-      additionalMembers[i] = testUtils.createUniqueMember();
-      memberRepository.save(additionalMembers[i]);
+      additionalMembers[i] = testMemberUtils.createSave();
 
-      MemberRoom additionalMemberRoom =
-          testUtils.createUniqueMemberRoom_With_Member_AND_Room(additionalMembers[i], room);
-      memberRoomRepository.save(additionalMemberRoom);
+          testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(additionalMembers[i], room);
     }
 
     // 인증 헤더 생성
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
   }
 
 

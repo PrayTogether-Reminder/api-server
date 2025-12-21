@@ -34,8 +34,7 @@ public class AuthTokenReissueIntegrateTest extends IntegrateTest {
   @BeforeEach
   void setUp() {
     // 회원 생성
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
+    member = testMemberUtils.createSave();
 
     // Refresh Token 생성 및 저장
     PrayTogetherPrincipal principal = PrayTogetherPrincipal.builder()
@@ -45,8 +44,7 @@ public class AuthTokenReissueIntegrateTest extends IntegrateTest {
     refreshToken = jwtService.issueRefreshToken(principal);
     Instant expiration = jwtService.extractExpiration(refreshToken);
 
-    RefreshToken refreshTokenEntity = RefreshToken.create(member, refreshToken, expiration);
-    refreshTokenRepository.save(refreshTokenEntity);
+    testRefreshTokenUtils.createSave(member, refreshToken, expiration);
   }
 
   @Test
@@ -103,8 +101,7 @@ public class AuthTokenReissueIntegrateTest extends IntegrateTest {
   @DisplayName("DB에 존재하지 않는 Refresh Token으로 재발급 시 400 Bad Request")
   void reissue_token_with_non_existent_token_then_return_400_bad_request() throws Exception {
     // given - 다른 회원의 Refresh Token 생성 (DB에 저장하지 않음)
-    Member otherMember = testUtils.createUniqueMember();
-    memberRepository.save(otherMember);
+    Member otherMember = testMemberUtils.createSave();
 
     PrayTogetherPrincipal principal = PrayTogetherPrincipal.builder()
         .id(otherMember.getId())

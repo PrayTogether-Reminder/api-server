@@ -34,29 +34,23 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
   private PrayerTitle prayerTitle;
   private List<PrayerContent> prayerContents;
 
-  private static Long validMemberId;
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     // 회원 생성
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
-    validMemberId = member.getId();
+    member = testMemberUtils.createSave();
 
     // 방 생성
-    room = testUtils.createUniqueRoom();
-    roomRepository.save(room);
+    room = testRoomUtils.createSave();
 
     // 방 연관관계 생성
-    memberRoom = testUtils.createUniqueMemberRoom_With_Member_AND_Room(member, room);
-    memberRoomRepository.save(memberRoom);
+    memberRoom = testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(member, room);
 
     // 인증 헤더 생성
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
 
     // 기도 제목 생성
-    prayerTitle = PrayerTitle.create(room, "original-prayer-changedTitle");
-    prayerTitleRepository.save(prayerTitle);
+    prayerTitle = testPrayerTitleUtils.createSave(room);
 
     // 기도 내용 생성 - 각각 다른 이름으로 생성
     prayerContents = new ArrayList<>();
@@ -134,13 +128,11 @@ public class PrayerUpdateIntegrateTest extends IntegrateTest {
   @DisplayName("다른 회원이 기도 내용 수정 시 writer 정보가 변경됨")
   void when_different_member_updates_content_then_writer_info_changes() throws Exception {
     // given - 다른 회원 생성 및 방에 추가
-    Member anotherMember = testUtils.createUniqueMember();
-    memberRepository.save(anotherMember);
-    MemberRoom anotherMemberRoom = testUtils.createUniqueMemberRoom_With_Member_AND_Room(anotherMember, room);
-    memberRoomRepository.save(anotherMemberRoom);
+    Member anotherMember = testMemberUtils.createSave();
+    MemberRoom anotherMemberRoom = testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(anotherMember, room);
 
     // 다른 회원의 인증 헤더 생성
-    String anotherToken = testUtils.createBearerToken(anotherMember);
+    String anotherToken = testAuthUtils.createBearerToken(anotherMember);
 
     String newContent = "content-updated-by-another-member";
     PrayerContentUpdateRequest contentRequest = PrayerContentUpdateRequest.builder()

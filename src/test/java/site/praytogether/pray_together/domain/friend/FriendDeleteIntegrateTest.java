@@ -24,16 +24,13 @@ public class FriendDeleteIntegrateTest extends IntegrateTest {
 
   @BeforeEach
   void setup() {
-    currentMember = testUtils.createUniqueMember();
-    memberRepository.save(currentMember);
+    currentMember = testMemberUtils.createSave();
 
-    friend1 = testUtils.createUniqueMember();
-    memberRepository.save(friend1);
+    friend1 = testMemberUtils.createSave();
 
-    friend2 = testUtils.createUniqueMember();
-    memberRepository.save(friend2);
+    friend2 = testMemberUtils.createSave();
 
-    currentMemberToken = testUtils.createBearerToken(currentMember);
+    currentMemberToken = testAuthUtils.createBearerToken(currentMember);
   }
 
   @Test

@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
-import site.praytogether.pray_together.domain.auth.domain.RefreshToken;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 
@@ -22,13 +21,13 @@ public class LogoutIntegrateTest extends IntegrateTest {
 
   @BeforeEach
   void setUp() {
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
-    token = testUtils.createBearerToken(member);
+    member = testMemberUtils.createSave();
+    token = testAuthUtils.createBearerToken(member);
 
-    RefreshToken refreshToken =
-        RefreshToken.create(member, "test-refresh-token", Instant.now().plusSeconds(3600));
-    refreshTokenRepository.save(refreshToken);
+    testRefreshTokenUtils.createSave(
+        member,
+        "test-refresh-token",
+        Instant.now().plusSeconds(3600));
   }
 
   @Test

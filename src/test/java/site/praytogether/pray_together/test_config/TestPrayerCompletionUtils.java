@@ -2,6 +2,8 @@ package site.praytogether.pray_together.test_config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import site.praytogether.pray_together.domain.prayer.domain.PrayerCompletion;
@@ -24,10 +26,12 @@ public class TestPrayerCompletionUtils {
    * @param prayerTitle 기도 제목
    * @param count 생성할 기도 완료 횟수
    */
-  public void create(Long memberId, PrayerTitle prayerTitle, int count) {
+  public List<PrayerCompletion> createSave(Long memberId, PrayerTitle prayerTitle, int count) {
+    List<PrayerCompletion> completions = new ArrayList<>();
     for (int i = 0; i < count; i++) {
       PrayerCompletion completion = PrayerCompletion.create(memberId, prayerTitle);
-      prayerCompletionRepository.save(completion);
+      completions.add(completion);
     }
+    return prayerCompletionRepository.saveAll(completions);
   }
 }
