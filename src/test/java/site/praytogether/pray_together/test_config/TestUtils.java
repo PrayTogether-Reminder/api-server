@@ -36,8 +36,12 @@ public class TestUtils {
     return PrayerTitle.create(room, "test-prayer-changedTitle" + prayerTitleUniqueId++);
   }
 
-  public MemberRoom createUniqueMemberRoom_With_Member_AND_Room(Member member, Room room) {
+  public MemberRoom createUniqueMemberRoom_With_MemberOwner_AND_Room(Member member, Room room) {
     return MemberRoom.builder().member(member).room(room).role(RoomRole.OWNER).build();
+  }
+
+  public MemberRoom createUniqueMemberRoom_With_Member_AND_Room(Member member, Room room) {
+    return MemberRoom.builder().member(member).room(room).role(RoomRole.MEMBER).build();
   }
 
   public Room createUniqueRoom() {

@@ -45,6 +45,9 @@ public class IntegrateTest {
   protected PrayerCompletionNotificationRepository prayerCompletionNotificationRepository;
 
   @Autowired protected TestUtils testUtils;
+  @Autowired protected TestMemberRoomUtils testMemberRoomUtils;
+  @Autowired protected TestPrayerCompletionUtils testPrayerCompletionUtils;
+  @Autowired protected TestPrayerTitleUtils testPrayerTitleUtils;
 
   @PersistenceContext protected EntityManager entityManager;
   @Autowired protected TransactionTemplate transactionTemplate;
