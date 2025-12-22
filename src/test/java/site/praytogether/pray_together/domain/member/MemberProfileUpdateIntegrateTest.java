@@ -20,13 +20,12 @@ public class MemberProfileUpdateIntegrateTest extends IntegrateTest {
   private Member member;
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     // 회원 생성
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
+    member = testMemberUtils.createSave();
 
     // 인증 토큰 생성
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
   }
 
   @Test

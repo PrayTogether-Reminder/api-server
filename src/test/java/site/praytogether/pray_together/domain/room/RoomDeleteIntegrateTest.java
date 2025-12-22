@@ -11,19 +11,16 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
 import site.praytogether.pray_together.domain.room.model.Room;
-import site.praytogether.pray_together.exception.ExceptionResponse;
 import site.praytogether.pray_together.test_config.IntegrateTest;
 
 @DisplayName("Room 삭제 통합 테스트")
@@ -33,10 +30,9 @@ public class RoomDeleteIntegrateTest extends IntegrateTest {
   private Room testRoom;
 
   @BeforeEach
-  void setup() throws Exception {
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
-    token = testUtils.createBearerToken(member);
+  void setup() {
+    member = testMemberUtils.createSave();
+    token = testAuthUtils.createBearerToken(member);
   }
 
   @Test

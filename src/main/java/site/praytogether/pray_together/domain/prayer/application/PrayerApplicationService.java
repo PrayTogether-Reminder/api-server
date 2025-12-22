@@ -9,24 +9,25 @@ import site.praytogether.pray_together.domain.base.MessageResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.domain.member_room.service.MemberRoomService;
-import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerCompletionCreateRequest;
-import site.praytogether.pray_together.domain.prayer.presentation.dto.response.PrayerContentResponse;
-import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerTitleInfiniteScrollRequest;
-import site.praytogether.pray_together.domain.prayer.presentation.dto.response.PrayerTitleInfiniteScrollResponse;
-import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerTitleCreateRequest;
-import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerTitleUpdateRequest;
-import site.praytogether.pray_together.domain.prayer.presentation.dto.response.PrayerTitleResponse;
-import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerContentCreateRequest;
-import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerContentUpdateRequest;
-import site.praytogether.pray_together.domain.prayer.domain.exception.PrayerContentNotFoundException;
+import site.praytogether.pray_together.domain.prayer.application.mapper.PrayerTitleMapper;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerCompletionService;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerCompletionCount;
 import site.praytogether.pray_together.domain.prayer.domain.PrayerContent;
 import site.praytogether.pray_together.domain.prayer.domain.PrayerContentInfo;
-import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
-import site.praytogether.pray_together.domain.prayer.domain.PrayerTitleInfo;
-import site.praytogether.pray_together.domain.prayer.domain.PrayerCompletionService;
 import site.praytogether.pray_together.domain.prayer.domain.PrayerContentService;
+import site.praytogether.pray_together.domain.prayer.domain.PrayerTitle;
 import site.praytogether.pray_together.domain.prayer.domain.PrayerTitleService;
 import site.praytogether.pray_together.domain.prayer.domain.event.PrayerCompletionEvent;
+import site.praytogether.pray_together.domain.prayer.domain.exception.PrayerContentNotFoundException;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerCompletionCreateRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerContentCreateRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerContentUpdateRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerTitleCreateRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerTitleInfiniteScrollRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.request.PrayerTitleUpdateRequest;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.response.PrayerContentResponse;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.response.PrayerTitleInfiniteScrollResponse;
+import site.praytogether.pray_together.domain.prayer.presentation.dto.response.PrayerTitleResponse;
 import site.praytogether.pray_together.domain.room.model.Room;
 import site.praytogether.pray_together.domain.room.service.RoomService;
 
@@ -47,9 +48,25 @@ public class PrayerApplicationService {
   public PrayerTitleInfiniteScrollResponse fetchPrayerTitleInfiniteScroll(
       Long memberId, PrayerTitleInfiniteScrollRequest request) {
     memberRoomService.validateMemberExistInRoom(memberId, request.getRoomId());
-    List<PrayerTitleInfo> titleInfos =
+
+    // 기도 제목 조회
+    List<PrayerTitle> titles =
         titleService.fetchTitlesByRoom(request.getRoomId(), request.getAfter());
-    return PrayerTitleInfiniteScrollResponse.from(titleInfos);
+
+    if (titles.isEmpty()) {
+      return PrayerTitleMapper.emptyResponse();
+    }
+
+    // 기도 제목 ID 추출
+    List<Long> titleIds = titles.stream()
+        .map(PrayerTitle::getId)
+        .toList();
+
+    // 기도 완료 횟수 조회
+    List<PrayerCompletionCount> counts =
+        completionService.fetchCountByTitleIds(titleIds);
+
+    return PrayerTitleMapper.toResponse(titles, counts);
   }
 
 

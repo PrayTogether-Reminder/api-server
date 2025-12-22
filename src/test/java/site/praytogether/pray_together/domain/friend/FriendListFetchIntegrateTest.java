@@ -25,23 +25,18 @@ public class FriendListFetchIntegrateTest extends IntegrateTest {
   private String currentMemberToken;
 
   @BeforeEach
-  void setup() throws Exception {
-    currentMember = testUtils.createUniqueMember();
-    memberRepository.save(currentMember);
+  void setup() {
+    currentMember = testMemberUtils.createSave();
 
-    friend1 = testUtils.createUniqueMember();
-    memberRepository.save(friend1);
+    friend1 = testMemberUtils.createSave();
 
-    friend2 = testUtils.createUniqueMember();
-    memberRepository.save(friend2);
+    friend2 = testMemberUtils.createSave();
 
-    friend3 = testUtils.createUniqueMember();
-    memberRepository.save(friend3);
+    friend3 = testMemberUtils.createSave();
 
-    notFriend = testUtils.createUniqueMember();
-    memberRepository.save(notFriend);
+    notFriend = testMemberUtils.createSave();
 
-    currentMemberToken = testUtils.createBearerToken(currentMember);
+    currentMemberToken = testAuthUtils.createBearerToken(currentMember);
   }
 
   @Test

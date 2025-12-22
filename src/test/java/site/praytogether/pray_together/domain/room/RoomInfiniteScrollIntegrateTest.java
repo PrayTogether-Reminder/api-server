@@ -5,11 +5,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,15 +38,13 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
   private final String DIR_DESC = "dsec";
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     // member1 생성
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
+    member = testMemberUtils.createSave();
     // room1 생성
 
     for (int i = 0; i < 30; i++) {
-      Room testRoom = Room.create("test" + (i + 1), "test-description" + (i + 1));
-      roomRepository.save(testRoom);
+      testRoomUtils.createSave();
     }
 
     List<Room> allRoom = roomRepository.findAll();
@@ -68,8 +64,7 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
     }
 
     // member2 생성
-    Member member2 = testUtils.createUniqueMember();
-    memberRepository.save(member2);
+    Member member2 = testMemberUtils.createSave();
     // member2는 짝수 ID 방 추가
     for (int i = 0; i < 30; i++) {
       Room room = allRoom.get(i);
@@ -92,7 +87,7 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
       String test, String orderBy, String after, String dir) throws Exception {
 
     // given
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
     String uri =
         UriComponentsBuilder.fromUriString(ROOMS_API_URL)
             .queryParam(ORDER_BY, orderBy)
@@ -150,7 +145,7 @@ public class RoomInfiniteScrollIntegrateTest extends IntegrateTest {
   void fetch_rooms_list_with_sequential_requests_time_desc_and_empty_final_response() throws Exception {
 
     // given
-    token = testUtils.createBearerToken(member);
+    token = testAuthUtils.createBearerToken(member);
     String uri =
         UriComponentsBuilder.fromUriString(ROOMS_API_URL)
             .queryParam(ORDER_BY, ORDER_BY_TIME)

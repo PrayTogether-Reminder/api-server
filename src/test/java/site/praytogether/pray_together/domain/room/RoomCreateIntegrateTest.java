@@ -28,9 +28,8 @@ public class RoomCreateIntegrateTest extends IntegrateTest {
 
   @BeforeEach
   void setup() {
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
-    token = testUtils.createBearerToken(member);
+    member = testMemberUtils.createSave();
+    token = testAuthUtils.createBearerToken(member);
   }
 
   @Test

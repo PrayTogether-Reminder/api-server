@@ -31,23 +31,18 @@ public class InvitationCreateIntegrateTestV2 extends IntegrateTest {
   private String ROOM_INVITATION_URL = "/invitations";
 
   @BeforeEach
-  void setup() throws Exception {
-    memberInviter = testUtils.createUniqueMember();
-    memberRepository.save(memberInviter);
+  void setup() {
+    memberInviter = testMemberUtils.createSave();
 
-    friend1 = testUtils.createUniqueMember();
-    friend2 = testUtils.createUniqueMember();
-    friend3 = testUtils.createUniqueMember();
-    memberRepository.saveAll(List.of(friend1, friend2, friend3));
+    friend1 = testMemberUtils.createSave();
+    friend2 = testMemberUtils.createSave();
+    friend3 = testMemberUtils.createSave();
 
-    room = testUtils.createUniqueRoom();
-    roomRepository.save(room);
+    room = testRoomUtils.createSave();
 
-    MemberRoom memberRoom =
-        testUtils.createUniqueMemberRoom_With_Member_AND_Room(memberInviter, room);
-    memberRoomRepository.save(memberRoom);
+    testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(memberInviter, room);
 
-    token = testUtils.createBearerToken(memberInviter);
+    token = testAuthUtils.createBearerToken(memberInviter);
   }
 
   @Test
@@ -95,7 +90,7 @@ public class InvitationCreateIntegrateTestV2 extends IntegrateTest {
   void invite_friends_when_one_already_in_room_then_return_400() throws Exception {
     // given
     MemberRoom friend1InRoom =
-        testUtils.createUniqueMemberRoom_With_Member_AND_Room(friend1, room);
+        testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(friend1, room);
     memberRoomRepository.save(friend1InRoom);
 
     InvitationCreateRequestV2 request = new InvitationCreateRequestV2(
@@ -170,8 +165,7 @@ public class InvitationCreateIntegrateTestV2 extends IntegrateTest {
   @DisplayName("이미 PENDING 초대장이 있는 친구는 제외하고 나머지만 초대")
   void invite_friends_excluding_already_pending_invitations() throws Exception {
     // given
-    Invitation existingInvitation = Invitation.create(memberInviter, friend1, room);
-    invitationRepository.save(existingInvitation);
+    Invitation existingInvitation = testInvitationUtils.createSave(memberInviter, friend1, room);
 
     InvitationCreateRequestV2 request = new InvitationCreateRequestV2(
         room.getId(),

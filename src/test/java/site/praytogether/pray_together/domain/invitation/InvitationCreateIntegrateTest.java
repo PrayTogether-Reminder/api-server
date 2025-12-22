@@ -27,25 +27,20 @@ public class InvitationCreateIntegrateTest extends IntegrateTest {
   private String token;
 
   @BeforeEach
-  void setup() throws Exception {
-    memberInviter = testUtils.createUniqueMember();
-    memberRepository.save(memberInviter);
-    memberInvitee = testUtils.createUniqueMember();
-    memberRepository.save(memberInvitee);
+  void setup() {
+    memberInviter = testMemberUtils.createSave();
+    memberInvitee = testMemberUtils.createSave();
 
-    room = testUtils.createUniqueRoom();
-    roomRepository.save(room);
+    room = testRoomUtils.createSave();
 
-    MemberRoom memberRoom =
-        testUtils.createUniqueMemberRoom_With_Member_AND_Room(memberInviter, room);
-    memberRoomRepository.save(memberRoom);
+    testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(memberInviter, room);
   }
 
   @Test
   @DisplayName("방 초대시 201 Created 응답")
   void invite_member_to_room_then_return_201_created() throws Exception {
     // given
-    token = testUtils.createBearerToken(memberInviter);
+    token = testAuthUtils.createBearerToken(memberInviter);
     InvitationCreateRequest request =
         InvitationCreateRequest.builder()
             .roomId(room.getId())

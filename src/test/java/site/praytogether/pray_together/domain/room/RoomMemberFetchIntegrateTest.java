@@ -34,9 +34,8 @@ public class RoomMemberFetchIntegrateTest extends IntegrateTest {
   @BeforeEach
   void setup() throws Exception {
     // 회원 생성 및 JWT 설정
-    member = testUtils.createUniqueMember();
-    memberRepository.save(member);
-    token = testUtils.createBearerToken(member);
+    member = testMemberUtils.createSave();
+    token = testAuthUtils.createBearerToken(member);
 
     // 방 생성
     RoomCreateRequest createRequest =
@@ -54,10 +53,8 @@ public class RoomMemberFetchIntegrateTest extends IntegrateTest {
 
     // 방 참가자 생성 (본인 포함 총 memberCount 명)
     List<MemberRoom> memberRoomList = new ArrayList<>();
-    List<Member> memberList = new ArrayList<>();
     for (int i = 0; i < memberCount - 1; i++) {
-      Member newMember = testUtils.createUniqueMember();
-      memberList.add(newMember);
+      Member newMember = testMemberUtils.createSave();
       MemberRoom memberRoom =
           MemberRoom.builder()
               .member(newMember)
@@ -67,7 +64,6 @@ public class RoomMemberFetchIntegrateTest extends IntegrateTest {
               .build();
       memberRoomList.add(memberRoom);
     }
-    memberRepository.saveAll(memberList);
     memberRoomRepository.saveAll(memberRoomList);
   }
 

@@ -16,9 +16,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import site.praytogether.pray_together.domain.invitation.presentation.v1.dto.InvitationStatusUpdateRequest;
 import site.praytogether.pray_together.domain.invitation.domain.Invitation;
 import site.praytogether.pray_together.domain.invitation.domain.InvitationStatus;
+import site.praytogether.pray_together.domain.invitation.presentation.v1.dto.InvitationStatusUpdateRequest;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member_room.model.MemberRoom;
 import site.praytogether.pray_together.domain.room.model.Room;
@@ -33,33 +33,24 @@ public class InvitationUpdateStatusIntegrateTest extends IntegrateTest {
   private Invitation invitation;
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     // 초대자 회원 생성
-    memberInviter = testUtils.createUniqueMember();
-    memberRepository.save(memberInviter);
+    memberInviter = testMemberUtils.createSave();
 
     // 초대받는 회원 생성
-    memberInvitee = testUtils.createUniqueMember();
-    memberRepository.save(memberInvitee);
+    memberInvitee = testMemberUtils.createSave();
 
     // 방 생성
-    room = testUtils.createUniqueRoom();
-    roomRepository.save(room);
+    room = testRoomUtils.createSave();
 
     // 초대자-방 연관관계 생성
-    MemberRoom memberRoom =
-        testUtils.createUniqueMemberRoom_With_Member_AND_Room(memberInviter, room);
-    memberRoomRepository.save(memberRoom);
+    testMemberRoomUtils.createSaveMemberRoom_With_MemberOwner_AND_Room(memberInviter, room);
 
     // 초대장 생성
-    invitation = Invitation.create(memberInviter, memberInvitee, room);
-    invitationRepository.save(invitation);
-
-    // 생성된 초대장 조회
-    invitation = invitationRepository.findAll().get(0);
+    invitation = testInvitationUtils.createSave(memberInviter, memberInvitee, room);
 
     // 테스트용 인증 헤더 설정
-    token = testUtils.createBearerToken(memberInvitee);
+    token = testAuthUtils.createBearerToken(memberInvitee);
   }
 
   @ParameterizedTest(name = "[{index}] 초대장 상태를 {0}으로 변경하면 200 OK 응답")

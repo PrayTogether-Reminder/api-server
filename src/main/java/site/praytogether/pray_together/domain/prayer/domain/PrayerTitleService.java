@@ -30,12 +30,12 @@ public class PrayerTitleService {
         .orElseThrow(() -> new PrayerTitleNotFoundException(titleId));
   }
 
-  public List<PrayerTitleInfo> fetchTitlesByRoom(Long roomId, String after) {
+  public List<PrayerTitle> fetchTitlesByRoom(Long roomId, String after) {
     if (DEFAULT_INFINITE_SCROLL_AFTER.equals(after)) {
-      return titleRepository.findFirstPrayerTitleInfosOrderByCreatedTimeDesc(
+      return titleRepository.findByRoomIdOrderByCreatedTimeDesc(
           roomId, PageRequest.of(0, PRAYER_TITLES_INFINITE_SCROLL_SIZE));
     }
-    return titleRepository.findPrayerTitleInfosOrderByCreatedTimeDesc(
+    return titleRepository.findByRoomIdAndCreatedTimeBeforeOrderByCreatedTimeDesc(
         roomId, Instant.parse(after), PageRequest.of(0, PRAYER_TITLES_INFINITE_SCROLL_SIZE));
   }
 
