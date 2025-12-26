@@ -28,13 +28,11 @@
     </root>
   </springProfile>
 
-  <!-- Production profile: JSON structured logging -->
+  <!-- Production profile: Plain text logging -->
   <springProfile name="prod">
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-      <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-        <includeMdcKeyName>memberId</includeMdcKeyName>
-        <includeMdcKeyName>requestId</includeMdcKeyName>
-        <customFields>{"application":"pray-together","environment":"prod"}</customFields>
+      <encoder>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - [memberId:%X{memberId}] [requestId:%X{requestId}] %msg%n</pattern>
       </encoder>
     </appender>
 
@@ -45,10 +43,8 @@
         <maxHistory>30</maxHistory>
         <totalSizeCap>3GB</totalSizeCap>
       </rollingPolicy>
-      <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-        <includeMdcKeyName>memberId</includeMdcKeyName>
-        <includeMdcKeyName>requestId</includeMdcKeyName>
-        <customFields>{"application":"pray-together","environment":"production"}</customFields>
+      <encoder>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - [memberId:%X{memberId}] [requestId:%X{requestId}] %msg%n</pattern>
       </encoder>
     </appender>
 
