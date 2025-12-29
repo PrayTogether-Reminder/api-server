@@ -2,7 +2,6 @@ package site.praytogether.pray_together.domain.auth.presentation;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,10 @@ import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenRei
 import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueResponse;
 import site.praytogether.pray_together.domain.auth.presentation.dto.ChangePasswordRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.EmailOtpRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.GoogleAuthRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.GoogleAuthResponse;
+import site.praytogether.pray_together.domain.auth.presentation.dto.GoogleSignupRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.LoginResponse;
 import site.praytogether.pray_together.domain.auth.presentation.dto.OtpVerifyRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.ReissuePasswordRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.SignupRequest;
@@ -92,5 +95,21 @@ public class AuthController {
     MessageResponse response = authApplication.changePassword(memberId, request);
     log.info("[API] 비밀번호 변경 요청 종료");
     return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @PostMapping("/google")
+  public ResponseEntity<GoogleAuthResponse> googleAuth(@Valid @RequestBody GoogleAuthRequest request) {
+    log.info("[API] Google 인증 요청 시작 email={}", request.getEmail());
+    GoogleAuthResponse response = authApplication.googleAuth(request);
+    log.info("[API] Google 인증 요청 종료 email={} isNewMember={}", request.getEmail(), response.isNewMember());
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @PostMapping("/google/signup")
+  public ResponseEntity<LoginResponse> googleSignup(@Valid @RequestBody GoogleSignupRequest request) {
+    log.info("[API] Google 회원가입 요청 시작 email={}", request.getEmail());
+    LoginResponse response = authApplication.googleSignup(request);
+    log.info("[API] Google 회원가입 요청 종료 email={}", request.getEmail());
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 }

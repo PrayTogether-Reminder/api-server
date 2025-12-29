@@ -8,6 +8,7 @@ public class CoreConstant {
     public static final int NAME_MAX_LEN = 20 * RDBMS_CHAR_LEN_BYTE;
     public static final int PASSWORD_MAX_LEN = 20 * RDBMS_CHAR_LEN_BYTE;
     public static final int PHONE_NUMBER_MAX_LEN = 20 * RDBMS_CHAR_LEN_BYTE;
+    public static final int OAUTH_PROVIDER_MAX_LEN = 20 * RDBMS_CHAR_LEN_BYTE;
   }
 
   public static class RoomConstant {

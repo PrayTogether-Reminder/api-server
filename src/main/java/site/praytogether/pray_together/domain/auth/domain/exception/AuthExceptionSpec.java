@@ -21,6 +21,7 @@ public enum AuthExceptionSpec implements ExceptionSpec {
   OTP_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH-009", "email에 해당하는 OTP가 없습니다."),
   AUTHENTICATION_FAIL(HttpStatus.UNAUTHORIZED, "AUTH-010", "인증되지 않은 요청입니다."),
   REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH-011", "RefreshToken이 만료되었습니다."),
+  GOOGLE_TOKEN_VERIFICATION_FAILED(HttpStatus.UNAUTHORIZED, "AUTH-012", "Google ID Token 검증에 실패했습니다."),
   ;
 
   private final HttpStatus status;
