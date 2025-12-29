@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import site.praytogether.pray_together.domain.auth.domain.OAuthProvider;
 import site.praytogether.pray_together.domain.member.dto.MemberProfileResponse;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.test_config.IntegrateTest;
@@ -55,6 +56,10 @@ public class MemberProfileFetchIntegrateTest extends IntegrateTest {
     assertThat(response.getPhoneNumber())
         .as("응답된 회원 전화번호가 요청한 회원의 전화번호와 일치하지 않습니다.")
         .isEqualTo(member.getPhoneNumber().getValue());
+
+    assertThat(response.getProvider())
+        .as("응답된 회원 Provider가 요청한 회원의 Provider와 일치하지 않습니다.")
+        .isEqualTo(member.getProvider());
   }
 
   @Test
@@ -66,6 +71,7 @@ public class MemberProfileFetchIntegrateTest extends IntegrateTest {
         .email("nophone@test.com")
         .password("test-password")
         .phoneNumber(null)
+        .provider(OAuthProvider.LOCAL)
         .build();
     memberRepository.save(memberWithoutPhone);
 
@@ -86,5 +92,6 @@ public class MemberProfileFetchIntegrateTest extends IntegrateTest {
     assertThat(response.getName()).as("응답된 회원 이름이 요청한 회원의 이름과 일치하지 않습니다.").isEqualTo(memberWithoutPhone.getName());
     assertThat(response.getEmail()).as("응답된 회원 이메일이 요청한 회원의 이메일과 일치하지 않습니다.").isEqualTo(memberWithoutPhone.getEmail());
     assertThat(response.getPhoneNumber()).as("전화번호가 없는 회원의 경우 응답의 전화번호도 NULL이어야 합니다.").isNull();
+    assertThat(response.getProvider()).as("응답된 회원 Provider가 요청한 회원의 Provider와 일치하지 않습니다.").isEqualTo(memberWithoutPhone.getProvider());
   }
 }
