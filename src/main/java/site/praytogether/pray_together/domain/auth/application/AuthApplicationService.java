@@ -1,6 +1,7 @@
 package site.praytogether.pray_together.domain.auth.application;
 
 import io.jsonwebtoken.JwtException;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.praytogether.pray_together.domain.auth.domain.AuthService;
+import site.praytogether.pray_together.domain.auth.domain.OAuthProvider;
 import site.praytogether.pray_together.domain.auth.domain.OtpService;
 import site.praytogether.pray_together.domain.auth.domain.PasswordReissuer;
 import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
@@ -41,6 +44,7 @@ public class AuthApplicationService {
   private final MemberService memberService;
   private final OtpService otpService;
   private final JwtService jwtService;
+  private final AuthService authService;
   private final RefreshTokenService refreshTokenService;
   private final PasswordReissuer passwordReissuer;
   private final PasswordEncoder passwordEncoder;
@@ -91,6 +95,7 @@ public class AuthApplicationService {
 
   public MessageResponse reissuePassword(ReissuePasswordRequest request) {
     Member member = memberService.fetchByEmail(request.getEmail());
+    authService.validateLocalAuthentication(member);
     String newPw = passwordReissuer.generatedByRandom();
     String encodePw = passwordEncoder.encode(newPw);
     member.updatePassword(encodePw);
@@ -102,6 +107,7 @@ public class AuthApplicationService {
 
   public MessageResponse changePassword(Long memberId, ChangePasswordRequest request) {
     Member member = memberService.fetchById(memberId);
+    authService.validateLocalAuthentication(member);
     String encodedPassword = passwordEncoder.encode(request.getNewPassword());
     member.updatePassword(encodedPassword);
 
