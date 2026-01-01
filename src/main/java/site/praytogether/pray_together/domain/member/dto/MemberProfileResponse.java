@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.praytogether.pray_together.domain.auth.domain.OAuthProvider;
 import site.praytogether.pray_together.domain.member.model.MemberProfile;
 
 @Getter
@@ -16,6 +17,7 @@ public class MemberProfileResponse {
   private String name;
   private String email;
   private String phoneNumber;
+  private OAuthProvider provider;
 
   public static MemberProfileResponse from(MemberProfile profile) {
     String phoneNumber = null;
@@ -27,6 +29,7 @@ public class MemberProfileResponse {
         .email(profile.getEmail())
         .name(profile.getName())
         .phoneNumber(phoneNumber)
+        .provider(profile.getProvider())
         .build();
   }
 }

@@ -3,6 +3,8 @@ package site.praytogether.pray_together.domain.member.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import site.praytogether.pray_together.constant.CoreConstant.MemberConstant;
+import site.praytogether.pray_together.domain.auth.domain.OAuthProvider;
 import site.praytogether.pray_together.domain.base.BaseEntity;
 
 @Entity
@@ -38,11 +41,15 @@ public class Member extends BaseEntity {
   @Column(nullable = false, length = MemberConstant.NAME_MAX_LEN)
   private String name;
 
-  @Column(nullable = false, length = MemberConstant.PASSWORD_MAX_LEN)
+  @Column(nullable = true, length = MemberConstant.PASSWORD_MAX_LEN)
   private String password;
 
   @Embedded
   private PhoneNumber phoneNumber;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false, length = MemberConstant.OAUTH_PROVIDER_MAX_LEN)
+  private OAuthProvider provider;
 
   public static Member create(String name, String email, String password, PhoneNumber phoneNumber) {
     return Member.builder()
@@ -50,6 +57,17 @@ public class Member extends BaseEntity {
         .email(email)
         .password(password)
         .phoneNumber(phoneNumber)
+        .provider(OAuthProvider.LOCAL)
+        .build();
+  }
+
+  public static Member createGoogleMember(String name, String email, PhoneNumber phoneNumber) {
+    return Member.builder()
+        .name(name)
+        .email(email)
+        .password(null)
+        .phoneNumber(phoneNumber)
+        .provider(OAuthProvider.GOOGLE)
         .build();
   }
 

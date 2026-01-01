@@ -1,6 +1,7 @@
 package site.praytogether.pray_together.domain.member.service;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import site.praytogether.pray_together.domain.member.expcetion.MemberAlreadyExis
 import site.praytogether.pray_together.domain.member.expcetion.MemberNotFoundException;
 import site.praytogether.pray_together.domain.member.model.Member;
 import site.praytogether.pray_together.domain.member.model.MemberProfile;
+import site.praytogether.pray_together.domain.member.model.PhoneNumber;
 import site.praytogether.pray_together.domain.member.repository.MemberRepository;
 
 @Service
@@ -50,6 +52,16 @@ public class MemberService {
 
   public Member fetchByEmail(String email) {
     return memberRepository.findByEmail(email).orElseThrow(() -> new MemberNotFoundException(email));
+  }
+
+  public Optional<Member> findByEmail(String email) {
+    return memberRepository.findByEmail(email);
+  }
+
+  
+  public Member createGoogleMember(String name, String email, PhoneNumber phoneNumber) {
+    Member member = Member.createGoogleMember(name, email, phoneNumber);
+    return memberRepository.save(member);
   }
 
   public List<Member> fetchByIds(List<Long> ids) {

@@ -1,33 +1,38 @@
 package site.praytogether.pray_together.domain.auth.application;
 
 import io.jsonwebtoken.JwtException;
-import jakarta.validation.Valid;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
+import site.praytogether.pray_together.domain.auth.domain.AuthService;
+import site.praytogether.pray_together.domain.auth.domain.OAuthProvider;
+import site.praytogether.pray_together.domain.auth.domain.OtpService;
 import site.praytogether.pray_together.domain.auth.domain.PasswordReissuer;
-import site.praytogether.pray_together.domain.auth.domain.RefreshTokenRepository;
+import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
+import site.praytogether.pray_together.domain.auth.domain.RefreshTokenService;
+import site.praytogether.pray_together.domain.auth.domain.SignupCommand;
 import site.praytogether.pray_together.domain.auth.domain.event.PasswordReissuedEvent;
-import site.praytogether.pray_together.domain.auth.infrastructure.annotation.PrincipalId;
+import site.praytogether.pray_together.domain.auth.domain.exception.RefreshTokenNotValidException;
+import site.praytogether.pray_together.domain.auth.infrastructure.GoogleTokenVerifier;
 import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueResponse;
 import site.praytogether.pray_together.domain.auth.presentation.dto.ChangePasswordRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.GoogleAuthRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.GoogleAuthResponse;
+import site.praytogether.pray_together.domain.auth.presentation.dto.GoogleSignupRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.LoginResponse;
 import site.praytogether.pray_together.domain.auth.presentation.dto.OtpVerifyRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.ReissuePasswordRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.SignupRequest;
-import site.praytogether.pray_together.domain.auth.domain.exception.RefreshTokenNotValidException;
-import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
-import site.praytogether.pray_together.domain.auth.domain.SignupCommand;
-import site.praytogether.pray_together.domain.auth.domain.OtpService;
-import site.praytogether.pray_together.domain.auth.domain.RefreshTokenService;
 import site.praytogether.pray_together.domain.base.MessageResponse;
+import site.praytogether.pray_together.domain.member.expcetion.MemberAlreadyExistException;
 import site.praytogether.pray_together.domain.member.model.Member;
+import site.praytogether.pray_together.domain.member.model.PhoneNumber;
 import site.praytogether.pray_together.domain.member.service.MemberService;
 import site.praytogether.pray_together.security.service.JwtService;
 
@@ -39,10 +44,12 @@ public class AuthApplicationService {
   private final MemberService memberService;
   private final OtpService otpService;
   private final JwtService jwtService;
+  private final AuthService authService;
   private final RefreshTokenService refreshTokenService;
   private final PasswordReissuer passwordReissuer;
   private final PasswordEncoder passwordEncoder;
   private final ApplicationEventPublisher eventPublisher;
+  private final GoogleTokenVerifier googleTokenVerifier;
 
   public void signup(SignupRequest request) {
     SignupCommand command = SignupCommand.from(request);
@@ -88,6 +95,7 @@ public class AuthApplicationService {
 
   public MessageResponse reissuePassword(ReissuePasswordRequest request) {
     Member member = memberService.fetchByEmail(request.getEmail());
+    authService.validateLocalAuthentication(member);
     String newPw = passwordReissuer.generatedByRandom();
     String encodePw = passwordEncoder.encode(newPw);
     member.updatePassword(encodePw);
@@ -99,9 +107,57 @@ public class AuthApplicationService {
 
   public MessageResponse changePassword(Long memberId, ChangePasswordRequest request) {
     Member member = memberService.fetchById(memberId);
+    authService.validateLocalAuthentication(member);
     String encodedPassword = passwordEncoder.encode(request.getNewPassword());
     member.updatePassword(encodedPassword);
 
     return MessageResponse.of("비밀번호를 변경했습니다.");
+  }
+
+  public GoogleAuthResponse googleAuth(GoogleAuthRequest request) {
+    googleTokenVerifier.verify(request.getIdToken());
+
+    Optional<Member> memberOptional = memberService.findByEmail(request.getEmail());
+
+    if (memberOptional.isEmpty()) {
+      return GoogleAuthResponse.newMember();
+    }
+
+    Member member = memberOptional.get();
+    PrayTogetherPrincipal principal = PrayTogetherPrincipal.builder()
+        .id(member.getId())
+        .email(member.getEmail())
+        .build();
+
+    String accessToken = jwtService.issueAccessToken(principal);
+    String refreshToken = jwtService.issueRefreshToken(principal);
+    refreshTokenService.save(member, refreshToken, jwtService.extractExpiration(refreshToken));
+
+    return GoogleAuthResponse.existingMember(accessToken, refreshToken);
+  }
+
+  public LoginResponse googleSignup(GoogleSignupRequest request) {
+    googleTokenVerifier.verify(request.getIdToken());
+
+    if (memberService.isExistMember(request.getEmail())) {
+      throw new MemberAlreadyExistException(request.getEmail());
+    }
+
+    PhoneNumber phoneNumber = PhoneNumber.of(request.getPhoneNumber());
+    Member member = memberService.createGoogleMember(request.getName(), request.getEmail(), phoneNumber);
+
+    PrayTogetherPrincipal principal = PrayTogetherPrincipal.builder()
+        .id(member.getId())
+        .email(member.getEmail())
+        .build();
+
+    String accessToken = jwtService.issueAccessToken(principal);
+    String refreshToken = jwtService.issueRefreshToken(principal);
+    refreshTokenService.save(member, refreshToken, jwtService.extractExpiration(refreshToken));
+
+    return LoginResponse.builder()
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
+        .build();
   }
 }

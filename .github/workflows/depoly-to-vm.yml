@@ -75,6 +75,7 @@ jobs:
                 -e APP_VERSION_MINIMUM="${{ secrets.APP_VERSION_MINIMUM }}" \
                 -e APP_VERSION_UPDATE_FORCE="${{ secrets.APP_VERSION_UPDATE_FORCE }}" \
                 -e APP_MAINTENANCE_MODE="${{ secrets.APP_MAINTENANCE_MODE }}" \
+                -e GOOGLE_WEB_CLIENT_ID="${{ secrets.GOOGLE_WEB_CLIENT_ID }}" \
                 $IMAGE_URL
             
               echo "⏳ [SUB VM] Waiting for container to start..."
@@ -195,6 +196,7 @@ jobs:
                 -e APP_VERSION_MINIMUM="${{ secrets.APP_VERSION_MINIMUM }}" \
                 -e APP_VERSION_UPDATE_FORCE="${{ secrets.APP_VERSION_UPDATE_FORCE }}" \
                 -e APP_MAINTENANCE_MODE="${{ secrets.APP_MAINTENANCE_MODE }}" \
+                -e GOOGLE_WEB_CLIENT_ID="${{ secrets.GOOGLE_WEB_CLIENT_ID }}" \
                 $IMAGE_URL
             
               echo "⏳ [MAIN VM] Waiting for container to start..."
