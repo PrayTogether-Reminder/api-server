@@ -51,6 +51,9 @@ public class Member extends BaseEntity {
   @Column(nullable = false, length = MemberConstant.OAUTH_PROVIDER_MAX_LEN)
   private OAuthProvider provider;
 
+  @Column(nullable = true, length = MemberConstant.PROVIDER_MEMBER_ID_MAX_LEN, unique = true)
+  private String providerMemberId;
+
   public static Member create(String name, String email, String password, PhoneNumber phoneNumber) {
     return Member.builder()
         .name(name)
@@ -68,6 +71,17 @@ public class Member extends BaseEntity {
         .password(null)
         .phoneNumber(phoneNumber)
         .provider(OAuthProvider.GOOGLE)
+        .build();
+  }
+
+  public static Member createAppleMember(String name, String providerMemberId) {
+    return Member.builder()
+        .name(name)
+        .email(providerMemberId)
+        .password(null)
+        .phoneNumber(null)
+        .provider(OAuthProvider.APPLE)
+        .providerMemberId(providerMemberId)
         .build();
   }
 

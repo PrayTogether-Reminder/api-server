@@ -58,9 +58,23 @@ public class MemberService {
     return memberRepository.findByEmail(email);
   }
 
-  
+  public Optional<Member> findByProviderMemberId(String providerUserId) {
+    return memberRepository.findByProviderMemberId(providerUserId);
+  }
+
+  public boolean isExistByProviderMemberId(String providerUserId) {
+    return memberRepository.existsByProviderMemberId(providerUserId);
+  }
+
+  @Transactional
   public Member createGoogleMember(String name, String email, PhoneNumber phoneNumber) {
     Member member = Member.createGoogleMember(name, email, phoneNumber);
+    return memberRepository.save(member);
+  }
+
+  @Transactional
+  public Member createAppleMember(String name, String providerUserId) {
+    Member member = Member.createAppleMember(name, providerUserId);
     return memberRepository.save(member);
   }
 

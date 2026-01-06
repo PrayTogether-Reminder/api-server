@@ -17,6 +17,8 @@ import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenRei
 import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueResponse;
 import site.praytogether.pray_together.domain.auth.presentation.dto.ChangePasswordRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.EmailOtpRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.AppleAuthRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.AppleAuthResponse;
 import site.praytogether.pray_together.domain.auth.presentation.dto.GoogleAuthRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.GoogleAuthResponse;
 import site.praytogether.pray_together.domain.auth.presentation.dto.GoogleSignupRequest;
@@ -111,5 +113,13 @@ public class AuthController {
     LoginResponse response = authApplication.googleSignup(request);
     log.info("[API] Google 회원가입 요청 종료 email={}", request.getEmail());
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
+
+  @PostMapping("/apple")
+  public ResponseEntity<AppleAuthResponse> appleAuth(@Valid @RequestBody AppleAuthRequest request) {
+    log.info("[API] Apple 인증 요청 시작");
+    AppleAuthResponse response = authApplication.appleAuth(request);
+    log.info("[API] Apple 인증 요청 종료 needsPhoneNumber={}", response.isNeedsPhoneNumber());
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

@@ -1,7 +1,6 @@
 package site.praytogether.pray_together.domain.auth.application;
 
 import io.jsonwebtoken.JwtException;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.praytogether.pray_together.domain.auth.domain.AuthService;
-import site.praytogether.pray_together.domain.auth.domain.OAuthProvider;
 import site.praytogether.pray_together.domain.auth.domain.OtpService;
 import site.praytogether.pray_together.domain.auth.domain.PasswordReissuer;
 import site.praytogether.pray_together.domain.auth.domain.PrayTogetherPrincipal;
@@ -18,7 +16,10 @@ import site.praytogether.pray_together.domain.auth.domain.RefreshTokenService;
 import site.praytogether.pray_together.domain.auth.domain.SignupCommand;
 import site.praytogether.pray_together.domain.auth.domain.event.PasswordReissuedEvent;
 import site.praytogether.pray_together.domain.auth.domain.exception.RefreshTokenNotValidException;
+import site.praytogether.pray_together.domain.auth.infrastructure.AppleTokenVerifier;
 import site.praytogether.pray_together.domain.auth.infrastructure.GoogleTokenVerifier;
+import site.praytogether.pray_together.domain.auth.presentation.dto.AppleAuthRequest;
+import site.praytogether.pray_together.domain.auth.presentation.dto.AppleAuthResponse;
 import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.AuthTokenReissueResponse;
 import site.praytogether.pray_together.domain.auth.presentation.dto.ChangePasswordRequest;
@@ -50,6 +51,7 @@ public class AuthApplicationService {
   private final PasswordEncoder passwordEncoder;
   private final ApplicationEventPublisher eventPublisher;
   private final GoogleTokenVerifier googleTokenVerifier;
+  private final AppleTokenVerifier appleTokenVerifier;
 
   public void signup(SignupRequest request) {
     SignupCommand command = SignupCommand.from(request);
@@ -159,5 +161,34 @@ public class AuthApplicationService {
         .accessToken(accessToken)
         .refreshToken(refreshToken)
         .build();
+  }
+
+  public AppleAuthResponse appleAuth(AppleAuthRequest request) {
+    String appleUserId = appleTokenVerifier.verify(request.getIdentityToken());
+
+    Optional<Member> memberOptional = memberService.findByProviderMemberId(appleUserId);
+
+    Member member;
+    boolean needsPhoneNumber;
+
+    if (memberOptional.isEmpty()) {
+      // 신규 회원 - 바로 생성 (전화번호 없이)
+      member = memberService.createAppleMember(request.getName(), appleUserId);
+      needsPhoneNumber = true;
+    } else {
+      member = memberOptional.get();
+      needsPhoneNumber = member.getPhoneNumber() == null;
+    }
+
+    PrayTogetherPrincipal principal = PrayTogetherPrincipal.builder()
+        .id(member.getId())
+        .email(member.getEmail())
+        .build();
+
+    String accessToken = jwtService.issueAccessToken(principal);
+    String refreshToken = jwtService.issueRefreshToken(principal);
+    refreshTokenService.save(member, refreshToken, jwtService.extractExpiration(refreshToken));
+
+    return AppleAuthResponse.of(accessToken, refreshToken, needsPhoneNumber);
   }
 }
