@@ -19,6 +19,7 @@ public class MdcLoggingFilter extends OncePerRequestFilter {
 
   private static final String MEMBER_ID_KEY = "memberId";
   private static final String REQUEST_ID_KEY = "requestId";
+  private static final String CLIENT_IP_KEY = "clientIp";
 
   @Override
   protected void doFilterInternal(
@@ -30,6 +31,10 @@ public class MdcLoggingFilter extends OncePerRequestFilter {
       // Generate unique request ID
       String requestId = UUID.randomUUID().toString();
       MDC.put(REQUEST_ID_KEY, requestId);
+
+      // Extract client IP
+      String clientIp = getClientIp(request);
+      MDC.put(CLIENT_IP_KEY, clientIp);
 
       // Extract memberId from SecurityContext if authenticated
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -44,5 +49,13 @@ public class MdcLoggingFilter extends OncePerRequestFilter {
       // Always clear MDC to prevent memory leaks
       MDC.clear();
     }
+  }
+
+  private String getClientIp(HttpServletRequest request) {
+    String xForwardedFor = request.getHeader("X-Forwarded-For");
+    if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+      return xForwardedFor.split(",")[0].trim();
+    }
+    return request.getRemoteAddr();
   }
 }
