@@ -52,7 +52,7 @@ public class SecurityConfig {
             JwtLogoutFilter.class)
         .addFilterBefore(
             new JwtValidationFilter(jwtService, authenticationEntryPoint), JwtAuthFilter.class)
-        .addFilterAfter(mdcLoggingFilter, JwtValidationFilter.class)
+        .addFilterBefore(mdcLoggingFilter, JwtValidationFilter.class)
         .exceptionHandling(
             exceptions -> exceptions.authenticationEntryPoint(authenticationEntryPoint))
         .csrf(AbstractHttpConfigurer::disable)
