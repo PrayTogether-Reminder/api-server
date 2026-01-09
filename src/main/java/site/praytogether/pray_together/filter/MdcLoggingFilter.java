@@ -20,7 +20,7 @@ public class MdcLoggingFilter extends OncePerRequestFilter {
 
   private static final String REQUEST_ID_KEY = "requestId";
   private static final String CLIENT_IP_KEY = "clientIp";
-  private static final String REQUEST_URI_KEY = "requestUri";
+  private static final String REQUEST_URI_KEY = "uri";
 
   @Override
   protected void doFilterInternal(
@@ -35,8 +35,8 @@ public class MdcLoggingFilter extends OncePerRequestFilter {
       String clientIp = getClientIp(request);
       MDC.put(CLIENT_IP_KEY, clientIp);
 
-      String requestUri = request.getRequestURI();
-      MDC.put(REQUEST_URI_KEY, requestUri);
+      String uri = request.getRequestURI();
+      MDC.put(REQUEST_URI_KEY, uri);
 
       filterChain.doFilter(request, response);
     } finally {
