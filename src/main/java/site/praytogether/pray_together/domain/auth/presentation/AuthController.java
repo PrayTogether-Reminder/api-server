@@ -26,6 +26,7 @@ import site.praytogether.pray_together.domain.auth.presentation.dto.LoginRespons
 import site.praytogether.pray_together.domain.auth.presentation.dto.OtpVerifyRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.ReissuePasswordRequest;
 import site.praytogether.pray_together.domain.auth.presentation.dto.SignupRequest;
+import site.praytogether.pray_together.domain.base.EmailMaskingUtil;
 import site.praytogether.pray_together.domain.base.MessageResponse;
 
 @RestController
@@ -62,9 +63,9 @@ public class AuthController {
 
   @PostMapping("/otp/email/verification")
   public ResponseEntity<MessageResponse> verifyOtp(@Valid @RequestBody OtpVerifyRequest request) {
-    log.info("[API] OTP 검증 요청 시작 email={} otp={}", request.getEmail(), request.getOtp());
+    log.info("[API] OTP 검증 요청 시작 email={}", EmailMaskingUtil.mask(request.getEmail()));
     boolean otpResult = authApplication.verifyOtp(request);
-    log.info("[API] OTP 검증 요청 종료 email={} otp={}", request.getEmail(), request.getOtp());
+    log.info("[API] OTP 검증 요청 종료 email={}", EmailMaskingUtil.mask(request.getEmail()));
     if (otpResult == false) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body(MessageResponse.of("인증 번호가 일치하지 않습니다."));
@@ -101,17 +102,17 @@ public class AuthController {
 
   @PostMapping("/google")
   public ResponseEntity<GoogleAuthResponse> googleAuth(@Valid @RequestBody GoogleAuthRequest request) {
-    log.info("[API] Google 인증 요청 시작 email={}", request.getEmail());
+    log.info("[API] Google 인증 요청 시작 email={}", EmailMaskingUtil.mask(request.getEmail()));
     GoogleAuthResponse response = authApplication.googleAuth(request);
-    log.info("[API] Google 인증 요청 종료 email={} isNewMember={}", request.getEmail(), response.isNewMember());
+    log.info("[API] Google 인증 요청 종료 email={} isNewMember={}", EmailMaskingUtil.mask(request.getEmail()), response.isNewMember());
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @PostMapping("/google/signup")
   public ResponseEntity<LoginResponse> googleSignup(@Valid @RequestBody GoogleSignupRequest request) {
-    log.info("[API] Google 회원가입 요청 시작 email={}", request.getEmail());
+    log.info("[API] Google 회원가입 요청 시작 email={}", EmailMaskingUtil.mask(request.getEmail()));
     LoginResponse response = authApplication.googleSignup(request);
-    log.info("[API] Google 회원가입 요청 종료 email={}", request.getEmail());
+    log.info("[API] Google 회원가입 요청 종료 email={}", EmailMaskingUtil.mask(request.getEmail()));
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
