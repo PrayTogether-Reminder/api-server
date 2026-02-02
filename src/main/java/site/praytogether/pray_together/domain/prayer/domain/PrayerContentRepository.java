@@ -13,7 +13,7 @@ public interface PrayerContentRepository extends JpaRepository<PrayerContent, Lo
         )
     FROM PrayerContent pc
     WHERE pc.prayerTitle.id = :titleId
-    ORDER BY pc.memberName ASC
+    ORDER BY pc.createdTime ASC
 """)
   List<PrayerContentInfo> findPrayerContentsByTitleId(Long titleId);
 
