@@ -48,7 +48,7 @@ public class PrayerContent extends BaseEntity {
   @Column(name = "member_id")
   private Long memberId;
 
-  @Column(nullable = false, length = 30)
+  @Column(nullable = false, length = 100)
   private String memberName;
 
   @Column(nullable = false, columnDefinition = "CLOB")
