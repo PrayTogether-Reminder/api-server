@@ -74,4 +74,8 @@ public class RoomApplicationService {
     List<RoomMember> roomMembers = memberRoomService.fetchMembersInRoom(roomId);
     return RoomMemberMapper.toResponse(roomMembers);
   }
+
+  public RoomInfo fetchRoom(Long memberId, Long roomId) {
+    return memberRoomService.fetchRoomInfo(memberId, roomId);
+  }
 }

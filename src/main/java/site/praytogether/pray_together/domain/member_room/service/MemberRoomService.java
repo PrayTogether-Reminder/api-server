@@ -86,6 +86,16 @@ public class MemberRoomService {
     return memberRoomRepository.findRoomMembers(roomId);
   }
 
+  public RoomInfo fetchRoomInfo(Long memberId, Long roomId) {
+    RoomInfo roomInfo =
+        memberRoomRepository
+            .findRoomInfoByMemberAndRoom(memberId, roomId)
+            .orElseThrow(() -> new MemberRoomNotFoundException(memberId, roomId));
+    Long memberCount = memberRoomRepository.countByRoom_Id(roomId);
+    roomInfo.setMemberCnt(memberCount);
+    return roomInfo;
+  }
+
   public List<Long> fetchMemberIdsInRoom(Long roomId) {
     return memberRoomRepository.findMember_IdByRoom_Id(roomId);
   }

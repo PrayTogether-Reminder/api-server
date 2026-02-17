@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import site.praytogether.pray_together.domain.auth.infrastructure.annotation.PrincipalId;
 import site.praytogether.pray_together.domain.base.MessageResponse;
+import site.praytogether.pray_together.domain.member_room.model.RoomInfo;
 import site.praytogether.pray_together.domain.room.applicatoin.RoomApplicationService;
 import site.praytogether.pray_together.domain.room.dto.RoomCreateRequest;
 import site.praytogether.pray_together.domain.room.dto.RoomInfiniteScrollRequest;
@@ -79,5 +80,15 @@ public class RoomController {
     RoomMemberResponse response = roomApplication.listRoomMembers(memberId, roomId);
     log.info("[API] 방 멤버 조회 종료 memberId={} roomId={}", memberId, roomId);
     return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @GetMapping("/{roomId}")
+  public ResponseEntity<RoomInfo> getRoom(
+      @PrincipalId Long memberId,
+      @Min(value = 1, message = "잘 못된 방을 선택하셨습니다.") @PathVariable Long roomId) {
+    log.info("[API] 방 단일 조회 시작 memberId={} roomId={}", memberId, roomId);
+    RoomInfo roomInfo = roomApplication.fetchRoom(memberId, roomId);
+    log.info("[API] 방 단일 조회 종료 memberId={} roomId={}", memberId, roomId);
+    return ResponseEntity.status(HttpStatus.OK).body(roomInfo);
   }
 }

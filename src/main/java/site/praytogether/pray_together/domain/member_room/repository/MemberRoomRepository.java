@@ -68,6 +68,17 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
   @Query(
       """
+          SELECT new site.praytogether.pray_together.domain.member_room.model.RoomInfo(
+            r.id ,r.name, r.description,mr.createdTime ,mr.isNotification
+          )
+          FROM MemberRoom  mr
+          JOIN Room  r ON mr.room.id = r.id
+          WHERE mr.member.id = :memberId AND mr.room.id = :roomId
+    """)
+  Optional<RoomInfo> findRoomInfoByMemberAndRoom(Long memberId, Long roomId);
+
+  @Query(
+      """
         SELECT new site.praytogether.pray_together.domain.member_room.model.RoomIdMemberCount(
         mr.room.id, COUNT(*)
         )
@@ -88,4 +99,6 @@ public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 """
   )
   boolean isExistingMembersInRoom(@Param("memberIds") List<Long> memberIds,@Param("roomId") Long roomId);
+
+  Long countByRoom_Id(Long roomId);
 }

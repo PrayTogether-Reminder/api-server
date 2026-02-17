@@ -15,16 +15,16 @@ public class RoomInfo {
   private Long memberCnt;
   private String description;
   private Instant joinedTime;
-  private boolean isNotification;
+  private boolean notification;
 
   public RoomInfo(
-      Long id, String name, String description, Instant createdTime, boolean isNotification) {
+      Long id, String name, String description, Instant createdTime, boolean notification) {
     this.id = id;
     this.name = name;
     this.memberCnt = 0L;
     this.description = description;
     this.joinedTime = createdTime;
-    this.isNotification = isNotification;
+    this.notification = notification;
   }
 
   public void setMemberCnt(Long memberCnt) {
