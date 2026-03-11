@@ -17,6 +17,7 @@ public class AsyncConfig {
     executor.setQueueCapacity(100);
     executor.setMaxPoolSize(10);
     executor.setThreadNamePrefix("notification-");
+    executor.setTaskDecorator(new MdcTaskDecorator());
     executor.setWaitForTasksToCompleteOnShutdown(true);
     executor.setAwaitTerminationSeconds(30);
     executor.initialize();
@@ -30,6 +31,7 @@ public class AsyncConfig {
     executor.setQueueCapacity(50);
     executor.setMaxPoolSize(10);
     executor.setThreadNamePrefix("email-");
+    executor.setTaskDecorator(new MdcTaskDecorator());
     executor.setWaitForTasksToCompleteOnShutdown(true);
     executor.setAwaitTerminationSeconds(60);
     executor.initialize();
