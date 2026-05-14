@@ -54,6 +54,7 @@ jobs:
               docker pull $IMAGE_URL
               docker run -d \
                 --name $CONTAINER_NAME \
+                --network app-net \
                 --restart unless-stopped \
                 --memory=700m \
                 -p 8080:8080 \
@@ -176,6 +177,7 @@ jobs:
               docker pull $IMAGE_URL
               docker run -d \
                 --name $CONTAINER_NAME \
+                --network app-net \
                 --restart unless-stopped \
                 --memory=700m \
                 -p 8080:8080 \
